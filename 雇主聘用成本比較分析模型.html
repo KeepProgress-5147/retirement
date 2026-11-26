@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>雇主聘用成本比較分析模型｜約聘雇（學士／碩士）vs. 編制內（辦事員／組員）</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --surface: #ffffff;
+      --surface-alt: #f8fafc;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --con: #059669;
+      --con-bg: #ecfdf5;
+      --con-border: #a7f3d0;
+      --sw1: #0284c7;
+      --sw1-bg: #f0f9ff;
+      --sw1-border: #bae6fd;
+      --sw2: #7c3aed;
+      --sw2-bg: #f5f3ff;
+      --sw2-border: #ddd6fe;
+      --reg: #d97706;
+      --reg-bg: #fffbeb;
+      --reg-border: #fde68a;
+      --danger: #dc2626;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .app-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 52%, #0f766e 100%);
+      color: #fff;
+      padding: 1.4rem 1.5rem 1.15rem;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.16);
+    }
+    .header-inner { max-width: 1400px; margin: 0 auto; }
+    .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; }
+    .app-header h1 { margin: 0; font-size: 1.48rem; }
+    .app-header p { margin: 0.3rem 0 0; font-size: 0.88rem; color: #cbd5e1; }
+    .pill-ver {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.26);
+      padding: 0.28rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      color: #ccfbf1;
+      white-space: nowrap;
+    }
+    .nav-tabs { display: flex; gap: 0.6rem; margin-top: 1.05rem; flex-wrap: wrap; }
+    .nav-tab {
+      border: 1px solid rgba(255,255,255,0.28);
+      background: rgba(255,255,255,0.09);
+      color: #e2e8f0;
+      padding: 0.58rem 1rem;
+      border-radius: 9px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.16s ease;
+    }
+    .nav-tab:hover { background: rgba(255,255,255,0.2); }
+    .nav-tab.active { background: #fff; color: #0f172a; border-color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .main-layout {
+      max-width: 1400px;
+      margin: 1.2rem auto 2.5rem;
+      padding: 0 1.2rem;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 1.2rem;
+      align-items: start;
+    }
+    @media (max-width: 1060px) { .main-layout { grid-template-columns: 1fr; } }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.15rem 1.25rem;
+      box-shadow: var(--shadow);
+    }
+    .sidebar { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow-y: auto; }
+    @media (max-width: 1060px) { .sidebar { position: static; max-height: none; } }
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0 0 0.8rem;
+      padding-bottom: 0.45rem;
+      border-bottom: 2px solid #ccfbf1;
+      color: #0f766e;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .control-group { margin-bottom: 0.9rem; padding-bottom: 0.8rem; border-bottom: 1px dashed var(--border); }
+    .control-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .group-label { font-size: 0.8rem; font-weight: 700; color: var(--muted); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.35rem; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .field { margin-bottom: 0.6rem; }
+    .field:last-child { margin-bottom: 0; }
+    .field-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.84rem; margin-bottom: 0.22rem; gap: 0.4rem; }
+    .field-val { font-weight: 700; color: #0f766e; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    input[type="range"] { width: 100%; accent-color: #0f766e; cursor: pointer; }
+    select {
+      width: 100%; padding: 0.42rem 0.55rem; border: 1px solid #cbd5e1; border-radius: 8px;
+      font-size: 0.84rem; font-family: inherit; background: #fff; color: var(--text);
+    }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; }
+    .chip-bar { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.35rem; }
+    .chip-btn {
+      font-size: 0.74rem; padding: 0.22rem 0.55rem; border-radius: 6px;
+      border: 1px solid #cbd5e1; background: var(--surface-alt); color: #334155;
+      cursor: pointer; font-family: inherit;
+    }
+    .chip-btn:hover { background: #ccfbf1; border-color: #0f766e; color: #0f766e; }
+    .toggle-row { display: flex; align-items: center; gap: 0.45rem; font-size: 0.83rem; cursor: pointer; user-select: none; }
+    .toggle-row input { width: 15px; height: 15px; accent-color: #0f766e; cursor: pointer; }
+    .hint { font-size: 0.76rem; color: var(--muted); margin-top: 0.22rem; line-height: 1.4; }
+    .content-col { display: flex; flex-direction: column; gap: 1.15rem; }
+    .banner {
+      background: linear-gradient(90deg, #f0fdfa 0%, #eff6ff 100%);
+      border: 1px solid #99f6e4;
+      border-left: 5px solid #0f766e;
+      border-radius: var(--radius);
+      padding: 0.95rem 1.2rem;
+      font-size: 0.9rem;
+    }
+    .banner strong { color: #134e4a; }
+    .kpi-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.9rem; }
+    @media (max-width: 1200px) { .kpi-grid-4 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .kpi-grid-4 { grid-template-columns: 1fr; } }
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.9rem 1rem;
+      box-shadow: var(--shadow);
+    }
+    .kpi-card.con { border-top-color: var(--con); }
+    .kpi-card.sw1 { border-top-color: var(--sw1); }
+    .kpi-card.sw2 { border-top-color: var(--sw2); }
+    .kpi-card.reg { border-top-color: var(--reg); }
+    .kpi-head { display: flex; justify-content: space-between; align-items: center; gap: 0.35rem; margin-bottom: 0.3rem; }
+    .kpi-title { font-weight: 700; font-size: 0.9rem; }
+    .badge { font-size: 0.7rem; font-weight: 700; padding: 0.12rem 0.45rem; border-radius: 999px; white-space: nowrap; }
+    .badge-con { background: var(--con-bg); color: var(--con); border: 1px solid var(--con-border); }
+    .badge-sw1 { background: var(--sw1-bg); color: var(--sw1); border: 1px solid var(--sw1-border); }
+    .badge-sw2 { background: var(--sw2-bg); color: var(--sw2); border: 1px solid var(--sw2-border); }
+    .badge-reg { background: var(--reg-bg); color: var(--reg); border: 1px solid var(--reg-border); }
+    .badge-best { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+    .kpi-big { font-size: 1.48rem; font-weight: 800; font-variant-numeric: tabular-nums; margin: 0.12rem 0; }
+    .kpi-big small { font-size: 0.76rem; font-weight: 500; color: var(--muted); }
+    .kpi-sub { font-size: 0.76rem; color: var(--muted); margin-bottom: 0.55rem; min-height: 2.2em; }
+    .kpi-meta { border-top: 1px solid var(--border); padding-top: 0.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.38rem 0.5rem; font-size: 0.77rem; }
+    .kpi-meta .lbl { display: block; font-size: 0.7rem; color: var(--muted); }
+    .kpi-meta .val { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .charts-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; }
+    @media (max-width: 900px) { .charts-2 { grid-template-columns: 1fr; } }
+    .chart-box { width: 100%; overflow-x: auto; }
+    .chart-box svg { display: block; width: 100%; height: auto; user-select: none; }
+    .legend { display: flex; flex-wrap: wrap; gap: 0.8rem; font-size: 0.78rem; color: var(--muted); margin-top: 0.45rem; }
+    .legend-item { display: inline-flex; align-items: center; gap: 0.32rem; }
+    .swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    th, td { border: 1px solid var(--border); padding: 0.48rem 0.6rem; text-align: left; vertical-align: middle; }
+    th { background: #f1f5f9; font-weight: 700; white-space: nowrap; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    td.center, th.center { text-align: center; white-space: nowrap; }
+    tr.row-focus { background: #f0fdfa; font-weight: 600; }
+    tr.row-edu { background: #f5f3ff; }
+    .pos { color: #059669; font-weight: 700; }
+    .neg { color: #dc2626; font-weight: 700; }
+    .pk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    @media (max-width: 720px) { .pk-grid { grid-template-columns: 1fr; } }
+    .pk-box { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; }
+    details summary { cursor: pointer; font-weight: 700; color: #0f766e; font-size: 0.9rem; }
+    .tooltip {
+      position: fixed; pointer-events: none; background: rgba(15, 23, 42, 0.95); color: #f8fafc;
+      padding: 0.52rem 0.75rem; border-radius: 8px; font-size: 0.77rem; line-height: 1.45;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.22); z-index: 9999; display: none; max-width: 320px;
+    }
+    .footnote {
+      font-size: 0.77rem; color: var(--muted); line-height: 1.6;
+      background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.85rem 1.1rem;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div>
+          <h1>雇主聘用成本比較分析模型｜約聘雇（學士／碩士）vs. 編制內（辦事員／組員）</h1>
+          <p>內建 2025/04/17 核定版校內薪資表、115 年健保表(二)/(三)、116 年勞保/勞退分級表與 114 年私校退撫表｜含雙視角與 1～40 年長期負債估算</p>
+        </div>
+        <div class="pill-ver">v1.1 雇主成本＋職員累積實領雙視角</div>
+      </div>
+      <div class="nav-tabs">
+        <button class="nav-tab active" id="tab-long" onclick="setTab('long')">一、雇主長期成本（1～40年／含6年轉編制）</button>
+        <button class="nav-tab" id="tab-emp" onclick="setTab('emp')">二、職員累積實領與退專本金（1～40年）</button>
+        <button class="nav-tab" id="tab-yr6" onclick="setTab('yr6')">三、第 6 年轉編制專題（vs. 辦事員 170／200）</button>
+        <button class="nav-tab" id="tab-max" onclick="setTab('max')">四、最高薪天花板比較（約聘雇 vs. 辦事員／組員）</button>
+        <button class="nav-tab" id="tab-pk" onclick="setTab('pk')">五、同月薪橫斷面 & 自選單月 PK 器</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-layout">
+    <!-- Left Sidebar -->
+    <aside class="panel sidebar">
+      <div class="panel-title">
+        <span>全局成本參數與模擬條件</span>
+        <button class="chip-btn" onclick="resetAll()">重設預設</button>
+      </div>
+
+      <div class="control-group">
+        <div class="group-label"><span class="dot" style="background:#0f766e"></span>長期模擬條件（分頁一）</div>
+        <div class="field">
+          <div class="field-row"><label for="horizonYears">觀察任職年限</label><span class="field-val" id="val-horizonYears">40 年</span></div>
+          <input type="range" id="horizonYears" min="1" max="40" value="40" />
+          <div class="chip-bar">
+            <button class="chip-btn" onclick="setVal('horizonYears',6)">6年</button>
+            <button class="chip-btn" onclick="setVal('horizonYears',15)">15年</button>
+            <button class="chip-btn" onclick="setVal('horizonYears',25)">25年</button>
+            <button class="chip-btn" onclick="setVal('horizonYears',35)">35年</button>
+            <button class="chip-btn" onclick="setVal('horizonYears',40)">40年</button>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-row"><label for="contractTrack">約聘雇起始職類與學歷</label></div>
+          <select id="contractTrack">
+            <option value="ba_adm">學士級－行政類（12級 36,160 → 25級 50,580）</option>
+            <option value="ma_adm">碩士級－行政類（14級 38,290 → 28級 54,130）</option>
+            <option value="ba_tech">學士級－技術類（12級 39,800 → 25級 55,670）</option>
+            <option value="ma_tech">碩士級－技術類（14級 42,140 → 28級 59,570）</option>
+          </select>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <div class="field-row"><label for="switchAfter">約聘滿幾年轉編制</label><span class="field-val" id="val-switchAfter">6 年</span></div>
+            <input type="range" id="switchAfter" min="1" max="15" value="6" />
+          </div>
+          <div class="field">
+            <div class="field-row"><label for="switchStartPts">轉任辦事員起敘</label></div>
+            <select id="switchStartPts">
+              <option value="140">140 薪額 (41,970)</option>
+              <option value="170" selected>170 薪額 (44,270)</option>
+              <option value="200">200 薪額 (46,570)</option>
+              <option value="230">230 薪額 (49,830)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-row"><label for="pureRegRole">第 1 年即聘編制內對照組</label></div>
+          <select id="pureRegRole">
+            <option value="clerk_140">全程編制辦事員（140 起薪 → 頂 310）</option>
+            <option value="officer_160">全程編制組員（160 起薪 → 頂 475）</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="group-label"><span class="dot" style="background:#0284c7"></span>獎金與保險費率基準（全分頁連動）</div>
+        <div class="field">
+          <div class="field-row"><label for="bonusMonths">年終獎金月數（全薪計，無考績獎金）</label><span class="field-val" id="val-bonusMonths">1.5 個月</span></div>
+          <input type="range" id="bonusMonths" min="0" max="2.5" step="0.1" value="1.5" />
+        </div>
+        <div class="field">
+          <div class="field-row"><label for="occRate">約聘雇職災保險費率（單位100%）</label><span class="field-val" id="val-occRate">0.14%</span></div>
+          <input type="range" id="occRate" min="0.07" max="0.50" step="0.01" value="0.14" />
+        </div>
+        <div class="field">
+          <div class="field-row"><label for="gpRate">編制內公保費率（學校負擔 32.5%）</label><span class="field-val" id="val-gpRate">10.16%</span></div>
+          <input type="range" id="gpRate" min="7.00" max="18.00" step="0.01" value="10.16" />
+        </div>
+        <div class="hint">• 私校退撫學校 32.5% 依決議全額計入總成本<br>• 二代健保雇主補充保費＝年終獎金 × 2.11%</div>
+      </div>
+
+      <div class="control-group">
+        <div class="group-label"><span class="dot" style="background:#7c3aed"></span>編制內退休後「公保超額年金」估算</div>
+        <div class="field">
+          <div class="field-row"><label for="retirePayoutYears">假設退休後按月領取年數</label><span class="field-val" id="val-retirePayoutYears">20 年</span></div>
+          <input type="range" id="retirePayoutYears" min="10" max="30" value="20" />
+          <div class="hint">依《公保法》第 20 條，逾 0.75%（即 0.55%）由學校與政府各付 50% 至過世為止；獨立列示不混入在職月支出。</div>
+        </div>
+        <div class="field">
+          <label class="toggle-row">
+            <input type="checkbox" id="isPost11207" />
+            <span>112.07.01 後初保公保（超額年金上限 40 年）</span>
+          </label>
+        </div>
+        <div class="field" style="margin-top:0.4rem;">
+          <label class="toggle-row">
+            <input type="checkbox" id="includeExcessInChart" />
+            <span>在長期對照卡標示「含退休後超額年金」合計</span>
+          </label>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Views -->
+    <section class="content-col">
+      <!-- TAB 1: Long-Term 1~40Y -->
+      <div id="view-long" class="content-col">
+        <div class="banner" id="long-banner"></div>
+        <div class="kpi-grid-4" id="long-kpis"></div>
+
+        <div class="charts-2">
+          <div class="panel">
+            <div class="panel-title">逐年「年度雇主總成本」趨勢（第 1～<span id="lbl-h1">40</span> 年）</div>
+            <div class="chart-box" id="chart-annual"></div>
+            <div class="legend" id="legend-annual"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">累計「在職雇主總成本」曲線（第 1～<span id="lbl-h2">40</span> 年）</div>
+            <div class="chart-box" id="chart-cum"></div>
+            <div class="legend" id="legend-cum"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">長期關鍵里程碑對照表（6 / 15 / 25 / 35 / 40 年）與公保超額年金負債</div>
+          <div class="table-wrap" id="long-milestone-table"></div>
+        </div>
+
+        <div class="panel">
+          <details>
+            <summary id="long-yearly-summary">展開檢視：第 1～40 年逐年薪級、年成本與員工月實領明細表</summary>
+            <div class="table-wrap" style="margin-top:0.75rem;" id="long-yearly-table"></div>
+          </details>
+        </div>
+      </div>
+
+      <!-- TAB 2: EMPLOYEE CUMULATIVE TAKE-HOME PAY (1~40Y) -->
+      <div id="view-emp" class="content-col hidden">
+        <div class="banner" id="emp-banner"></div>
+        <div class="kpi-grid-4" id="emp-kpis"></div>
+
+        <div class="charts-2">
+          <div class="panel">
+            <div class="panel-title">逐年「職員年實領現金」趨勢（第 1～<span id="lbl-eh1">40</span> 年，含年終）</div>
+            <div class="chart-box" id="chart-emp-annual"></div>
+            <div class="legend" id="legend-emp-annual"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">
+              <span>累計「職員實領」曲線（第 1～<span id="lbl-eh2">40</span> 年）</span>
+              <span style="display:flex;gap:0.3rem;">
+                <button class="chip-btn" id="emp-mode-cash" onclick="setEmpCumMode('cash')" style="background:#ccfbf1;border-color:#0f766e;color:#0f766e;font-weight:700;">僅看實領現金</button>
+                <button class="chip-btn" id="emp-mode-total" onclick="setEmpCumMode('total')">實領＋退專本金</button>
+              </span>
+            </div>
+            <div class="chart-box" id="chart-emp-cum"></div>
+            <div class="legend" id="legend-emp-cum"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">全 10 類身分與路徑：6 / 15 / 25 / 35 / 40 年「職員累積實領現金」與「退休專戶累計本金」總表</div>
+          <div class="table-wrap" id="emp-all10-table"></div>
+        </div>
+
+        <div class="panel">
+          <details>
+            <summary id="emp-yearly-summary">展開檢視：第 1～40 年各路徑逐年實領現金與累計實領明細表</summary>
+            <div class="table-wrap" style="margin-top:0.75rem;" id="emp-yearly-table"></div>
+          </details>
+        </div>
+      </div>
+
+      <!-- TAB 3: Year 6 vs Clerk 170/200 -->
+      <div id="view-yr6" class="content-col hidden">
+        <div class="banner" id="yr6-banner"></div>
+        <div class="panel">
+          <div class="panel-title">第 6 年轉編制專題：雇主月總成本拆解 vs. 員工月實領對比圖</div>
+          <div class="chart-box" id="chart-yr6"></div>
+          <div class="legend">
+            <span class="legend-item"><span class="swatch" style="background:#0f766e"></span>月薪資</span>
+            <span class="legend-item"><span class="swatch" style="background:#38bdf8"></span>社會保險(勞保/公保+職災)</span>
+            <span class="legend-item"><span class="swatch" style="background:#a78bfa"></span>退休提撥(勞退/退撫)</span>
+            <span class="legend-item"><span class="swatch" style="background:#f59e0b"></span>雇主健保</span>
+            <span class="legend-item"><span class="swatch" style="background:#ef4444"></span>● 員工扣自付後月實領</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">第 1 年起薪＆第 6 年（晉升 5 級）約聘雇 vs. 編制內辦事員（140／170／200）與組員起薪完整明細</div>
+          <div class="table-wrap" id="table-yr6"></div>
+        </div>
+      </div>
+
+      <!-- TAB 3: Max Salary Ceilings -->
+      <div id="view-max" class="content-col hidden">
+        <div class="banner" id="max-banner"></div>
+        <div class="panel">
+          <div class="panel-title">各類最高薪天花板：雇主年總成本（含 1.5 月年終＋二代健保補充保費）對比圖</div>
+          <div class="chart-box" id="chart-max"></div>
+          <div class="legend">
+            <span class="legend-item"><span class="swatch" style="background:#0f766e"></span>12 個月薪資</span>
+            <span class="legend-item"><span class="swatch" style="background:#38bdf8"></span>12 個月法定附加成本</span>
+            <span class="legend-item"><span class="swatch" style="background:#f59e0b"></span>年終獎金＋二代健保補充保費</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">約聘雇 4 類最高薪 vs. 編制內辦事員（310 薪額）、組員（475 薪額）最高薪完整對照表</div>
+          <div class="table-wrap" id="table-max"></div>
+        </div>
+      </div>
+
+      <!-- TAB 4: Same Salary & Custom PK -->
+      <div id="view-pk" class="content-col hidden">
+        <div class="panel">
+          <div class="panel-title">自選單月／全年成本即時 PK 比較器（約聘雇 vs. 編制內職員）</div>
+          <div class="pk-grid">
+            <div class="pk-box">
+              <div class="group-label"><span class="dot" style="background:#059669"></span>左側：約聘雇人員（學士 12～25 級／碩士 14～28 級）</div>
+              <div class="two-col">
+                <div class="field"><label class="hint">職類</label><select id="pk-con-type"><option value="adm">行政類 (118.1)</option><option value="tech">技術類 (130.0)</option></select></div>
+                <div class="field"><label class="hint">薪級（等級 12～28）</label><select id="pk-con-lv"></select></div>
+              </div>
+            </div>
+            <div class="pk-box">
+              <div class="group-label"><span class="dot" style="background:#7c3aed"></span>右側：編制內職員（辦事員 140～310／組員 160～475）</div>
+              <div class="two-col">
+                <div class="field"><label class="hint">職稱</label><select id="pk-reg-role"><option value="clerk">辦事員 (140～310)</option><option value="officer">組員 (160～475)</option></select></div>
+                <div class="field"><label class="hint">薪額</label><select id="pk-reg-pts"></select></div>
+              </div>
+            </div>
+          </div>
+          <div class="table-wrap" id="pk-result-table"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">同月薪區間橫斷面比較（4.2 萬～5.9 萬元：每發 1 元薪水之雇主真實負擔）</div>
+          <div class="table-wrap" id="table-same-sal"></div>
+        </div>
+      </div>
+
+      <div class="footnote">
+        <strong>資料來源與財務口徑說明：</strong>
+        1. 校內薪資表採 2025/04/17 核定版（114 年標準）；健保表(二)/(三) 採 115.01.01 實施表（費率 5.17%，平均眷口 0.56 → 雇主按 1.56 人計）；勞保普通事故＋就保分擔表（12%+1%=13%，單位 70%）與勞退 62 級表（單位 6%）採 116.01.01 生效表；私校退撫採 114.01.01 費用表（本薪×2×12%，學校 32.5% 依決議全額計入總成本）。
+        2. 雙方年終獎金均以全薪 × 設定月數計（預設 1.5 個月，無考績獎金），並計入《健保法》第 34 條雇主二代健保補充保費（年終獎金 × 2.11%）。
+        3. 員工月實領＝月薪資 − 員工自付社會保險（勞保 20% 或公保 35%）− 員工自付退休提撥（約聘雇預設 0%；編制內強制自繳 35%）− 員工本人健保 30%（未含個人所得稅與眷屬健保）；年實領＝月實領 × 12 ＋ 年終獎金（依《健保法》第 31 條，年終 1.5 個月未逾 4 倍投保金額，個人免扣二代健保補充保費）。
+        4. 「員工退專月入帳／累計本金」：約聘雇為雇主提繳勞退 6%；編制內為個人 35%＋學校 32.5%＋政府 32.5% 之私校退撫專戶合計入帳本金（不含複利投資收益，亦未計入私校強制自繳 35% 免計入年度薪資所得課稅之節稅效益）。
+      </div>
+    </section>
+  </main>
+
+  <div class="tooltip" id="tooltip"></div>
+
+  <script>
+    const DB = {"nhi_edu":[{"g":1,"s":29500,"e":458,"u":833,"v":833},{"g":2,"s":30300,"e":470,"u":855,"v":855},{"g":3,"s":31800,"e":493,"u":898,"v":898},{"g":4,"s":33300,"e":516,"u":940,"v":940},{"g":5,"s":34800,"e":540,"u":982,"v":982},{"g":6,"s":36300,"e":563,"u":1025,"v":1025},{"g":7,"s":38200,"e":592,"u":1078,"v":1078},{"g":8,"s":40100,"e":622,"u":1132,"v":1132},{"g":9,"s":42000,"e":651,"u":1186,"v":1186},{"g":10,"s":43900,"e":681,"u":1239,"v":1239},{"g":11,"s":45800,"e":710,"u":1293,"v":1293},{"g":12,"s":48200,"e":748,"u":1361,"v":1361},{"g":13,"s":50600,"e":785,"u":1428,"v":1428},{"g":14,"s":53000,"e":822,"u":1496,"v":1496},{"g":15,"s":55400,"e":859,"u":1564,"v":1564},{"g":16,"s":57800,"e":896,"u":1632,"v":1632},{"g":17,"s":60800,"e":943,"u":1716,"v":1716},{"g":18,"s":63800,"e":990,"u":1801,"v":1801},{"g":19,"s":66800,"e":1036,"u":1886,"v":1886},{"g":20,"s":69800,"e":1083,"u":1970,"v":1970},{"g":21,"s":72800,"e":1129,"u":2055,"v":2055},{"g":22,"s":76500,"e":1187,"u":2159,"v":2159},{"g":23,"s":80200,"e":1244,"u":2264,"v":2264},{"g":24,"s":83900,"e":1301,"u":2368,"v":2368},{"g":25,"s":87600,"e":1359,"u":2473,"v":2473},{"g":26,"s":92100,"e":1428,"u":2600,"v":2600},{"g":27,"s":96600,"e":1498,"u":2727,"v":2727},{"g":28,"s":101100,"e":1568,"u":2854,"v":2854},{"g":29,"s":105600,"e":1638,"u":2981,"v":2981},{"g":30,"s":110100,"e":1708,"u":3108,"v":3108},{"g":31,"s":115500,"e":1791,"u":3260,"v":3260},{"g":32,"s":120900,"e":1875,"u":3413,"v":3413},{"g":33,"s":126300,"e":1959,"u":3565,"v":3565},{"g":34,"s":131700,"e":2043,"u":3718,"v":3718},{"g":35,"s":137100,"e":2126,"u":3870,"v":3870},{"g":36,"s":142500,"e":2210,"u":4023,"v":4023},{"g":37,"s":147900,"e":2294,"u":4175,"v":4175},{"g":38,"s":150000,"e":2327,"u":4234,"v":4234},{"g":39,"s":156400,"e":2426,"u":4415,"v":4415},{"g":40,"s":162800,"e":2525,"u":4596,"v":4596},{"g":41,"s":169200,"e":2624,"u":4776,"v":4776},{"g":42,"s":175600,"e":2724,"u":4957,"v":4957},{"g":43,"s":182000,"e":2823,"u":5138,"v":5138},{"g":44,"s":189500,"e":2939,"u":5349,"v":5349},{"g":45,"s":197000,"e":3055,"u":5561,"v":5561},{"g":46,"s":204500,"e":3172,"u":5773,"v":5773},{"g":47,"s":212000,"e":3288,"u":5984,"v":5984},{"g":48,"s":219500,"e":3404,"u":6196,"v":6196},{"g":49,"s":228200,"e":3539,"u":6442,"v":6442},{"g":50,"s":236900,"e":3674,"u":6687,"v":6687},{"g":51,"s":245600,"e":3809,"u":6933,"v":6933},{"g":52,"s":254300,"e":3944,"u":7178,"v":7178},{"g":53,"s":263000,"e":4079,"u":7424,"v":7424},{"g":54,"s":273000,"e":4234,"u":7706,"v":7706},{"g":55,"s":283000,"e":4389,"u":7989,"v":7989},{"g":56,"s":293000,"e":4544,"u":8271,"v":8271},{"g":57,"s":303000,"e":4700,"u":8553,"v":8553},{"g":58,"s":313000,"e":4855,"u":8835,"v":8835}],"nhi_lab":[{"g":1,"s":29500,"e":458,"u":1428,"v":238},{"g":2,"s":30300,"e":470,"u":1466,"v":244},{"g":3,"s":31800,"e":493,"u":1539,"v":256},{"g":4,"s":33300,"e":516,"u":1611,"v":269},{"g":5,"s":34800,"e":540,"u":1684,"v":281},{"g":6,"s":36300,"e":563,"u":1757,"v":293},{"g":7,"s":38200,"e":592,"u":1849,"v":308},{"g":8,"s":40100,"e":622,"u":1940,"v":323},{"g":9,"s":42000,"e":651,"u":2032,"v":339},{"g":10,"s":43900,"e":681,"u":2124,"v":354},{"g":11,"s":45800,"e":710,"u":2216,"v":369},{"g":12,"s":48200,"e":748,"u":2332,"v":389},{"g":13,"s":50600,"e":785,"u":2449,"v":408},{"g":14,"s":53000,"e":822,"u":2565,"v":427},{"g":15,"s":55400,"e":859,"u":2681,"v":447},{"g":16,"s":57800,"e":896,"u":2797,"v":466},{"g":17,"s":60800,"e":943,"u":2942,"v":490},{"g":18,"s":63800,"e":990,"u":3087,"v":515},{"g":19,"s":66800,"e":1036,"u":3233,"v":539},{"g":20,"s":69800,"e":1083,"u":3378,"v":563},{"g":21,"s":72800,"e":1129,"u":3523,"v":587},{"g":22,"s":76500,"e":1187,"u":3702,"v":617},{"g":23,"s":80200,"e":1244,"u":3881,"v":647},{"g":24,"s":83900,"e":1301,"u":4060,"v":677},{"g":25,"s":87600,"e":1359,"u":4239,"v":707},{"g":26,"s":92100,"e":1428,"u":4457,"v":743},{"g":27,"s":96600,"e":1498,"u":4675,"v":779},{"g":28,"s":101100,"e":1568,"u":4892,"v":815},{"g":29,"s":105600,"e":1638,"u":5110,"v":852},{"g":30,"s":110100,"e":1708,"u":5328,"v":888},{"g":31,"s":115500,"e":1791,"u":5589,"v":932},{"g":32,"s":120900,"e":1875,"u":5850,"v":975},{"g":33,"s":126300,"e":1959,"u":6112,"v":1019},{"g":34,"s":131700,"e":2043,"u":6373,"v":1062},{"g":35,"s":137100,"e":2126,"u":6634,"v":1106},{"g":36,"s":142500,"e":2210,"u":6896,"v":1149},{"g":37,"s":147900,"e":2294,"u":7157,"v":1193},{"g":38,"s":150000,"e":2327,"u":7259,"v":1210},{"g":39,"s":156400,"e":2426,"u":7568,"v":1261},{"g":40,"s":162800,"e":2525,"u":7878,"v":1313},{"g":41,"s":169200,"e":2624,"u":8188,"v":1365},{"g":42,"s":175600,"e":2724,"u":8497,"v":1416},{"g":43,"s":182000,"e":2823,"u":8807,"v":1468},{"g":44,"s":189500,"e":2939,"u":9170,"v":1528},{"g":45,"s":197000,"e":3055,"u":9533,"v":1589},{"g":46,"s":204500,"e":3172,"u":9896,"v":1649},{"g":47,"s":212000,"e":3288,"u":10259,"v":1710},{"g":48,"s":219500,"e":3404,"u":10622,"v":1770},{"g":49,"s":228200,"e":3539,"u":11043,"v":1840},{"g":50,"s":236900,"e":3674,"u":11464,"v":1911},{"g":51,"s":245600,"e":3809,"u":11885,"v":1981},{"g":52,"s":254300,"e":3944,"u":12306,"v":2051},{"g":53,"s":263000,"e":4079,"u":12727,"v":2121},{"g":54,"s":273000,"e":4234,"u":13211,"v":2202},{"g":55,"s":283000,"e":4389,"u":13695,"v":2282},{"g":56,"s":293000,"e":4544,"u":14179,"v":2363},{"g":57,"s":303000,"e":4700,"u":14663,"v":2444},{"g":58,"s":313000,"e":4855,"u":15146,"v":2524}],"lab_ins_116":[{"g":"第1級","s":30900,"e":804,"u":2812},{"g":"第2級","s":31800,"e":827,"u":2894},{"g":"第3級","s":33300,"e":866,"u":3030},{"g":"第4級","s":34800,"e":905,"u":3167},{"g":"第5級","s":36300,"e":944,"u":3303},{"g":"第6級","s":38200,"e":993,"u":3476},{"g":"第7級","s":40100,"e":1042,"u":3649},{"g":"第8級","s":42000,"e":1092,"u":3822},{"g":"第9級","s":43900,"e":1142,"u":3995},{"g":"第10級","s":45800,"e":1191,"u":4168}],"lab_pen_116":[1500,3000,4500,6000,7500,8700,9900,11100,12540,13500,15840,16500,17280,17880,19047,20008,21009,22000,23100,24000,25250,26400,27600,28590,29500,30900,31800,33300,34800,36300,38200,40100,42000,43900,45800,48200,50600,53000,55400,57800,60800,63800,66800,69800,72800,76500,80200,83900,87600,92100,96600,101100,105600,110100,115500,120900,126300,131700,137100,142500,147900,150000],"reg_all":[{"rank":"36","pts":90,"base":17390,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":1461,"ret_sch":1356,"ret_gov":1357,"ret_tot":4174},{"rank":"35","pts":100,"base":18160,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":1525,"ret_sch":1416,"ret_gov":1417,"ret_tot":4358},{"rank":"34","pts":110,"base":18920,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":1589,"ret_sch":1476,"ret_gov":1476,"ret_tot":4541},{"rank":"33","pts":120,"base":19690,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":1654,"ret_sch":1536,"ret_gov":1536,"ret_tot":4726},{"rank":"32","pts":130,"base":20460,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":1719,"ret_sch":1595,"ret_gov":1596,"ret_tot":4910},{"rank":"31","pts":140,"base":21220,"clerk":41970,"tech_asst":41970,"nurse":42930,"officer":null,"counselor":null,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":1783,"ret_sch":1655,"ret_gov":1655,"ret_tot":5093},{"rank":"30","pts":150,"base":21990,"clerk":42740,"tech_asst":42740,"nurse":43700,"officer":null,"counselor":null,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":1847,"ret_sch":1715,"ret_gov":1716,"ret_tot":5278},{"rank":"29","pts":160,"base":22750,"clerk":43500,"tech_asst":43500,"nurse":44460,"officer":44460,"counselor":null,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":1911,"ret_sch":1774,"ret_gov":1775,"ret_tot":5460},{"rank":"28","pts":170,"base":23520,"clerk":44270,"tech_asst":44270,"nurse":45230,"officer":45230,"counselor":null,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":1976,"ret_sch":1834,"ret_gov":1835,"ret_tot":5645},{"rank":"27","pts":180,"base":24290,"clerk":45040,"tech_asst":45040,"nurse":46000,"officer":46000,"counselor":null,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":2041,"ret_sch":1894,"ret_gov":1895,"ret_tot":5830},{"rank":"26","pts":190,"base":25050,"clerk":45800,"tech_asst":45800,"nurse":46760,"officer":46760,"counselor":46760,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":2104,"ret_sch":1954,"ret_gov":1954,"ret_tot":6012},{"rank":"25","pts":200,"base":25820,"clerk":46570,"tech_asst":46570,"nurse":47530,"officer":47530,"counselor":47530,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":2169,"ret_sch":2014,"ret_gov":2014,"ret_tot":6197},{"rank":"24","pts":210,"base":26580,"clerk":48290,"tech_asst":48290,"nurse":48290,"officer":48290,"counselor":48290,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":2233,"ret_sch":2073,"ret_gov":2073,"ret_tot":6379},{"rank":"23","pts":220,"base":27350,"clerk":49060,"tech_asst":49060,"nurse":49060,"officer":49060,"counselor":49060,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":2297,"ret_sch":2133,"ret_gov":2134,"ret_tot":6564},{"rank":"22","pts":230,"base":28120,"clerk":49830,"tech_asst":49830,"nurse":49830,"officer":49830,"counselor":49830,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":2362,"ret_sch":2193,"ret_gov":2194,"ret_tot":6749},{"rank":"21","pts":245,"base":29270,"clerk":50980,"tech_asst":50980,"nurse":53150,"officer":53150,"counselor":53150,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":2459,"ret_sch":2283,"ret_gov":2283,"ret_tot":7025},{"rank":"20","pts":260,"base":30410,"clerk":52120,"tech_asst":52120,"nurse":54290,"officer":54290,"counselor":54290,"specialist":null,"secretary":null,"director":null,"chief":null,"ret_emp":2554,"ret_sch":2372,"ret_gov":2372,"ret_tot":7298},{"rank":"19","pts":275,"base":31560,"clerk":53270,"tech_asst":53270,"nurse":55440,"officer":55440,"counselor":55440,"specialist":56500,"secretary":null,"director":null,"chief":null,"ret_emp":2651,"ret_sch":2461,"ret_gov":2462,"ret_tot":7574},{"rank":"18","pts":290,"base":32710,"clerk":54420,"tech_asst":54420,"nurse":56590,"officer":56590,"counselor":56590,"specialist":57650,"secretary":null,"director":null,"chief":null,"ret_emp":2748,"ret_sch":2551,"ret_gov":2551,"ret_tot":7850},{"rank":"17","pts":310,"base":33860,"clerk":55570,"tech_asst":55570,"nurse":57740,"officer":57740,"counselor":57740,"specialist":58800,"secretary":58800,"director":null,"chief":null,"ret_emp":2844,"ret_sch":2641,"ret_gov":2641,"ret_tot":8126},{"rank":"16","pts":330,"base":35010,"clerk":null,"tech_asst":56720,"nurse":58890,"officer":58890,"counselor":58890,"specialist":59950,"secretary":59950,"director":null,"chief":null,"ret_emp":2941,"ret_sch":2730,"ret_gov":2731,"ret_tot":8402},{"rank":"15","pts":350,"base":36160,"clerk":null,"tech_asst":57870,"nurse":60040,"officer":61100,"counselor":61100,"specialist":65760,"secretary":65760,"director":null,"chief":null,"ret_emp":3037,"ret_sch":2820,"ret_gov":2821,"ret_tot":8678},{"rank":"14","pts":370,"base":37310,"clerk":null,"tech_asst":59020,"nurse":61190,"officer":62250,"counselor":62250,"specialist":66910,"secretary":66910,"director":null,"chief":null,"ret_emp":3134,"ret_sch":2910,"ret_gov":2910,"ret_tot":8954},{"rank":"13","pts":390,"base":38460,"clerk":null,"tech_asst":60170,"nurse":62340,"officer":63400,"counselor":63400,"specialist":68060,"secretary":68060,"director":null,"chief":null,"ret_emp":3231,"ret_sch":2999,"ret_gov":3000,"ret_tot":9230},{"rank":"12","pts":410,"base":39610,"clerk":null,"tech_asst":61320,"nurse":63490,"officer":64550,"counselor":64550,"specialist":69210,"secretary":69210,"director":null,"chief":null,"ret_emp":3327,"ret_sch":3089,"ret_gov":3090,"ret_tot":9506},{"rank":"11","pts":430,"base":40760,"clerk":null,"tech_asst":null,"nurse":null,"officer":65700,"counselor":65700,"specialist":70360,"secretary":70360,"director":null,"chief":null,"ret_emp":3424,"ret_sch":3179,"ret_gov":3179,"ret_tot":9782},{"rank":"10","pts":450,"base":41900,"clerk":null,"tech_asst":null,"nurse":null,"officer":66840,"counselor":66840,"specialist":71500,"secretary":71500,"director":null,"chief":null,"ret_emp":3520,"ret_sch":3268,"ret_gov":3268,"ret_tot":10056},{"rank":"9","pts":475,"base":44970,"clerk":null,"tech_asst":null,"nurse":null,"officer":69910,"counselor":69910,"specialist":74570,"secretary":74570,"director":79370,"chief":82450,"ret_emp":3778,"ret_sch":3507,"ret_gov":3508,"ret_tot":10793},{"rank":"8","pts":500,"base":46500,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":76100,"secretary":76100,"director":80900,"chief":83980,"ret_emp":3906,"ret_sch":3627,"ret_gov":3627,"ret_tot":11160},{"rank":"7","pts":525,"base":48030,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":77630,"secretary":77630,"director":82430,"chief":85510,"ret_emp":4034,"ret_sch":3746,"ret_gov":3747,"ret_tot":11527},{"rank":"6","pts":550,"base":49560,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":null,"secretary":79160,"director":83960,"chief":87040,"ret_emp":4163,"ret_sch":3865,"ret_gov":3866,"ret_tot":11894},{"rank":"5","pts":575,"base":51100,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":null,"secretary":80700,"director":85500,"chief":88580,"ret_emp":4292,"ret_sch":3986,"ret_gov":3986,"ret_tot":12264},{"rank":"4","pts":600,"base":52630,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":null,"secretary":82230,"director":87030,"chief":90110,"ret_emp":4421,"ret_sch":4105,"ret_gov":4105,"ret_tot":12631},{"rank":"3","pts":625,"base":54160,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":null,"secretary":83760,"director":88560,"chief":91640,"ret_emp":4549,"ret_sch":4224,"ret_gov":4225,"ret_tot":12998},{"rank":"2","pts":650,"base":55690,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":null,"secretary":null,"director":90090,"chief":93170,"ret_emp":4678,"ret_sch":4344,"ret_gov":4344,"ret_tot":13366},{"rank":"1","pts":680,"base":57220,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":null,"secretary":null,"director":91620,"chief":94700,"ret_emp":4807,"ret_sch":4463,"ret_gov":4463,"ret_tot":13733},{"rank":"年功3","pts":710,"base":59520,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":null,"secretary":null,"director":93920,"chief":97000,"ret_emp":5000,"ret_sch":4642,"ret_gov":4643,"ret_tot":14285},{"rank":"年功2","pts":740,"base":60290,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":null,"secretary":null,"director":94690,"chief":97770,"ret_emp":5065,"ret_sch":4702,"ret_gov":4703,"ret_tot":14470},{"rank":"年功1","pts":770,"base":63570,"clerk":null,"tech_asst":null,"nurse":null,"officer":null,"counselor":null,"specialist":null,"secretary":null,"director":null,"chief":101050,"ret_emp":5340,"ret_sch":4958,"ret_gov":4959,"ret_tot":15257}],"con_all":[{"lv":1,"pts":229,"adm":27060,"tech":null},{"lv":2,"pts":234,"adm":27660,"tech":null},{"lv":3,"pts":239,"adm":28250,"tech":null},{"lv":4,"pts":246,"adm":29070,"tech":null},{"lv":5,"pts":253,"adm":29910,"tech":32900},{"lv":6,"pts":260,"adm":30730,"tech":33820},{"lv":7,"pts":267,"adm":31550,"tech":34730},{"lv":8,"pts":274,"adm":32380,"tech":35630},{"lv":9,"pts":281,"adm":33200,"tech":36550},{"lv":10,"pts":288,"adm":34050,"tech":37460},{"lv":11,"pts":297,"adm":35100,"tech":38640},{"lv":12,"pts":306,"adm":36160,"tech":39800},{"lv":13,"pts":315,"adm":37220,"tech":40970},{"lv":14,"pts":324,"adm":38290,"tech":42140},{"lv":15,"pts":333,"adm":39350,"tech":43320},{"lv":16,"pts":342,"adm":40410,"tech":44490},{"lv":17,"pts":351,"adm":41480,"tech":45650},{"lv":18,"pts":360,"adm":42540,"tech":46820},{"lv":19,"pts":369,"adm":43600,"tech":48000},{"lv":20,"pts":378,"adm":44670,"tech":49170},{"lv":21,"pts":388,"adm":45860,"tech":50460},{"lv":22,"pts":398,"adm":47030,"tech":51770},{"lv":23,"pts":408,"adm":48210,"tech":53070},{"lv":24,"pts":418,"adm":49400,"tech":54370},{"lv":25,"pts":428,"adm":50580,"tech":55670},{"lv":26,"pts":438,"adm":51760,"tech":56960},{"lv":27,"pts":448,"adm":52940,"tech":58270},{"lv":28,"pts":458,"adm":54130,"tech":59570}]};
+    const regByPts = {};
+    DB.reg_all.forEach(r => { regByPts[r.pts] = r; });
+    const conByLv = {};
+    DB.con_all.forEach(r => { conByLv[r.lv] = r; });
+    const ptsList = DB.reg_all.map(r => r.pts);
+
+    const $ = id => document.getElementById(id);
+    const fmt = n => Math.round(n).toLocaleString("zh-TW");
+    const fmtWan = n => (n / 10000).toFixed(1) + " 萬";
+    const fmtDiff = n => (n >= 0 ? "+" : "") + fmt(n);
+
+    const uiState = { tab: "long", empCumMode: "cash" };
+
+    // Lookup functions
+    function lkNhi(tbl, sal) {
+      for (const r of tbl) if (sal <= r.s) return r;
+      return tbl[tbl.length - 1];
+    }
+    function lkLabIns(sal) {
+      for (const r of DB.lab_ins_116) if (sal <= r.s) return r;
+      return DB.lab_ins_116[DB.lab_ins_116.length - 1];
+    }
+    function lkLabPen(sal) {
+      for (const amt of DB.lab_pen_116) if (sal <= amt) return amt;
+      return DB.lab_pen_116[DB.lab_pen_116.length - 1];
+    }
+
+    function getGlobalCfg() {
+      return {
+        horizon: parseInt($("horizonYears").value, 10),
+        track: $("contractTrack").value,
+        switchAfter: parseInt($("switchAfter").value, 10),
+        switchStartPts: parseInt($("switchStartPts").value, 10),
+        pureRegRole: $("pureRegRole").value,
+        bonusMonths: parseFloat($("bonusMonths").value),
+        occRate: parseFloat($("occRate").value) / 100,
+        gpRate: parseFloat($("gpRate").value) / 100,
+        retirePayoutYears: parseInt($("retirePayoutYears").value, 10),
+        isPost11207: $("isPost11207").checked,
+        includeExcessInChart: $("includeExcessInChart").checked,
+        suppNhiRate: 0.0211
+      };
+    }
+
+    function calcContractMo(sal, cfg) {
+      const li = lkLabIns(sal);
+      const lpAmt = lkLabPen(sal);
+      const nhi = lkNhi(DB.nhi_lab, sal);
+      const occ = Math.round(li.s * cfg.occRate);
+      const lpU = Math.round(lpAmt * 0.06);
+      const addon = li.u + occ + lpU + nhi.u;
+      const empMo = sal + addon;
+      const bonus = Math.round(sal * cfg.bonusMonths);
+      const supp = Math.round(bonus * cfg.suppNhiRate);
+      const empYr = empMo * 12 + bonus + supp;
+      const takeMo = sal - li.e - nhi.e;
+      const takeYr = takeMo * 12 + bonus;
+      const retYr = lpU * 12;
+      return {
+        sal, insU: li.u, occ, retU: lpU, nhiU: nhi.u, addon, addonPct: (addon / sal) * 100,
+        empMo, bonus, supp, empYr, takeMo, takeYr, retIn: lpU, retYr,
+        empDeduct: li.e + nhi.e, nhiGrade: nhi.s, liGrade: li.s, lpGrade: lpAmt
+      };
+    }
+
+    function calcRegMo(row, role, cfg) {
+      const sal = row[role];
+      const base = row.base;
+      const gpU = Math.round(base * cfg.gpRate * 0.325);
+      const gpE = Math.round(base * cfg.gpRate * 0.35);
+      const retU = row.ret_sch;
+      const retE = row.ret_emp;
+      const nhi = lkNhi(DB.nhi_edu, sal);
+      const addon = gpU + retU + nhi.u;
+      const empMo = sal + addon;
+      const bonus = Math.round(sal * cfg.bonusMonths);
+      const supp = Math.round(bonus * cfg.suppNhiRate);
+      const empYr = empMo * 12 + bonus + supp;
+      const takeMo = sal - gpE - retE - nhi.e;
+      const takeYr = takeMo * 12 + bonus;
+      const retYr = row.ret_tot * 12;
+      return {
+        sal, base, allow: sal - base, insU: gpU, occ: 0, retU, nhiU: nhi.u, addon, addonPct: (addon / sal) * 100,
+        empMo, bonus, supp, empYr, takeMo, takeYr, retIn: row.ret_tot, retYr,
+        empDeduct: gpE + retE + nhi.e, nhiGrade: nhi.s
+      };
+    }
+
+    const TRACK_META = {
+      ba_adm: { label: "學士行政約聘雇", field: "adm", startLv: 12, maxLv: 25 },
+      ma_adm: { label: "碩士行政約聘雇", field: "adm", startLv: 14, maxLv: 28 },
+      ba_tech: { label: "學士技術約聘雇", field: "tech", startLv: 12, maxLv: 25 },
+      ma_tech: { label: "碩士技術約聘雇", field: "tech", startLv: 14, maxLv: 28 }
+    };
+
+    function simulatePath(pathType, cfg, totalYears) {
+      const meta = TRACK_META[cfg.track];
+      const yearly = [];
+      let cum = 0, cumTake = 0, cumRet = 0;
+      const eduBases = [];
+
+      for (let y = 1; y <= totalYears; y++) {
+        let c, rankLabel;
+        if (pathType === "contract") {
+          const lv = Math.min(meta.startLv + (y - 1), meta.maxLv);
+          c = calcContractMo(conByLv[lv][meta.field], cfg);
+          rankLabel = `約聘 ${lv}級`;
+        } else if (pathType === "switch_clerk" || pathType === "switch_officer") {
+          if (y <= cfg.switchAfter) {
+            const lv = Math.min(meta.startLv + (y - 1), meta.maxLv);
+            c = calcContractMo(conByLv[lv][meta.field], cfg);
+            rankLabel = `約聘 ${lv}級`;
+          } else {
+            const maxPts = pathType === "switch_clerk" ? 310 : 475;
+            const startIdx = ptsList.indexOf(cfg.switchStartPts);
+            const maxIdx = ptsList.indexOf(maxPts);
+            const idx = Math.min(startIdx + (y - cfg.switchAfter - 1), maxIdx);
+            const r = DB.reg_all[idx];
+            const role = r.pts <= 310 ? "clerk" : "officer";
+            c = calcRegMo(r, role, cfg);
+            eduBases.push(r.base);
+            rankLabel = `${role === "clerk" ? "辦事員" : "組員"} ${r.pts}`;
+          }
+        } else if (pathType === "pure_reg") {
+          const isOfficer = cfg.pureRegRole === "officer_160";
+          const startIdx = ptsList.indexOf(isOfficer ? 160 : 140);
+          const maxIdx = ptsList.indexOf(isOfficer ? 475 : 310);
+          const idx = Math.min(startIdx + (y - 1), maxIdx);
+          const r = DB.reg_all[idx];
+          const role = isOfficer ? "officer" : "clerk";
+          c = calcRegMo(r, role, cfg);
+          eduBases.push(r.base);
+          rankLabel = `${isOfficer ? "組員" : "辦事員"} ${r.pts}`;
+        }
+        cum += c.empYr;
+        cumTake += c.takeYr;
+        cumRet += c.retYr;
+        yearly.push({ y, rankLabel, ...c, cum, cumTake, cumRet, cumRealComp: cumTake + cumRet });
+      }
+
+      // Post-retirement excess annuity school liability (Art. 20: 50% of 0.55% over 0.75%)
+      const eduYears = eduBases.length;
+      const capYears = cfg.isPost11207 ? 40 : 35;
+      let excessMoSch = 0, excessTot = 0, avg10Base = 0;
+      if (eduYears >= 15) {
+        const win = Math.min(10, eduYears);
+        avg10Base = Math.round(eduBases.slice(-win).reduce((a, b) => a + b, 0) / win);
+        excessMoSch = Math.round(avg10Base * Math.min(eduYears, capYears) * 0.0055 * 0.5);
+        excessTot = excessMoSch * 12 * cfg.retirePayoutYears;
+      }
+
+      const last = yearly[yearly.length - 1];
+      return {
+        yearly, totalInService: cum, totalTakeHome: cumTake, totalRetPrincipal: cumRet, totalRealComp: cumTake + cumRet,
+        eduYears, avg10Base, excessMoSch, excessTot, grandTotal: cum + excessTot,
+        last
+      };
+    }
+
+    // Tooltip
+    const tipEl = $("tooltip");
+    function showTip(e, html) {
+      tipEl.innerHTML = html;
+      tipEl.style.display = "block";
+      let l = e.clientX + 14, t = e.clientY + 14;
+      if (l + 310 > window.innerWidth) l = e.clientX - 310;
+      if (t + 160 > window.innerHeight) t = e.clientY - 140;
+      tipEl.style.left = l + "px";
+      tipEl.style.top = t + "px";
+    }
+    function hideTip() { tipEl.style.display = "none"; }
+
+    // SVG Line Chart
+    function renderLineChart(containerId, legendId, series, horizon, valueKey, isWan) {
+      const W = 520, H = 265, m = { t: 18, r: 18, b: 36, l: 64 };
+      const cw = W - m.l - m.r, ch = H - m.t - m.b;
+      let maxY = 100000;
+      series.forEach(s => s.data.forEach(d => { if (d[valueKey] > maxY) maxY = d[valueKey]; }));
+      maxY *= 1.08;
+      let minY = (valueKey === "empYr" || valueKey === "takeYr") ? Math.min(...series.flatMap(s => s.data.map(d => d[valueKey]))) * 0.85 : 0;
+
+      const sx = y => horizon === 1 ? m.l + cw / 2 : m.l + ((y - 1) / (horizon - 1)) * cw;
+      const sy = v => m.t + ch - ((v - minY) / (maxY - minY)) * ch;
+
+      let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+      for (let i = 0; i <= 4; i++) {
+        const yv = minY + ((maxY - minY) * i) / 4;
+        const yy = sy(yv);
+        svg += `<line x1="${m.l}" y1="${yy}" x2="${W - m.r}" y2="${yy}" stroke="#e2e8f0" stroke-width="1"/>`;
+        svg += `<text x="${m.l - 6}" y="${yy + 4}" text-anchor="end" font-size="10.5" fill="#64748b">${isWan ? fmtWan(yv) : (yv/10000).toFixed(0)+"萬"}</text>`;
+      }
+
+      series.forEach(s => {
+        const d = s.data.map((pt, i) => `${i === 0 ? "M" : "L"}${sx(pt.y).toFixed(1)},${sy(pt[valueKey]).toFixed(1)}`).join(" ");
+        svg += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2.4" ${s.dash ? `stroke-dasharray="${s.dash}"` : ""}/>`;
+      });
+
+      const tipTitleMap = {
+        empYr: "年度雇主總成本",
+        cum: "累計雇主總成本",
+        takeYr: "職員年度實領現金",
+        cumTake: "職員累計實領現金",
+        cumRealComp: "職員累計總實質所得（實領＋退專本金）"
+      };
+      // Hover bands
+      const step = Math.max(1, Math.floor(horizon / 20));
+      for (let y = 1; y <= horizon; y += step) {
+        const lines = series.map(s => {
+          const pt = s.data[y - 1];
+          return `<span style="color:${s.color}">●</span> ${s.short}（${pt.rankLabel}）：<strong>${fmtWan(pt[valueKey])}</strong>`;
+        }).join("<br>");
+        const tip = `<strong>第 ${y} 年${tipTitleMap[valueKey] || ""}</strong><br>${lines}`;
+        const bw = Math.max(10, cw / Math.max(1, horizon / step));
+        svg += `<rect x="${sx(y) - bw/2}" y="${m.t}" width="${bw}" height="${ch}" fill="transparent" style="cursor:crosshair" data-tip="${tip.replace(/"/g,"&quot;")}"/>`;
+      }
+
+      // X ticks
+      const xStep = horizon <= 10 ? 1 : (horizon <= 25 ? 5 : 5);
+      for (let y = 1; y <= horizon; y++) {
+        if (y === 1 || y === horizon || y % xStep === 0) {
+          svg += `<text x="${sx(y)}" y="${H - 12}" text-anchor="middle" font-size="10.5" fill="#64748b">第${y}年</text>`;
+        }
+      }
+      svg += `</svg>`;
+      const el = $(containerId);
+      el.innerHTML = svg;
+      el.querySelectorAll("rect[data-tip]").forEach(r => {
+        r.addEventListener("mousemove", e => showTip(e, r.getAttribute("data-tip")));
+        r.addEventListener("mouseleave", hideTip);
+      });
+      $(legendId).innerHTML = series.map(s => `<span class="legend-item"><span class="swatch" style="background:${s.color}"></span>${s.short}</span>`).join("");
+    }
+
+    // SVG Stacked Bar Chart (Year 6 & Max Salary)
+    function renderStackedChart(containerId, items, mode) {
+      const W = 860, H = 300, m = { t: 28, r: 20, b: 64, l: 66 };
+      const cw = W - m.l - m.r, ch = H - m.t - m.b;
+      const maxVal = Math.max(...items.map(it => mode === "mo" ? it.c.empMo : it.c.empYr)) * 1.14;
+      const sy = v => m.t + ch - (v / maxVal) * ch;
+      const barW = Math.min(58, cw / items.length - 18);
+
+      let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+      for (let i = 0; i <= 4; i++) {
+        const yv = (maxVal * i) / 4;
+        const yy = sy(yv);
+        svg += `<line x1="${m.l}" y1="${yy}" x2="${W - m.r}" y2="${yy}" stroke="#e2e8f0" stroke-width="1"/>`;
+        svg += `<text x="${m.l - 6}" y="${yy + 4}" text-anchor="end" font-size="10.5" fill="#64748b">${mode === "mo" ? fmt(yv) : fmtWan(yv)}</text>`;
+      }
+
+      items.forEach((it, idx) => {
+        const cx = m.l + (cw / items.length) * (idx + 0.5);
+        const x = cx - barW / 2;
+        const c = it.c;
+        let segs, topVal, tip;
+
+        if (mode === "mo") {
+          segs = [
+            { v: c.sal, col: "#0f766e" },
+            { v: c.insU + c.occ, col: "#38bdf8" },
+            { v: c.retU, col: "#a78bfa" },
+            { v: c.nhiU, col: "#f59e0b" }
+          ];
+          topVal = c.empMo;
+          tip = `<strong>${it.label}</strong><br>月薪：${fmt(c.sal)} 元<br>社會保險(雇主)：${fmt(c.insU + c.occ)} 元<br>退休提撥(雇主)：${fmt(c.retU)} 元<br>健保(雇主)：${fmt(c.nhiU)} 元<br><strong>雇主月總成本：${fmt(c.empMo)} 元 (+${c.addonPct.toFixed(1)}%)</strong><br><span style="color:#fca5a5">員工扣自付後月實領：${fmt(c.takeMo)} 元</span><br>退專月入帳：${fmt(c.retIn)} 元`;
+        } else {
+          segs = [
+            { v: c.sal * 12, col: "#0f766e" },
+            { v: c.addon * 12, col: "#38bdf8" },
+            { v: c.bonus + c.supp, col: "#f59e0b" }
+          ];
+          topVal = c.empYr;
+          tip = `<strong>${it.label}</strong><br>12個月薪資：${fmtWan(c.sal*12)}<br>12個月法定附加：${fmtWan(c.addon*12)} (+${c.addonPct.toFixed(1)}%)<br>年終＋補充保費：${fmtWan(c.bonus + c.supp)}<br><strong>雇主年總成本：${fmtWan(c.empYr)} (${fmt(c.empYr)} 元)</strong><br>員工月實領：${fmt(c.takeMo)} 元`;
+        }
+
+        let curY = m.t + ch;
+        svg += `<g style="cursor:pointer" data-tip="${tip.replace(/"/g,"&quot;")}">`;
+        segs.forEach(sg => {
+          const h = (sg.v / maxVal) * ch;
+          curY -= h;
+          svg += `<rect x="${x}" y="${curY}" width="${barW}" height="${Math.max(0, h)}" fill="${sg.col}" />`;
+        });
+        svg += `<text x="${cx}" y="${curY - 6}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0f172a">${mode === "mo" ? fmt(topVal) : fmtWan(topVal)}</text>`;
+        if (mode === "mo") {
+          const ty = sy(c.takeMo);
+          svg += `<circle cx="${cx}" cy="${ty}" r="4.8" fill="#ef4444" stroke="#fff" stroke-width="1.8"/>`;
+        }
+        const parts = it.short.split("\n");
+        parts.forEach((p, pi) => {
+          svg += `<text x="${cx}" y="${H - 42 + pi * 14}" text-anchor="middle" font-size="10.5" font-weight="${pi === 0 ? 700 : 400}" fill="${pi === 0 ? "#0f172a" : "#64748b"}">${p}</text>`;
+        });
+        svg += `</g>`;
+      });
+
+      svg += `</svg>`;
+      const el = $(containerId);
+      el.innerHTML = svg;
+      el.querySelectorAll("g[data-tip]").forEach(g => {
+        g.addEventListener("mousemove", e => showTip(e, g.getAttribute("data-tip")));
+        g.addEventListener("mouseleave", hideTip);
+      });
+    }
+
+    function setTab(t) {
+      uiState.tab = t;
+      ["long", "emp", "yr6", "max", "pk"].forEach(k => {
+        $("tab-" + k).classList.toggle("active", k === t);
+        $("view-" + k).classList.toggle("hidden", k !== t);
+      });
+      render();
+    }
+
+    function setEmpCumMode(m) {
+      uiState.empCumMode = m;
+      const isCash = m === "cash";
+      $("emp-mode-cash").style.cssText = isCash ? "background:#ccfbf1;border-color:#0f766e;color:#0f766e;font-weight:700;" : "";
+      $("emp-mode-total").style.cssText = !isCash ? "background:#ccfbf1;border-color:#0f766e;color:#0f766e;font-weight:700;" : "";
+      render();
+    }
+
+    function setVal(id, v) { $(id).value = v; render(); }
+
+    function resetAll() {
+      $("horizonYears").value = 40;
+      $("contractTrack").value = "ba_adm";
+      $("switchAfter").value = 6;
+      $("switchStartPts").value = "170";
+      $("pureRegRole").value = "clerk_140";
+      $("bonusMonths").value = 1.5;
+      $("occRate").value = 0.14;
+      $("gpRate").value = 10.16;
+      $("retirePayoutYears").value = 20;
+      $("isPost11207").checked = false;
+      $("includeExcessInChart").checked = false;
+      render();
+    }
+
+    function populatePkSelects() {
+      const lvSel = $("pk-con-lv");
+      DB.con_all.filter(r => r.lv >= 12).forEach(r => {
+        const opt = document.createElement("option");
+        opt.value = r.lv;
+        opt.textContent = `等級 ${r.lv} (${r.pts}點)｜行政 ${fmt(r.adm)} / 技術 ${fmt(r.tech)}`;
+        lvSel.appendChild(opt);
+      });
+      lvSel.value = "17";
+      refreshPkRegPts();
+    }
+
+    function refreshPkRegPts() {
+      const role = $("pk-reg-role").value;
+      const sel = $("pk-reg-pts");
+      const prev = sel.value;
+      sel.innerHTML = "";
+      DB.reg_all.filter(r => r[role] !== null).forEach(r => {
+        const opt = document.createElement("option");
+        opt.value = r.pts;
+        opt.textContent = `${r.pts} 薪額 (${r.rank})｜月薪 ${fmt(r[role])} (本薪 ${fmt(r.base)})`;
+        sel.appendChild(opt);
+      });
+      if ([...sel.options].some(o => o.value === prev)) sel.value = prev;
+      else sel.value = role === "clerk" ? "170" : "160";
+    }
+
+    function render() {
+      const cfg = getGlobalCfg();
+      $("val-horizonYears").textContent = cfg.horizon + " 年";
+      $("val-switchAfter").textContent = cfg.switchAfter + " 年";
+      $("val-bonusMonths").textContent = cfg.bonusMonths.toFixed(1) + " 個月";
+      $("val-occRate").textContent = (cfg.occRate * 100).toFixed(2) + "%";
+      $("val-gpRate").textContent = (cfg.gpRate * 100).toFixed(2) + "%";
+      $("val-retirePayoutYears").textContent = cfg.retirePayoutYears + " 年";
+      $("lbl-h1").textContent = cfg.horizon;
+      $("lbl-h2").textContent = cfg.horizon;
+      $("lbl-eh1").textContent = cfg.horizon;
+      $("lbl-eh2").textContent = cfg.horizon;
+
+      // ===== TAB 1: LONG TERM =====
+      const pCon = simulatePath("contract", cfg, cfg.horizon);
+      const pSw1 = simulatePath("switch_clerk", cfg, cfg.horizon);
+      const pSw2 = simulatePath("switch_officer", cfg, cfg.horizon);
+      const pReg = simulatePath("pure_reg", cfg, cfg.horizon);
+
+      const meta = TRACK_META[cfg.track];
+      const regLabel = cfg.pureRegRole === "officer_160" ? "全程編制組員(160→475)" : "全程編制辦事員(140→310)";
+      const paths = [
+        { key: "con", name: `全程${meta.label}`, short: "全程約聘雇", cls: "con", color: "#059669", res: pCon },
+        { key: "sw1", name: `滿${cfg.switchAfter}年轉辦事員${cfg.switchStartPts}(頂310)`, short: "轉辦事員(頂310)", cls: "sw1", color: "#0284c7", res: pSw1 },
+        { key: "sw2", name: `滿${cfg.switchAfter}年轉辦事員${cfg.switchStartPts}升組員(頂475)`, short: "轉並升組員(頂475)", cls: "sw2", color: "#7c3aed", res: pSw2 },
+        { key: "reg", name: regLabel, short: cfg.pureRegRole === "officer_160" ? "全程組員" : "全程辦事員", cls: "reg", color: "#d97706", res: pReg }
+      ];
+
+      const getCompareTot = p => cfg.includeExcessInChart ? p.res.grandTotal : p.res.totalInService;
+      const minTot = Math.min(...paths.map(getCompareTot));
+
+      $("long-banner").innerHTML =
+        `<strong>【${cfg.horizon} 年長期成本結論】</strong>以 <strong>${meta.label}</strong> 進用並於滿 <strong>${cfg.switchAfter} 年</strong>轉任編制內辦事員（${cfg.switchStartPts} 薪額起敘）比較：<br>` +
+        `• 若停留於<strong>辦事員頂薪 (310)</strong>：${cfg.horizon} 年在職總成本 <strong>${fmtWan(pSw1.totalInService)}</strong>，較全程約聘雇（${fmtWan(pCon.totalInService)}）<strong>${pSw1.totalInService - pCon.totalInService <= 0 ? "節省 " + fmtWan(pCon.totalInService - pSw1.totalInService) : "多出 " + fmtWan(pSw1.totalInService - pCon.totalInService)}</strong>（另加退休後 ${cfg.retirePayoutYears} 年公保超額年金學校負擔約 <strong>${fmtWan(pSw1.excessTot)}</strong>）。<br>` +
+        `• 若後續<strong>升任組員至頂薪 (475)</strong>：${cfg.horizon} 年在職總成本為 <strong>${fmtWan(pSw2.totalInService)}</strong>（較全程約聘雇 ${pSw2.totalInService - pCon.totalInService >= 0 ? "+" : ""}${fmtWan(pSw2.totalInService - pCon.totalInService)}），退休後 ${cfg.retirePayoutYears} 年超額年金學校負擔約 <strong>${fmtWan(pSw2.excessTot)}</strong>。`;
+
+      $("long-kpis").innerHTML = paths.map(p => {
+        const r = p.res;
+        const isLowest = getCompareTot(p) === minTot;
+        const diff = r.totalInService - pCon.totalInService;
+        return `
+          <div class="kpi-card ${p.cls}">
+            <div class="kpi-head">
+              <div class="kpi-title">${p.short}</div>
+              <span class="badge ${isLowest ? "badge-best" : "badge-" + p.cls}">${isLowest ? "★ 總成本最低" : p.res.last.rankLabel}</span>
+            </div>
+            <div class="kpi-big">${fmtWan(cfg.includeExcessInChart ? r.grandTotal : r.totalInService)} <small>${cfg.includeExcessInChart ? "含超額年金" : `${cfg.horizon}年在職`}</small></div>
+            <div class="kpi-sub">${p.name}<br>較全程約聘在職差：<strong>${p.key === "con" ? "基準" : (diff >= 0 ? "+" : "") + fmtWan(diff)}</strong></div>
+            <div class="kpi-meta">
+              <div><span class="lbl">末年雇主年總成本</span><span class="val">${fmtWan(r.last.empYr)}</span></div>
+              <div><span class="lbl">${cfg.horizon}年職員累積實領</span><span class="val">${fmtWan(r.totalTakeHome)}</span></div>
+              <div><span class="lbl">末年員工月實領</span><span class="val">${fmt(r.last.takeMo)} 元</span></div>
+              <div><span class="lbl">退後${cfg.retirePayoutYears}年超額(校)</span><span class="val" style="color:${r.excessTot > 0 ? "#7c3aed" : "#64748b"}">${r.excessTot > 0 ? fmtWan(r.excessTot) : "0 萬"}</span></div>
+            </div>
+          </div>`;
+      }).join("");
+
+      renderLineChart("chart-annual", "legend-annual", paths.map(p => ({ short: p.short, color: p.color, data: p.res.yearly })), cfg.horizon, "empYr", true);
+      renderLineChart("chart-cum", "legend-cum", paths.map(p => ({ short: p.short, color: p.color, data: p.res.yearly })), cfg.horizon, "cum", true);
+
+      // Milestone table (always compute full 40y for milestones)
+      const fullPaths = [
+        { label: `全程${meta.label}`, r: simulatePath("contract", cfg, 40) },
+        { label: `滿${cfg.switchAfter}年轉辦事員${cfg.switchStartPts}(頂310)`, r: simulatePath("switch_clerk", cfg, 40) },
+        { label: `滿${cfg.switchAfter}年轉辦事員${cfg.switchStartPts}升組員(頂475)`, r: simulatePath("switch_officer", cfg, 40) },
+        { label: regLabel, r: simulatePath("pure_reg", cfg, 40) }
+      ];
+      $("long-milestone-table").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>長期聘用路徑</th>
+              <th class="num">6 年累計</th>
+              <th class="num">15 年累計</th>
+              <th class="num">25 年累計</th>
+              <th class="num">35 年累計</th>
+              <th class="num">40 年在職累計</th>
+              <th class="num">退後超額月付(校)</th>
+              <th class="num">退後${cfg.retirePayoutYears}年超額合計</th>
+              <th class="num">40年＋超額全期</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${fullPaths.map(fp => `
+              <tr>
+                <td><strong>${fp.label}</strong></td>
+                <td class="num">${fmtWan(fp.r.yearly[5].cum)}</td>
+                <td class="num">${fmtWan(fp.r.yearly[14].cum)}</td>
+                <td class="num">${fmtWan(fp.r.yearly[24].cum)}</td>
+                <td class="num">${fmtWan(fp.r.yearly[34].cum)}</td>
+                <td class="num"><strong>${fmtWan(fp.r.yearly[39].cum)}</strong></td>
+                <td class="num">${fp.r.excessMoSch > 0 ? fmt(fp.r.excessMoSch) + " 元" : "—"}</td>
+                <td class="num">${fp.r.excessTot > 0 ? fmtWan(fp.r.excessTot) : "—"}</td>
+                <td class="num"><strong>${fmtWan(fp.r.grandTotal)}</strong></td>
+              </tr>`).join("")}
+          </tbody>
+        </table>`;
+
+      // Yearly breakdown table
+      $("long-yearly-summary").textContent = `展開檢視：第 1～${cfg.horizon} 年逐年薪級、年成本與員工月實領明細表`;
+      let yRows = "";
+      for (let i = 0; i < cfg.horizon; i++) {
+        const c0 = pCon.yearly[i], c1 = pSw1.yearly[i], c2 = pSw2.yearly[i], c3 = pReg.yearly[i];
+        const isSwitchYr = (i + 1) === (cfg.switchAfter + 1);
+        yRows += `<tr class="${isSwitchYr ? "row-focus" : ""}">
+          <td class="center">第 ${i + 1} 年${isSwitchYr ? " ★轉編" : ""}</td>
+          <td>${c0.rankLabel} / ${fmt(c0.sal)}</td><td class="num">${fmt(c0.empYr)}</td>
+          <td>${c1.rankLabel} / ${fmt(c1.sal)}</td><td class="num">${fmt(c1.empYr)}</td>
+          <td>${c2.rankLabel} / ${fmt(c2.sal)}</td><td class="num">${fmt(c2.empYr)}</td>
+          <td>${c3.rankLabel} / ${fmt(c3.sal)}</td><td class="num">${fmt(c3.empYr)}</td>
+        </tr>`;
+      }
+      $("long-yearly-table").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th class="center">年資</th>
+              <th>全程約聘(級/月薪)</th><th class="num">年成本</th>
+              <th>轉辦事員(級/月薪)</th><th class="num">年成本</th>
+              <th>升組員(級/月薪)</th><th class="num">年成本</th>
+              <th>全程編制(級/月薪)</th><th class="num">年成本</th>
+            </tr>
+          </thead>
+          <tbody>${yRows}</tbody>
+        </table>`;
+
+      // ===== TAB 2: EMPLOYEE CUMULATIVE TAKE-HOME PAY (1~40Y) =====
+      const isCashMode = uiState.empCumMode === "cash";
+      const maxEmpMetric = Math.max(...paths.map(p => isCashMode ? p.res.totalTakeHome : p.res.totalRealComp));
+      const dTakeSw1 = pSw1.totalTakeHome - pCon.totalTakeHome;
+      const dRealSw1 = pSw1.totalRealComp - pCon.totalRealComp;
+      const dTakeSw2 = pSw2.totalTakeHome - pCon.totalTakeHome;
+      const dRealSw2 = pSw2.totalRealComp - pCon.totalRealComp;
+
+      $("emp-banner").innerHTML =
+        `<strong>【職員視角：${cfg.horizon} 年累積實領現金＆退休專戶本金結論】</strong>（以 <strong>${meta.label}</strong> 為基準，含每年 ${cfg.bonusMonths.toFixed(1)} 個月全薪年終，未扣個人所得稅）：<br>` +
+        `• <strong>滿 ${cfg.switchAfter} 年轉辦事員 ${cfg.switchStartPts} (頂 310)</strong>：${cfg.horizon} 年累積實領現金 <strong>${fmtWan(pSw1.totalTakeHome)}</strong>（較全程約聘 <strong>${dTakeSw1 >= 0 ? "+" : ""}${fmtWan(dTakeSw1)}</strong>）；但個人退休專戶累計入帳本金高達 <strong>${fmtWan(pSw1.totalRetPrincipal)}</strong>（約聘僅 ${fmtWan(pCon.totalRetPrincipal)}），合併總實質所得達 <strong>${fmtWan(pSw1.totalRealComp)}（較約聘 ${dRealSw1 >= 0 ? "+" : ""}${fmtWan(dRealSw1)}）</strong>！<br>` +
+        `• <strong>後續升任組員 (頂 475)</strong>：${cfg.horizon} 年累積實領現金 <strong>${fmtWan(pSw2.totalTakeHome)}</strong>（較約聘 ${dTakeSw2 >= 0 ? "+" : ""}${fmtWan(dTakeSw2)}），加上退休專戶本金 ${fmtWan(pSw2.totalRetPrincipal)}，總實質所得高達 <strong>${fmtWan(pSw2.totalRealComp)}（較約聘 ${dRealSw2 >= 0 ? "+" : ""}${fmtWan(dRealSw2)}）</strong>。`;
+
+      $("emp-kpis").innerHTML = paths.map(p => {
+        const r = p.res;
+        const metricVal = isCashMode ? r.totalTakeHome : r.totalRealComp;
+        const isBest = metricVal === maxEmpMetric;
+        const diffCash = r.totalTakeHome - pCon.totalTakeHome;
+        return `
+          <div class="kpi-card ${p.cls}">
+            <div class="kpi-head">
+              <div class="kpi-title">${p.short}</div>
+              <span class="badge ${isBest ? "badge-best" : "badge-" + p.cls}">${isBest ? "★ 職員所得最高" : r.last.rankLabel}</span>
+            </div>
+            <div class="kpi-big">${fmtWan(metricVal)} <small>${isCashMode ? `${cfg.horizon}年累積實領` : "實領＋退專本金"}</small></div>
+            <div class="kpi-sub">${p.name}<br>實領較全程約聘：<strong>${p.key === "con" ? "基準" : (diffCash >= 0 ? "+" : "") + fmtWan(diffCash)}</strong></div>
+            <div class="kpi-meta">
+              <div><span class="lbl">${cfg.horizon}年累積實領現金</span><span class="val">${fmtWan(r.totalTakeHome)}</span></div>
+              <div><span class="lbl">${cfg.horizon}年退專累計本金</span><span class="val" style="color:#7c3aed">${fmtWan(r.totalRetPrincipal)}</span></div>
+              <div><span class="lbl">末年職員年實領</span><span class="val">${fmtWan(r.last.takeYr)}</span></div>
+              <div><span class="lbl">實領＋退專總所得</span><span class="val" style="color:#059669">${fmtWan(r.totalRealComp)}</span></div>
+            </div>
+          </div>`;
+      }).join("");
+
+      renderLineChart("chart-emp-annual", "legend-emp-annual", paths.map(p => ({ short: p.short, color: p.color, data: p.res.yearly })), cfg.horizon, "takeYr", true);
+      renderLineChart("chart-emp-cum", "legend-emp-cum", paths.map(p => ({ short: p.short, color: p.color, data: p.res.yearly })), cfg.horizon, isCashMode ? "cumTake" : "cumRealComp", true);
+
+      // All 10 standard career paths employee comparison table
+      const all10Specs = [
+        { lbl: "全程學士行政約聘雇 (12→25級)", pt: "contract", ov: { track: "ba_adm" } },
+        { lbl: "全程碩士行政約聘雇 (14→28級)", pt: "contract", ov: { track: "ma_adm" } },
+        { lbl: "全程學士技術約聘雇 (12→25級)", pt: "contract", ov: { track: "ba_tech" } },
+        { lbl: "全程碩士技術約聘雇 (14→28級)", pt: "contract", ov: { track: "ma_tech" } },
+        { lbl: "學士行政 6 年 → 辦事員 170 (頂 310)", pt: "switch_clerk", ov: { track: "ba_adm", switchAfter: 6, switchStartPts: 170 }, cls: "row-focus" },
+        { lbl: "學士行政 6 年 → 辦事員 170 升組員 (頂 475)", pt: "switch_officer", ov: { track: "ba_adm", switchAfter: 6, switchStartPts: 170 }, cls: "row-edu" },
+        { lbl: "碩士行政 6 年 → 辦事員 200 (頂 310)", pt: "switch_clerk", ov: { track: "ma_adm", switchAfter: 6, switchStartPts: 200 }, cls: "row-focus" },
+        { lbl: "碩士行政 6 年 → 辦事員 200 升組員 (頂 475)", pt: "switch_officer", ov: { track: "ma_adm", switchAfter: 6, switchStartPts: 200 }, cls: "row-edu" },
+        { lbl: "全程編制辦事員 (140→310)", pt: "pure_reg", ov: { pureRegRole: "clerk_140" } },
+        { lbl: "全程編制組員 (160→475)", pt: "pure_reg", ov: { pureRegRole: "officer_160" } }
+      ];
+      $("emp-all10-table").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>身分與職涯路徑（隨左側費率／年終即時重算）</th>
+              <th class="num">6 年實領</th>
+              <th class="num">15 年實領</th>
+              <th class="num">25 年實領</th>
+              <th class="num">35 年實領</th>
+              <th class="num">40 年累積實領</th>
+              <th class="num">40 年退專本金</th>
+              <th class="num">40 年總實質所得</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${all10Specs.map(sp => {
+              const r = simulatePath(sp.pt, { ...cfg, ...sp.ov }, 40);
+              return `<tr class="${sp.cls || ""}">
+                <td><strong>${sp.lbl}</strong></td>
+                <td class="num">${fmtWan(r.yearly[5].cumTake)}</td>
+                <td class="num">${fmtWan(r.yearly[14].cumTake)}</td>
+                <td class="num">${fmtWan(r.yearly[24].cumTake)}</td>
+                <td class="num">${fmtWan(r.yearly[34].cumTake)}</td>
+                <td class="num"><strong>${fmtWan(r.totalTakeHome)}</strong></td>
+                <td class="num" style="color:#7c3aed">${fmtWan(r.totalRetPrincipal)}</td>
+                <td class="num"><strong style="color:#059669">${fmtWan(r.totalRealComp)}</strong></td>
+              </tr>`;
+            }).join("")}
+          </tbody>
+        </table>`;
+
+      $("emp-yearly-summary").textContent = `展開檢視：第 1～${cfg.horizon} 年各路徑逐年實領現金與累計實領明細表`;
+      let eyRows = "";
+      for (let i = 0; i < cfg.horizon; i++) {
+        const c0 = pCon.yearly[i], c1 = pSw1.yearly[i], c2 = pSw2.yearly[i], c3 = pReg.yearly[i];
+        const isSw = (i + 1) === (cfg.switchAfter + 1);
+        eyRows += `<tr class="${isSw ? "row-focus" : ""}">
+          <td class="center">第 ${i + 1} 年${isSw ? " ★轉編" : ""}</td>
+          <td class="num">${fmt(c0.takeYr)}</td><td class="num"><strong>${fmtWan(c0.cumTake)}</strong></td>
+          <td class="num">${fmt(c1.takeYr)}</td><td class="num"><strong>${fmtWan(c1.cumTake)}</strong></td>
+          <td class="num">${fmt(c2.takeYr)}</td><td class="num"><strong>${fmtWan(c2.cumTake)}</strong></td>
+          <td class="num">${fmt(c3.takeYr)}</td><td class="num"><strong>${fmtWan(c3.cumTake)}</strong></td>
+        </tr>`;
+      }
+      $("emp-yearly-table").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th class="center">年資</th>
+              <th class="num">全程約聘(年實領)</th><th class="num">累計實領</th>
+              <th class="num">轉辦事員(年實領)</th><th class="num">累計實領</th>
+              <th class="num">升組員(年實領)</th><th class="num">累計實領</th>
+              <th class="num">全程編制(年實領)</th><th class="num">累計實領</th>
+            </tr>
+          </thead>
+          <tbody>${eyRows}</tbody>
+        </table>`;
+
+      // ===== TAB 3: YEAR 6 vs CLERK 170/200 =====
+      const yr6List = [
+        { label: "學士行政－第1年 (12級)", short: "學士行政\n第1年", c: calcContractMo(conByLv[12].adm, cfg), hl: false },
+        { label: "碩士行政－第1年 (14級)", short: "碩士行政\n第1年", c: calcContractMo(conByLv[14].adm, cfg), hl: false },
+        { label: "學士行政－第6年 (17級，晉5級)", short: "學士行政\n第6年★", c: calcContractMo(conByLv[17].adm, cfg), hl: true },
+        { label: "學士技術－第6年 (17級，晉5級)", short: "學士技術\n第6年★", c: calcContractMo(conByLv[17].tech, cfg), hl: true },
+        { label: "碩士行政－第6年 (19級，晉5級)", short: "碩士行政\n第6年★", c: calcContractMo(conByLv[19].adm, cfg), hl: true },
+        { label: "碩士技術－第6年 (19級，晉5級)", short: "碩士技術\n第6年★", c: calcContractMo(conByLv[19].tech, cfg), hl: true },
+        { label: "編制辦事員－起薪 140 薪額", short: "辦事員\n140起薪", c: calcRegMo(regByPts[140], "clerk", cfg), hl: false, isEdu: true },
+        { label: "編制辦事員－170 薪額", short: "辦事員\n170薪額★", c: calcRegMo(regByPts[170], "clerk", cfg), hl: true, isEdu: true },
+        { label: "編制辦事員－200 薪額", short: "辦事員\n200薪額★", c: calcRegMo(regByPts[200], "clerk", cfg), hl: true, isEdu: true },
+        { label: "編制組員－起薪 160 薪額", short: "組員\n160起薪", c: calcRegMo(regByPts[160], "officer", cfg), hl: false, isEdu: true }
+      ];
+      const ba6 = yr6List[2].c, ma6 = yr6List[4].c, ck170 = yr6List[7].c, ck200 = yr6List[8].c;
+      $("yr6-banner").innerHTML =
+        `<strong>【第 6 年轉編制專題核心結論】</strong><br>` +
+        `• <strong>學士行政第 6 年 → 轉辦事員 170 薪額</strong>：雇主月成本由 ${fmt(ba6.empMo)} 降至 ${fmt(ck170.empMo)}（<strong>月省 ${fmt(ba6.empMo - ck170.empMo)} 元／年省 ${fmt(ba6.empYr - ck170.empYr)} 元</strong>），同時員工月實領反增 <strong>+${fmt(ck170.takeMo - ba6.takeMo)} 元</strong>、退休專戶月入帳由 ${fmt(ba6.retIn)} 跳升至 ${fmt(ck170.retIn)} 元。<br>` +
+        `• <strong>碩士行政第 6 年 → 轉辦事員 200 薪額</strong>：雇主月成本由 ${fmt(ma6.empMo)} 降至 ${fmt(ck200.empMo)}（<strong>月省 ${fmt(ma6.empMo - ck200.empMo)} 元／年省 ${fmt(ma6.empYr - ck200.empYr)} 元</strong>），員工月實領反增 <strong>+${fmt(ck200.takeMo - ma6.takeMo)} 元</strong>，達成學校省預算、員工加薪與退休翻倍之三贏！`;
+
+      renderStackedChart("chart-yr6", yr6List.slice(2, 9), "mo");
+      $("table-yr6").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>類別／職級</th><th class="num">月薪資</th><th class="num">保險+職災</th><th class="num">退休提撥</th><th class="num">雇主健保</th>
+              <th class="num">月附加(率)</th><th class="num">雇主月總成本</th><th class="num">雇主年總成本</th><th class="num">員工月實領</th><th class="num">退專月入帳</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${yr6List.map(it => `
+              <tr class="${it.hl ? (it.isEdu ? "row-edu" : "row-focus") : ""}">
+                <td><strong>${it.label}</strong></td>
+                <td class="num">${fmt(it.c.sal)}</td>
+                <td class="num">${fmt(it.c.insU + it.c.occ)}</td>
+                <td class="num">${fmt(it.c.retU)}</td>
+                <td class="num">${fmt(it.c.nhiU)}</td>
+                <td class="num">${fmt(it.c.addon)} (+${it.c.addonPct.toFixed(1)}%)</td>
+                <td class="num"><strong>${fmt(it.c.empMo)}</strong></td>
+                <td class="num"><strong>${fmt(it.c.empYr)}</strong></td>
+                <td class="num">${fmt(it.c.takeMo)}</td>
+                <td class="num">${fmt(it.c.retIn)}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>`;
+
+      // ===== TAB 3: MAX SALARY CEILINGS =====
+      const maxList = [
+        { label: "學士行政－最高 (25級／第14年)", short: "學士行政\n最高(25級)", c: calcContractMo(conByLv[25].adm, cfg), isEdu: false },
+        { label: "學士技術－最高 (25級／第14年)", short: "學士技術\n最高(25級)", c: calcContractMo(conByLv[25].tech, cfg), isEdu: false },
+        { label: "碩士行政－最高 (28級／第15年)", short: "碩士行政\n最高(28級)", c: calcContractMo(conByLv[28].adm, cfg), isEdu: false },
+        { label: "碩士技術－最高 (28級／第15年)", short: "碩士技術\n最高(28級)", c: calcContractMo(conByLv[28].tech, cfg), isEdu: false },
+        { label: "編制辦事員－最高 (310 薪額)", short: "編制辦事員\n最高(310)", c: calcRegMo(regByPts[310], "clerk", cfg), isEdu: true },
+        { label: "編制組員－最高 (475 薪額)", short: "編制組員\n最高(475)", c: calcRegMo(regByPts[475], "officer", cfg), isEdu: true }
+      ];
+      const mCk = maxList[4].c, mOf = maxList[5].c, mMa = maxList[2].c, mMt = maxList[3].c;
+      $("max-banner").innerHTML =
+        `<strong>【最高薪天花板結論】</strong><br>` +
+        `• <strong>編制辦事員頂薪 (310 薪額，月薪 55,570)</strong> 年總成本 <strong>${fmt(mCk.empYr)} 元</strong>，反而低於碩士行政頂薪（${fmt(mMa.empYr)} 元，省 ${fmt(mMa.empYr - mCk.empYr)} 元/年）與碩士技術頂薪（${fmt(mMt.empYr)} 元，省 ${fmt(mMt.empYr - mCk.empYr)} 元/年）！<br>` +
+        `• <strong>編制組員頂薪 (475 薪額，月薪 69,910)</strong> 年總成本達 <strong>${fmt(mOf.empYr)} 元</strong>（突破百萬），較辦事員頂薪高 <strong>+${fmt(mOf.empYr - mCk.empYr)} 元/年</strong>，是長期人事預算的分水嶺。`;
+
+      renderStackedChart("chart-max", maxList, "yr");
+      $("table-max").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>頂薪職級</th><th class="num">月薪資</th><th class="num">保險+職災</th><th class="num">退休提撥</th><th class="num">雇主健保</th>
+              <th class="num">月附加(率)</th><th class="num">雇主月總成本</th><th class="num">年終+補充</th><th class="num">雇主年總成本</th><th class="num">員工月實領</th><th class="num">退專月入帳</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${maxList.map(it => `
+              <tr class="${it.isEdu ? "row-edu" : ""}">
+                <td><strong>${it.label}</strong></td>
+                <td class="num">${fmt(it.c.sal)}</td>
+                <td class="num">${fmt(it.c.insU + it.c.occ)}</td>
+                <td class="num">${fmt(it.c.retU)}</td>
+                <td class="num">${fmt(it.c.nhiU)}</td>
+                <td class="num">${fmt(it.c.addon)} (+${it.c.addonPct.toFixed(1)}%)</td>
+                <td class="num"><strong>${fmt(it.c.empMo)}</strong></td>
+                <td class="num">${fmt(it.c.bonus + it.c.supp)}</td>
+                <td class="num"><strong>${fmt(it.c.empYr)}</strong></td>
+                <td class="num">${fmt(it.c.takeMo)}</td>
+                <td class="num">${fmt(it.c.retIn)}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>`;
+
+      // ===== TAB 4: CUSTOM PK & SAME SALARY =====
+      const pkConType = $("pk-con-type").value;
+      const pkConLv = parseInt($("pk-con-lv").value, 10);
+      const pkRegRole = $("pk-reg-role").value;
+      const pkRegPts = parseInt($("pk-reg-pts").value, 10);
+      const pkC = calcContractMo(conByLv[pkConLv][pkConType], cfg);
+      const pkR = calcRegMo(regByPts[pkRegPts], pkRegRole, cfg);
+      const diffClass = (val, invert) => (invert ? val <= 0 : val >= 0) ? "pos" : "neg";
+
+      $("pk-result-table").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>比較項目</th>
+              <th class="num">約聘雇：等級 ${pkConLv} (${pkConType === "adm" ? "行政" : "技術"})</th>
+              <th class="num">編制內：${pkRegRole === "clerk" ? "辦事員" : "組員"} ${pkRegPts} 薪額</th>
+              <th class="num">差額（編制內 − 約聘雇）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>月薪資（應發全薪）</strong></td><td class="num">${fmt(pkC.sal)} 元</td><td class="num">${fmt(pkR.sal)} 元（本${fmt(pkR.base)}+加${fmt(pkR.allow)}）</td><td class="num">${fmtDiff(pkR.sal - pkC.sal)} 元</td></tr>
+            <tr><td>雇主社會保險（勞保+職災 vs. 公保）</td><td class="num">${fmt(pkC.insU + pkC.occ)} 元</td><td class="num">${fmt(pkR.insU)} 元</td><td class="num ${diffClass(pkR.insU - pkC.insU - pkC.occ, true)}">${fmtDiff(pkR.insU - pkC.insU - pkC.occ)} 元</td></tr>
+            <tr><td>雇主退休提撥（勞退 6% vs. 退撫 32.5%）</td><td class="num">${fmt(pkC.retU)} 元</td><td class="num">${fmt(pkR.retU)} 元</td><td class="num ${diffClass(pkR.retU - pkC.retU, true)}">${fmtDiff(pkR.retU - pkC.retU)} 元</td></tr>
+            <tr><td>雇主健保負擔（表三 60% vs. 表二 35%）</td><td class="num">${fmt(pkC.nhiU)} 元</td><td class="num">${fmt(pkR.nhiU)} 元</td><td class="num ${diffClass(pkR.nhiU - pkC.nhiU, true)}">${fmtDiff(pkR.nhiU - pkC.nhiU)} 元</td></tr>
+            <tr><td><strong>雇主法定附加成本（佔月薪 %）</strong></td><td class="num">${fmt(pkC.addon)} 元 (+${pkC.addonPct.toFixed(1)}%)</td><td class="num">${fmt(pkR.addon)} 元 (+${pkR.addonPct.toFixed(1)}%)</td><td class="num ${diffClass(pkR.addon - pkC.addon, true)}">${fmtDiff(pkR.addon - pkC.addon)} 元</td></tr>
+            <tr class="row-focus"><td><strong>單月雇主總成本</strong></td><td class="num"><strong>${fmt(pkC.empMo)} 元</strong></td><td class="num"><strong>${fmt(pkR.empMo)} 元</strong></td><td class="num ${diffClass(pkR.empMo - pkC.empMo, true)}">${fmtDiff(pkR.empMo - pkC.empMo)} 元</td></tr>
+            <tr><td>年終獎金 (${cfg.bonusMonths.toFixed(1)}月) ＋ 二代健保補充保費</td><td class="num">${fmt(pkC.bonus + pkC.supp)} 元</td><td class="num">${fmt(pkR.bonus + pkR.supp)} 元</td><td class="num">${fmtDiff((pkR.bonus + pkR.supp) - (pkC.bonus + pkC.supp))} 元</td></tr>
+            <tr class="row-edu"><td><strong>全年雇主總成本</strong></td><td class="num"><strong>${fmt(pkC.empYr)} 元</strong></td><td class="num"><strong>${fmt(pkR.empYr)} 元</strong></td><td class="num ${diffClass(pkR.empYr - pkC.empYr, true)}">${fmtDiff(pkR.empYr - pkC.empYr)} 元</td></tr>
+            <tr><td><strong>員工扣自付保費後月實領</strong></td><td class="num">${fmt(pkC.takeMo)} 元</td><td class="num">${fmt(pkR.takeMo)} 元</td><td class="num ${diffClass(pkR.takeMo - pkC.takeMo, false)}">${fmtDiff(pkR.takeMo - pkC.takeMo)} 元</td></tr>
+            <tr><td><strong>員工退休專戶月入帳（勞退 vs. 私校三方）</strong></td><td class="num">${fmt(pkC.retIn)} 元</td><td class="num">${fmt(pkR.retIn)} 元</td><td class="num pos">${fmtDiff(pkR.retIn - pkC.retIn)} 元</td></tr>
+          </tbody>
+        </table>`;
+
+      const samePairs = [
+        ["約 4.2 萬級", 18, "adm", 140, "clerk"],
+        ["約 4.4 萬級", 19, "adm", 170, "clerk"],
+        ["約 4.6 萬級", 21, "adm", 200, "clerk"],
+        ["約 5.0 萬級", 25, "adm", 230, "clerk"],
+        ["約 5.5 萬級", 25, "tech", 310, "clerk"],
+        ["約 5.9 萬級", 28, "tech", 330, "officer"]
+      ];
+      $("table-same-sal").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>月薪區間</th><th>約聘雇級距</th><th class="num">約聘月薪／月成本 (附加率)</th>
+              <th>編制內職級</th><th class="num">編制月薪／月成本 (附加率)</th>
+              <th class="num">月成本差 (編−約)</th><th class="num">年總成本差 (編−約)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${samePairs.map(([zone, lv, f, pts, role]) => {
+              const a = calcContractMo(conByLv[lv][f], cfg);
+              const b = calcRegMo(regByPts[pts], role, cfg);
+              return `<tr>
+                <td><strong>${zone}</strong></td>
+                <td>等級 ${lv} (${f === "adm" ? "行政" : "技術"})</td>
+                <td class="num">${fmt(a.sal)} ／ <strong>${fmt(a.empMo)}</strong> (+${a.addonPct.toFixed(1)}%)</td>
+                <td>${role === "clerk" ? "辦事員" : "組員"} ${pts}</td>
+                <td class="num">${fmt(b.sal)} ／ <strong>${fmt(b.empMo)}</strong> (+${b.addonPct.toFixed(1)}%)</td>
+                <td class="num pos">${fmtDiff(b.empMo - a.empMo)} 元</td>
+                <td class="num pos">${fmtDiff(b.empYr - a.empYr)} 元</td>
+              </tr>`;
+            }).join("")}
+          </tbody>
+        </table>`;
+    }
+
+    // Init
+    populatePkSelects();
+    $("pk-reg-role").addEventListener("change", () => { refreshPkRegPts(); render(); });
+    document.querySelectorAll("aside input, aside select, #view-pk select").forEach(el => {
+      if (el.id !== "pk-reg-role") {
+        el.addEventListener("input", render);
+        el.addEventListener("change", render);
+      }
+    });
+    render();
+  </script>
+</body>
+</html>

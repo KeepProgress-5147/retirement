@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retirement 專案討論、執行過程與成果紀錄</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --accent: #0284c7;
+      --accent-soft: #e0f2fe;
+      --badge-edu: #7c3aed;
+      --badge-edu-bg: #f3e8ff;
+      --badge-labor: #059669;
+      --badge-labor-bg: #d1fae5;
+      --note-bg: #fffbeb;
+      --note-border: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 2rem 1rem 3rem;
+      font-family: "Segoe UI", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+    header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--accent);
+      border-radius: 12px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    }
+    h1 {
+      margin: 0 0 0.75rem 0;
+      font-size: 1.65rem;
+      color: var(--text);
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 2rem;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+    .meta code, td code, li code {
+      background: #f1f5f9;
+      padding: 0.12rem 0.42rem;
+      border-radius: 4px;
+      color: #0f172a;
+      font-size: 0.88em;
+    }
+    nav.toc {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.15rem 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    nav.toc strong {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #0369a1;
+    }
+    nav.toc ul {
+      margin: 0;
+      padding-left: 1.25rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.25rem 1.5rem;
+    }
+    nav.toc a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    nav.toc a:hover {
+      text-decoration: underline;
+    }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+    h2 {
+      margin-top: 0;
+      font-size: 1.28rem;
+      border-bottom: 2px solid var(--accent-soft);
+      padding-bottom: 0.5rem;
+      color: #0369a1;
+    }
+    h3 {
+      margin-top: 1.4rem;
+      margin-bottom: 0.65rem;
+      font-size: 1.08rem;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      color: #0f172a;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+    }
+    .badge-edu {
+      color: var(--badge-edu);
+      background: var(--badge-edu-bg);
+    }
+    .badge-labor {
+      color: var(--badge-labor);
+      background: var(--badge-labor-bg);
+    }
+    .badge-pillar {
+      color: #0369a1;
+      background: var(--accent-soft);
+    }
+    .table-wrap {
+      overflow-x: auto;
+      margin: 0.75rem 0 1rem 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.65rem 0.85rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f1f5f9;
+      font-weight: 600;
+    }
+    th.col-key {
+      width: 18%;
+      white-space: nowrap;
+      background: #f8fafc;
+    }
+    th.col-labor {
+      width: 41%;
+      background: #ecfdf5;
+      color: #065f46;
+    }
+    th.col-edu {
+      width: 41%;
+      background: #f5f3ff;
+      color: #5b21b6;
+    }
+    td.center, th.center {
+      text-align: center;
+      white-space: nowrap;
+    }
+    .callout {
+      background: var(--note-bg);
+      border-left: 4px solid var(--note-border);
+      padding: 0.85rem 1.1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+      font-size: 0.93rem;
+    }
+    .timeline-item {
+      border-left: 3px solid var(--accent);
+      padding-left: 1.15rem;
+      margin: 1.1rem 0;
+    }
+    .timeline-title {
+      font-weight: 700;
+      font-size: 1.04rem;
+      margin-bottom: 0.45rem;
+    }
+    .timeline-time {
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .insight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .insight-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.15rem;
+      background: #f8fafc;
+    }
+    .insight-card h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.98rem;
+      color: #0369a1;
+    }
+    ul, ol {
+      margin: 0.35rem 0 0.75rem 0;
+      padding-left: 1.35rem;
+    }
+    li {
+      margin-bottom: 0.3rem;
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Retirement 專案討論、執行過程與成果紀錄</h1>
+      <div class="meta">
+        <div><strong>專案資料夾：</strong><code>D:\GeminiCLi\basara\Retirement</code></div>
+        <div><strong>建立時間：</strong>2026-11-25 15:11 (UTC+8)</div>
+        <div><strong>最後更新：</strong>2026-11-26 13:23 (UTC+8)</div>
+      </div>
+    </header>
+
+    <nav class="toc">
+      <strong>文件導覽</strong>
+      <ul>
+        <li><a href="#sec-1">一、專案目標與需求</a></li>
+        <li><a href="#sec-2">二、資料夾檔案盤點與內容簡述</a></li>
+        <li><a href="#sec-3">三、討論與執行歷程（階段一～階段十六）</a></li>
+        <li><a href="#sec-4">四、成果一：兩大類身分與四大退休金法規比較</a></li>
+        <li><a href="#sec-5">五、成果二：完整雙層版試算模型藍圖（保留）</a></li>
+        <li><a href="#sec-6">六、成果三：第一層「勞保 vs. 公保」定案規格</a></li>
+        <li><a href="#sec-7">七、成果四：第一版交付檔案與驗算結果</a></li>
+        <li><a href="#sec-8">八、成果五：新增 4 份檔案解析與雇主成本比較框架</a></li>
+        <li><a href="#sec-9">九、成果六：雇主聘用成本分析定案、交付與驗算</a></li>
+        <li><a href="#sec-10">十、成果七：完整雙層退休金模型定案規格與成果</a></li>
+        <li><a href="#sec-11">十一、成果八：三合一統合決策平台架構與驗收</a></li>
+      </ul>
+    </nav>
+
+    <section id="sec-1">
+      <h2>一、專案目標與需求</h2>
+      <ol>
+        <li>檢查並簡要說明專案資料夾 <code>D:\GeminiCLi\basara\Retirement</code> 內的現有檔案內容。</li>
+        <li>自本次對話起，將雙方的<strong>討論過程</strong>、<strong>執行過程</strong>與<strong>成果</strong>完整記錄於專案資料夾內，並分別以 <strong>Markdown (<code>.md</code>)</strong> 與 <strong>HTML (<code>.html</code>)</strong> 兩種格式各整理一份。</li>
+        <li>依據資料夾內之法規與費率／薪級表，針對「<strong>一般勞工</strong>（勞保老年給付＋勞工退休金）」與「<strong>私校編制內職員</strong>（公保養老給付＋私校退撫儲金）」兩大類及其各自可領之兩層退休金，進行完整的法規比較及整理。</li>
+      </ol>
+    </section>
+
+    <section id="sec-2">
+      <h2>二、資料夾檔案盤點與內容簡述</h2>
+      <p>資料夾目前共有 <strong>8 份 PDF 檔案</strong>（無子資料夾），依適用制度可分為兩大類：</p>
+
+      <h3><span class="badge badge-edu">制度一</span> 編制內相關（私校教職員／公保與私校退撫儲金體系）</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>檔案名稱</th>
+              <th class="center">頁數</th>
+              <th class="center">法規版本／生效日</th>
+              <th>內容簡述</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>(編制內相關)公教人員保險法.pdf</code></td>
+              <td class="center">23 頁</td>
+              <td class="center">113.01.03 修正</td>
+              <td>《公教人員保險法》全文，規範公保費率、分擔比例、一次養老給付、養老年金（私校自 103.06.01 適用）與遺屬年金等。</td>
+            </tr>
+            <tr>
+              <td><code>(編制內相關)學校法人及其所屬私立學校教職員退休撫卹離職資遣條例.pdf</code></td>
+              <td class="center">10 頁</td>
+              <td class="center">112.06.09 修正</td>
+              <td>私校退撫條例全文，規範個人退撫儲金專戶三方提撥、自主投資、增額提撥、退休／離職／資遣與撫卹給與。</td>
+            </tr>
+            <tr>
+              <td><code>(編制內相關)私校教職人員保險薪額表.pdf</code></td>
+              <td class="center">1 頁</td>
+              <td class="center">114.01.01 實施</td>
+              <td>私校教職員薪級（三六級 90 薪額～年功一 770 薪額）對應之公保「保險薪額」（17,390 元～63,570 元）。</td>
+            </tr>
+            <tr>
+              <td><code>(編制內相關)私立學校教職員學校及政府每月提撥儲金費用表.pdf</code></td>
+              <td class="center">1 頁</td>
+              <td class="center">114.01.01 生效</td>
+              <td>各薪(俸)額以本(年功)薪加一倍 × 12% 計算之教職員（35%）、學校（32.5%）、政府（32.5%）每月退撫儲金提撥金額表。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3><span class="badge badge-labor">制度二</span> 勞工保險／勞工退休金體系</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>檔案名稱</th>
+              <th class="center">頁數</th>
+              <th class="center">法規版本／生效日</th>
+              <th>內容簡述</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>勞工保險條例.pdf</code></td>
+              <td class="center">21 頁</td>
+              <td class="center">115.01.21 修正</td>
+              <td>《勞工保險條例》全文，規範普通事故費率與分擔、老年年金／老年一次金／一次請領老年給付、遺屬年金及政府撥補與最後支付責任。</td>
+            </tr>
+            <tr>
+              <td><code>勞工保險普通事故及就業保險合計之保險費分擔金額表(自116年1月1日起適用).pdf</code></td>
+              <td class="center">1 頁</td>
+              <td class="center">116.01.01 適用</td>
+              <td>勞保普通事故費率調升至 13%（含就保者為普通事故 12% + 就保 1%）後之分擔金額表；全時勞工第 1 級 30,900 元～第 10 級 45,800 元。</td>
+            </tr>
+            <tr>
+              <td><code>勞工退休金條例.pdf</code></td>
+              <td class="center">12 頁</td>
+              <td class="center">108.05.15 修正</td>
+              <td>《勞工退休金條例》（勞退新制）全文，規範雇主強制提繳（≥6%）、勞工自願提繳（≤6% 免稅）、個人專戶、最低保證收益與月／一次退休金請領。</td>
+            </tr>
+            <tr>
+              <td><code>勞工退休金月提繳分級表(註明1160101生效).pdf</code></td>
+              <td class="center">1 頁</td>
+              <td class="center">116.01.01 生效</td>
+              <td>勞動部 115.11.20 修正發布之勞退月提繳分級表，共 11 組 62 級（第 1 級 1,500 元～第 62 級 150,000 元）。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="sec-3">
+      <h2>三、討論與執行歷程</h2>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-25 15:11 (UTC+8)</div>
+        <div class="timeline-title">階段一：專案盤點與紀錄機制建立</div>
+        <ul>
+          <li><strong>討論與需求</strong>：檢查並簡單描述資料夾檔案內容；建立並持續維護 MD 與 HTML 雙格式專案紀錄檔。</li>
+          <li><strong>執行過程</strong>：掃描目錄並使用 PyMuPDF 讀取 8 份 PDF 頁數與首頁標題、修法日期及生效日，建立雙格式紀錄文件。</li>
+          <li><strong>階段成果</strong>：完成 8 份檔案分類盤點與紀錄基底建置。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-25 15:23 (UTC+8)</div>
+        <div class="timeline-title">階段二：一般勞工 vs. 私校編制內職員退休法規比較與整理</div>
+        <ul>
+          <li><strong>討論與需求</strong>：依資料夾資料分為「一般勞工（勞保老年給付＋勞工退休金）」與「私校編制內職員（公保養老給付＋私校退撫儲金）」兩大類，逐項整理並比較各類可領退休金之法規規定。</li>
+          <li><strong>執行過程</strong>：使用 Python (<code>fitz</code> 與 <code>pdfplumber</code>) 完整提取 4 部法規全文與 4 份費率／薪級表，逐條核對條文編號、費率、分擔比例、投保上限、計算公式、起支年齡、加減給機制、稅賦優惠、投資與收益保證、遺屬保障及跨職域年資併計條款，並清除提取暫存資料。</li>
+          <li><strong>階段成果</strong>：完成兩大類身分 × 四大退休金之完整法規比較與實務差異整理，並同步更新至 MD 與 HTML 紀錄檔。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-25 15:33 (UTC+8)</div>
+        <div class="timeline-title">階段三：退休金試算模型設計規劃訪談（<code>/grill-me</code>）</div>
+        <ul>
+          <li><strong>討論與需求</strong>：規劃比較「純勞保體系」、「純私校體系」與「勞保轉換私校」三情境之退休金試算模型，透過逐題設計訪談收斂規格。</li>
+          <li><strong>五大設計決策</strong>：
+            <ol>
+              <li><strong>交付形式</strong>：互動式單頁網頁試算器（獨立 HTML 檔，內建參數調整、法規檢核與視覺化圖表）。</li>
+              <li><strong>薪資曲線</strong>：完全獨立輸入兩套薪資曲線（勞工起薪＋年調薪率；私校起聘薪級＋逐年晉級上限），不強制總薪對齊。</li>
+              <li><strong>勞保轉私校分流</strong>：完整法規自動分流，自動判定 4 種法定路徑（雙年金／單年金＋一次金／《公保法》第 49 條併計年金／雙一次金），舊勞退專戶持續複利滾存至 60 歲請領。</li>
+              <li><strong>精算與提撥範圍</strong>：純法定強制提撥比較（不含勞工自提與私校增額提撥）；公保費率預設 10.16%（可調），完整檢核《公保法》第 17、19、48 條 80% 天花板以動態核定實際公保年金率；兩邊第二層投資報酬率各自預設可調。</li>
+              <li><strong>核心比較指標</strong>：完整生命週期比較（退休月領現金流拆解、專戶總額、個人實繳 vs. 雇主/學校/政府投入、活至設定壽命總領取與回本年數），另設「私校強制自繳 35% 免稅效益」與「通膨折現實質購買力（含勞保 CPI ±5% 模擬）」可選開關。</li>
+            </ol>
+          </li>
+          <li><strong>階段成果</strong>：確立三情境退休金試算模型完整規格藍圖（見下方第五節），並同步更新至 MD 與 HTML 紀錄檔。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-25 15:43 (UTC+8)</div>
+        <div class="timeline-title">階段四：模型聚焦第一層（勞保 vs. 公保養老給付）規格定案（<code>/grill-me</code>）</div>
+        <ul>
+          <li><strong>討論與需求</strong>：將模型單純化，先聚焦比較「勞工保險老年給付」與「私校編制內職員公保養老給付」在純勞保、純私校公保、勞保轉換私校公保三情境下之差異；勞退與私校退撫保留至後續階段。</li>
+          <li><strong>四大聚焦決策</strong>：
+            <ol>
+              <li><strong>公保年金給付率</strong>：預設 1.3% 上限年金率並提供 0.75%～1.3% 滑桿；若觸發《公保法》第 49 條併計年金則自動鎖定 0.75%。</li>
+              <li><strong>薪資與保費回推邏輯</strong>：勞保直接選擇 116.01.01 投保級距；私校公保改由「起敘薪級（如 170）＋最高薪級（如 525）＋投保年資」估算，預設每年晉 1 級至最高薪級，據此精確回推前 10 年平均保俸與累積實繳保費。</li>
+              <li><strong>請領彈性與一次給付對照</strong>：主比較採年金給付（支援 55～70 歲退休、切換「提前減額 -4%/年」或「等到全額起支年齡再領」、公保 35/40 年上限切換），並並列一次給付金額與「領年金幾年贏過一次領」。</li>
+              <li><strong>視覺化與敏感度分析</strong>：除三情境月領、保費負擔、壽命累積領取與回本曲線外，新增「<strong>轉換年齡掃描圖</strong>」揭露 14 年 vs. 15 年等法規斷崖，另附可選 CPI 通膨模擬開關。</li>
+            </ol>
+          </li>
+          <li><strong>階段成果</strong>：確立第一層純社會保險試算模型定案規格（見下方第六節），並同步記錄於 MD 與 HTML 文件。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-25 15:59 (UTC+8)</div>
+        <div class="timeline-title">階段五：延伸討論「現職勞工評估是否轉進私校公保」決策模型</div>
+        <ul>
+          <li><strong>使用者提問</strong>：若已知目前勞保達最高級距（45,800 元）且超過 60 個月，想評估「續留勞保體系好，還是轉進私校公保體系好」，需確認應輸入目前年齡、退休年齡，或已累積勞保與未來公保年資。</li>
+          <li><strong>分析與規劃建議</strong>：
+            <ol>
+              <li><strong>三項必備變數缺一不可</strong>：<code>目前年齡</code>、<code>預計退休年齡</code>（決定未來剩餘年資）、<code>目前已累積勞保年資</code>（獨立輸入，不可僅由年齡反推，決定是否已跨過 15 年門檻）。</li>
+              <li><strong>邊際決策視角</strong>：過去已繳勞保保費屬沉沒成本，應聚焦比較「現在起到退休的<strong>新增自付保費</strong>」vs.「未來退休<strong>總領取差額</strong>」。</li>
+              <li><strong>建議升級為雙模式整合</strong>：同一網頁內建 <strong>模式一「全職涯三情境比較」</strong> 與 <strong>模式二「現職轉職決策模擬（續留勞保 vs. 現在／N 年後轉公保）」</strong>，自動找出最佳轉職時點（立刻轉／撐滿 15 年再轉／續留至退休）。</li>
+            </ol>
+          </li>
+          <li><strong>階段狀態</strong>：待使用者確認整合方案後即啟動實作。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-25 16:03 (UTC+8)</div>
+        <div class="timeline-title">階段六：法規釐清——勞保與私校公保「雙年金分別請領」確認</div>
+        <ul>
+          <li><strong>使用者提問</strong>：確認勞保滿 15 年且未來轉私校公保亦滿 15 年時，是否能各自依所屬級距與年資分別領取雙年金，並檢視邊際比較公式是否需調整。</li>
+          <li><strong>法規查核結論</strong>：
+            <ol>
+              <li><strong>完全可以同時分別請領</strong>：先後不同時期投保且各自滿 15 年時，勞保依《勞保條例》第 58、58-1 條向勞保局請領老年年金，私校公保依《公保法》第 16、48 條向臺銀公保部請領養老年金，兩者各自計算、互不扣減（僅須避免同時重複加保，《公保法》第 6 條第 4 項，銜接重疊容許 60 日內）。</li>
+              <li><strong>邊際比較公式更直觀</strong>：當兩段皆滿 15 年且 65 歲領時，原有勞保年金在兩方案中完全相同，真正決勝點在<strong>未來剩餘年資每 1 年的邊際產出與保費</strong>——續留勞保（45,800 級距）每年多領 <strong>710 元/月</strong>（月自付 1,191 元）；轉進私校公保每年多領 <code>前10年平均保俸 × 1.3%</code>（525 薪額約 <strong>624 元/月</strong>、770 薪額約 <strong>826 元/月</strong>，但個人月自付 35% 較高）。</li>
+            </ol>
+          </li>
+          <li><strong>階段成果</strong>：確認雙年金分別請領法源與邊際公式，同步紀錄於 MD 與 HTML 文件。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-25 16:06 (UTC+8)</div>
+        <div class="timeline-title">階段七：執行計畫定稿、試算模型 v1.0 開發與法規驗算</div>
+        <ul>
+          <li><strong>使用者指令</strong>：先將規格寫成執行計畫，隨即撰寫第一版。</li>
+          <li><strong>執行過程</strong>：
+            <ol>
+              <li>建立正式執行計畫 <code>執行計畫_勞保與公保養老給付試算模型.md</code>。</li>
+              <li>透過 Python 直接由專案 PDF 校對匯出 116.01.01 勞保 10 級分擔表與 114.01.01 私校公保 39 級保險薪額表。</li>
+              <li>實作獨立離線單頁試算網頁 <code>勞保與公保養老給付試算模型.html</code>（含雙模式面板、3 組互動原生 SVG 圖表、法規明細表與私校逐年晉級表）。</li>
+              <li>以 Node.js 執行 JS 語法檢查與 7 組法規邊界自動化驗算，全數通過。</li>
+            </ol>
+          </li>
+          <li><strong>階段成果</strong>：交付執行計畫書與第一版互動試算模型（見下方第七節）。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-26 10:56 (UTC+8)</div>
+        <div class="timeline-title">階段八：新增 4 份檔案盤點與「雇主聘用成本比較分析」架構討論</div>
+        <ul>
+          <li><strong>使用者需求</strong>：新增私校／一般健保負擔金額表與 20250417 核定版「編制內職員薪資表」、「約聘雇人員薪級表」，規劃建立「<strong>約聘雇人員 vs. 編制內職員</strong>」雇主合計聘用成本比較分析。</li>
+          <li><strong>執行過程</strong>：使用 Python 完整解析 4 份新增 PDF 表格數據、費率與備註條款，釐清兩類身分的雇主法定成本構成（特別是編制內適用公保／私校退撫／健保表二，而約聘雇適用勞保／勞退／健保表三），並以代表性起薪試算附加成本率差異。</li>
+          <li><strong>階段成果</strong>：產出 4 份新檔解析摘要、雇主成本結構對照與 5 項待確認設計議題（見下方第八節）。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-26 11:07 (UTC+8)</div>
+        <div class="timeline-title">階段九：雇主成本比較 5 項核心口徑定案與深化建議確認</div>
+        <ul>
+          <li><strong>確認之 5 大口徑</strong>：私校退撫 32.5% 全額計入總成本；涵蓋單月／同月薪／多年期（含滿 6 年轉編制路徑），重點對比「約聘雇第 6 年（晉升 5 級）」vs.「編制內辦事員 170、200 薪額」；納入年終、職災、二代健保補充保費與公保超額年金提醒，並新增「約聘雇各類最高薪 vs. 編制內辦事員／組員最高薪」比較；約聘雇僅看學士與碩士級；交付 MD 與 HTML 雙版本。</li>
+          <li><strong>關鍵精算初探</strong>：學士行政第 6 年（雇主月總 <strong>49,913 元</strong>、員工實領 39,737 元）轉編制內辦事員 170 薪額（雇主月總 <strong>48,174 元</strong>、員工實領 40,748 元），呈現「<strong>學校月省 1,739 元、員工實領反多 1,011 元</strong>」之雙贏；碩士行政第 6 年（52,414 元）轉辦事員 200 薪額（50,798 元）同樣學校月省 1,616 元、員工實領反多 958 元。</li>
+          <li><strong>待最終確認項目</strong>：年終／考績獎金規則、多年期追蹤年期與轉任銜接設定、職災／公保費率預設，以及是否加列「員工實領現金」雙視角。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-26 11:29 (UTC+8)</div>
+        <div class="timeline-title">階段十：雇主聘用成本分析定案規格、MD 報告與互動 HTML 模型實作驗算</div>
+        <ul>
+          <li><strong>最終定案口徑</strong>：年終 1.5 個月（全薪計、無考績獎金）＋二代健保補充保費 2.11%；觀察年限支援 <strong>1～40 年</strong>並納入後續<strong>升任組員（頂薪 475）</strong>路徑；退休後《公保法》第 20 條超額年金（學校負擔 50% 至過世）獨立列示估算；同步呈現員工月實領與退休專戶月入帳。</li>
+          <li><strong>執行過程</strong>：以 Python 完整擷取 7 份官方 PDF 級距表並全量精算，產出 <code>雇主聘用成本比較分析報告.md</code> 與四分頁離線互動網頁 <code>雇主聘用成本比較分析模型.html</code>，並透過 Node.js 執行全量交叉比對（0 元誤差全數通過）。</li>
+          <li><strong>階段成果</strong>：交付完整 MD 分析報告與互動 HTML 模型（詳見下方第九節）。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-26 12:03 (UTC+8)</div>
+        <div class="timeline-title">階段十一：擴充「職員 1～40 年累積實領金額與退休專戶本金」分析功能（v1.1）</div>
+        <ul>
+          <li><strong>使用者需求</strong>：依先前設定條件，新增估算各類身分職員的長期累積實領金額功能。</li>
+          <li><strong>執行過程</strong>：精算 10 條長期路徑 6/15/25/35/40 年累積實領現金與退休專戶累計本金；將 <code>雇主聘用成本比較分析模型.html</code> 升級至 <strong>v1.1</strong>（新增分頁二「職員累積實領與退專本金」含雙折線圖、現金／總實質所得切換與 10 路徑總表）；以 Node.js 通過 10/10 零誤差驗算，並同步擴充 <code>雇主聘用成本比較分析報告.md</code> 專題五。</li>
+          <li><strong>階段成果</strong>：完成雇主成本＋職員累積實領完整雙視角升級。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-26 12:25 (UTC+8)</div>
+        <div class="timeline-title">階段十二：納入第二層（勞工退休金＋私校退撫儲金）前之法規檢核與規劃重點</div>
+        <ul>
+          <li><strong>使用者需求</strong>：在第一層「勞保 vs. 公保養老給付」評估基礎上，擴充納入「勞工退休金（新制）」與「私校退撫儲金」，先盤點依現行法規與資料須注意或補充之處。</li>
+          <li><strong>六大關鍵注意事項</strong>：① 啟動《公保法》第 17/19/48 條「退撫月領＋公保年金 ≤ 最後保俸 2 倍 × 80%」連動天花板檢核；② 勞退上限 150,000 元須脫離勞保 45,800 獨立設薪（並可對接校內約聘雇／編制內核定薪資表）；③ 拆清個人強制出資（私校自繳本薪 8.4% vs. 勞工 0%）與自提開關；④ 區分勞退全面 2 年定存保底 vs. 私校僅保守型保底、其餘自負盈虧；⑤ 轉職情境下舊勞退專戶滾存至 60 歲（現職模擬可輸入現有專戶餘額）；⑥ 明確區分第一層「終身年金」與第二層「專戶領完為止」及請領期退職所得免稅門檻提醒。</li>
+          <li><strong>階段狀態</strong>：待使用者確認整合口徑與開發方向。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-26 12:33 (UTC+8)</div>
+        <div class="timeline-title">階段十三：雙層完整版退休金模型 4 項主軸確認與最後檢核</div>
+        <ul>
+          <li><strong>確認主軸</strong>：另開新檔 <code>完整雙層退休金試算模型.html</code>（附分析報告 MD）；勞工端直接套用校內約聘雇薪級表（學士／碩士 × 行政／技術）同時查算勞保與勞退；加入勞工自提（0%～6%）與私校增額提撥（0%～100%）可調開關；勞退預設報酬率 4.0%、私校內建保守 2.0%／穩健 4.5%／積極 6.5% 組合與可調退休後攤提利率。</li>
+          <li><strong>最後 3 項確認</strong>：編制內職稱頂薪快捷（辦事員 310／組員 475／專員 525／自選至 770）、沿用雙模式切換並新增「既有勞退專戶餘額」選填（含自動推估）、以及預設開啟《公保法》第 17／48 條第 6 項 80% 總月退天花板自動檢核。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-26 12:38 (UTC+8)</div>
+        <div class="timeline-title">階段十四：完整雙層退休金模型定案規格、實作與 10 組交叉驗算</div>
+        <ul>
+          <li><strong>使用者指令</strong>：全數接受 3 項建議，先將規格完整歸檔後開發 <code>完整雙層退休金試算模型.html</code> 與 <code>完整雙層退休金比較分析報告.md</code>。</li>
+          <li><strong>執行過程</strong>：以 Python 全量精算 12 條 40 年雙層路徑與 4 組 80% 天花板壓力測試；開發獨立離線雙模式網頁（75.1 KB，含 4 組互動 SVG 圖表、80% 天花板自動檢核警示、模式二既有勞退專戶自動推估）；撰寫完整分析報告並透過 Node.js 10 組交叉驗算全數通過。</li>
+          <li><strong>階段成果</strong>：交付完整雙層退休金互動模型與分析報告（詳見下方第十節）。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-26 13:03 (UTC+8)</div>
+        <div class="timeline-title">階段十五：以 ui-ux-pro-max 設計系統整合三合一決策平台</div>
+        <ul>
+          <li><strong>使用者需求</strong>：運用 <code>ui-ux-pro-max</code> 設計系統，將既有的三套獨立互動試算網頁（第一層養老給付、完整雙層退休金、雇主聘用成本與累積實領）整合成一個架構完善、體驗一致的全新統合網頁。</li>
+          <li><strong>執行過程</strong>：套用 Enterprise Gateway 版面結構、商務淺色／OLED 深色雙主題設計 Token 與 WCAG 2.2 AA 無障礙規格，以單檔離線 App Shell＋<code>iframe srcdoc</code> 延遲掛載（狀態切換不遺失）＋<code>postMessage</code> 雙向主題與深層子分頁橋接架構實作 <code>私校退休與人事成本決策平台.html</code>（319.5 KB），並以 Node.js 完成全模組語法與結構自動化驗收。</li>
+          <li><strong>階段成果</strong>：交付三合一統合決策平台（詳見下方第十一節），並完整保留原三套獨立 HTML 檔案。</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">2026-11-26 13:23 (UTC+8)</div>
+        <div class="timeline-title">階段十六：整備 GitHub 公開儲存庫封面 README.md 與 GitHub Pages 入口 index.html</div>
+        <ul>
+          <li><strong>使用者需求</strong>：準備將專案手動上傳至 GitHub（設定為 Public 並於未來啟用 GitHub Pages），確認排除 2 份校內薪資 PDF 是否影響運作與 <code>.gitignore</code> 設定方式，並建立 <code>README.md</code>。</li>
+          <li><strong>執行過程</strong>：驗證全部 4 份互動 HTML 檔已完整內嵌運算數據、不依賴外部 PDF 且未含校名，並將紀錄檔內僅存之校名去識別化改為「某私校」；建立公開適用之專案封面 <code>README.md</code> 並同步建立 GitHub Pages 根目錄入口檔 <code>index.html</code>（同 <code>私校退休與人事成本決策平台.html</code>）。</li>
+          <li><strong>階段成果</strong>：交付 <code>README.md</code> 與 <code>index.html</code>，完成 GitHub Public 儲存庫與 GitHub Pages 整備。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="sec-4">
+      <h2>四、成果一：兩大類身分與四大退休金法規比較及整理</h2>
+
+      <h3>4.1 退休制度雙層架構總覽</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 18%;">身分別</th>
+              <th style="width: 41%;">第一層：社會保險（確定給付制為主）</th>
+              <th style="width: 41%;">第二層：職業退休金（個人專戶制／確定提撥制）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge badge-labor">一般勞工</span></td>
+              <td><strong>勞工保險 — 老年給付</strong><br>法源：《勞工保險條例》（115.01.21 修正）<br>承保：勞動部勞工保險局</td>
+              <td><strong>勞工退休金（新制）</strong><br>法源：《勞工退休金條例》（108.05.15 修正）<br>收支／運用：勞保局／勞動基金運用局</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-edu">私校編制內職員</span></td>
+              <td><strong>公教人員保險 — 養老給付</strong><br>法源：《公教人員保險法》（113.01.03 修正）<br>主管／承保：銓敘部／指定承保機關（臺銀公保部）</td>
+              <td><strong>私校退撫儲金</strong><br>法源：《私校退撫條例》（112.06.09 修正）<br>主管／管理：教育部／私校退撫儲金管理委員會</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <strong>適用排他性提醒：</strong>依《勞工保險條例》第 6 條第 1 項第 4 款與《勞工退休金條例》第 7 條第 1 項但書，<strong>私立學校編制內有給專任職員</strong>係參加「公保＋私校退撫儲金」；私校編制外約聘僱／計畫人員或一般企業勞工，則適用「勞保＋勞退新制」。《公教人員保險法》第 6 條亦明定公保被保險人原則不得重複參加勞保。
+      </div>
+
+      <h3 id="sec-4-2"><span class="badge badge-pillar">第一層社會保險</span> 4.2 勞保老年給付 vs. 公保養老給付（私校編制內）</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-key">比較項目</th>
+              <th class="col-labor">一般勞工：勞工保險（老年給付）</th>
+              <th class="col-edu">私校編制內職員：公教人員保險（養老給付）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>法源依據</strong></td>
+              <td>《勞工保險條例》（115.01.21 修正）</td>
+              <td>《公教人員保險法》（113.01.03 修正）<br>※ 私校被保險人自 <strong>103.06.01</strong> 起適用養老年金（第 48 條）</td>
+            </tr>
+            <tr>
+              <td><strong>保險費率</strong></td>
+              <td>
+                • 法定普通事故費率區間：<strong>7.5%～13%</strong>（第 13 條）<br>
+                • 依 116.01.01 分擔表：普通事故費率調升至 <strong>13%</strong>（適用就保者為普通事故 <strong>12%</strong> + 就保 <strong>1%</strong> = 合計 <strong>13%</strong>）
+              </td>
+              <td>
+                • 法定費率區間：<strong>7%～18%</strong>，至少每 3 年精算 50 年（第 8 條）<br>
+                • 私校被保險人依第 48 條第 7 項按年金所需費率覈實釐定
+              </td>
+            </tr>
+            <tr>
+              <td><strong>保費分擔比例</strong></td>
+              <td>
+                • 一般受僱勞工（第 15 條第 1 款）：<br>
+                　<strong>勞工 20% ／ 投保單位 70% ／ 中央政府 10%</strong><br>
+                • 職災保險費全部由投保單位負擔
+              </td>
+              <td>
+                • 私校教職員（第 9 條第 1 項但書）：<br>
+                　<strong>個人 35% ／ 學校 32.5% ／ 政府 32.5%</strong><br>
+                • 退休請領養老給付後再加保者：個人 67.5%／學校 32.5%（第 9 條第 4 項）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>投保基數與上限</strong></td>
+              <td>
+                • 按「<strong>月薪資總額</strong>」依投保薪資分級表申報（第 14 條）<br>
+                • 116.01.01 分擔表全時勞工：<strong>第 1 級 30,900 元 ～ 第 10 級 45,800 元</strong>（部分工時 11,100～29,500 元）<br>
+                • 以最高級 45,800 元（30 日）計：勞工月繳 1,191 元、單位月繳 4,168 元
+              </td>
+              <td>
+                • 僅採計比照公立同級學校之「<strong>本（年功）薪額</strong>」（不含專業／主管加給），上限不超過部長級月俸額（第 8 條第 4、5 項）<br>
+                • 114.01.01 保險薪額表：<strong>三六級（90 薪額）17,390 元 ～ 年功一（770 薪額）63,570 元</strong>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>平均薪資計算基準</strong></td>
+              <td>
+                • <strong>老年年金／老年一次金</strong>：加保期間<strong>最高 60 個月</strong>平均月投保薪資（第 19 條第 3 項）<br>
+                • <strong>舊制一次請領老年給付</strong>：退保當月起<strong>前 3 年（36 個月）</strong>平均
+              </td>
+              <td>
+                • <strong>養老給付（一次／年金）</strong>：發生保險事故當月起<strong>前 10 年</strong>投保年資實際保險俸（薪）額平均（未滿 10 年按實際年資平均，第 12 條第 1 項）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>請領基本前提</strong></td>
+              <td>
+                • <strong>須辦理離職退保</strong>（第 58 條第 3 項）<br>
+                • 已領取老年給付者不得再參加勞保（第 58 條第 6 項）
+              </td>
+              <td>
+                • 依法<strong>退休（職）</strong>、<strong>資遣</strong>，或繳費<strong>滿 15 年且年滿 55 歲以上離職退保</strong>（第 16 條第 1 項）<br>
+                • 領取後再加保者，原年資不得併計且合計不得超上限（第 23 條）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>年金給付請領條件</strong></td>
+              <td>
+                • 法定請領年齡逐步提高至 <strong>65 歲</strong>（第 58 條第 5 項）<br>
+                • <strong>保險年資滿 15 年</strong>且達法定年齡（65 歲）<br>
+                • 未滿 15 年領老年一次金（但依第 74-2 條併計國保滿 15 年得領年金）<br>
+                • 危險／堅強體力特殊工作滿 15 年且 55 歲即可全額領年金（第 58 條第 7 項）
+              </td>
+              <td>
+                須符合下列三條件之一（第 16 條第 3 項）：<br>
+                1. 繳費滿 <strong>15 年</strong>以上且年滿 <strong>65 歲</strong><br>
+                2. 繳費滿 <strong>20 年</strong>以上且年滿 <strong>60 歲</strong><br>
+                3. 繳費滿 <strong>30 年</strong>以上且年滿 <strong>55 歲</strong><br>
+                ※ 具 103.01.14 前年資者，符合年金條件仍可自願擇領一次養老給付（第 16 條第 7 項）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>一次給付請領條件</strong></td>
+              <td>
+                • <strong>老年一次金</strong>：年滿法定年齡但年資未滿 15 年（第 58 條第 1 項）<br>
+                • <strong>一次請領老年給付</strong>（限 97.07.17 修正條文施行前有年資者，第 58 條第 2 項）：符合 5 款之一（如滿 1 年男 60／女 55 歲、滿 15 年 55 歲、同單位滿 25 年、滿 25 年 50 歲等）
+              </td>
+              <td>
+                • 符合退休／資遣或滿 15 年且 55 歲離職，但<strong>未符年金條件</strong>者，以一次養老給付為限（第 16 條第 6 項）<br>
+                • 具 103.01.14 前年資者可選擇改領一次養老給付
+              </td>
+            </tr>
+            <tr>
+              <td><strong>年金給付公式與上限</strong></td>
+              <td>
+                <strong>二式擇優，無年資上限</strong>（第 58-1 條）：<br>
+                • <strong>A 式</strong>：平均月投保薪資 × 年資 × <strong>0.775%</strong> ＋ <strong>3,000 元</strong><br>
+                • <strong>B 式</strong>：平均月投保薪資 × 年資 × <strong>1.55%</strong>
+              </td>
+              <td>
+                • 每滿 1 年給付率：<strong>0.75%（基本年金率）～ 1.3%（上限年金率）</strong>（第 16 條第 2 項）<br>
+                • <strong>年資上限</strong>：一般最高 <strong>35 年</strong>（總給付率最高 <strong>45.5%</strong>）；<strong>112.07.01 後初次加保者</strong>最高 <strong>40 年</strong>（總給付率最高 <strong>52%</strong>）<br>
+                • <strong>特別天花板（第 17、48 條第 6 項）</strong>：每月退休給與（含私校退撫）＋公保養老年金，不得逾最後在職投保薪額 2 倍之 <strong>80%</strong><br>
+                • <strong>僅給基本年金率 0.75%</strong>：資遣、滿 15 年離職退保（第 16 條第 4 項）<br>
+                • <strong>超額年金負擔</strong>：逾 0.75% 部分由<strong>政府與私校各負擔 50%</strong>（第 20 條）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>一次給付公式與上限</strong></td>
+              <td>
+                • 15 年內每滿 1 年給 <strong>1 個月</strong>；逾 15 年每滿 1 年給 <strong>2 個月</strong><br>
+                • 最高 <strong>45 個月</strong>（逾 60 歲續保最多再計 5 年，合併最高 <strong>50 個月</strong>，第 59 條）
+              </td>
+              <td>
+                • 每滿 1 年給 <strong>1.2 個月</strong>，最高 <strong>42 個月</strong>（103.01.14 前年資最高 36 個月，合併修正後年資最高 42 個月；辦優存者最高 36 個月，第 16 條第 2、10 項）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>提前（減額）與延後（展延）</strong></td>
+              <td>
+                • <strong>提前（減額）</strong>：年資滿 15 年最多提前 5 年，每提前 1 年 <strong>-4%</strong>（最多 <strong>-20%</strong>）<br>
+                • <strong>延後（展延）</strong>：每延後 1 年 <strong>+4%</strong>（最多延後 5 年 <strong>+20%</strong>）（第 58-2 條）
+              </td>
+              <td>
+                • <strong>提前（減額）</strong>：年資滿 15 年最多提前 5 年，每提前 1 年 <strong>-4%</strong>（最多 <strong>-20%</strong>）（第 18 條第 6 項）<br>
+                • <strong>展期請領</strong>：未達起支年齡者可至達起支年齡再領，但<strong>無 +4% 展延增給</strong>（第 18 條第 3 項）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>物價調整（CPI）</strong></td>
+              <td>CPI 累計成長率達 <strong>±5%</strong> 時，<strong>即依該成長率調整</strong>（第 65-4 條）</td>
+              <td>CPI 累計成長率達 <strong>±5%</strong> 時，由考試院會同行政院考量經濟、財政與準備金盈虧<strong>另定調整比率</strong>（第 31 條）</td>
+            </tr>
+            <tr>
+              <td><strong>領年金期間死亡遺屬保障</strong></td>
+              <td>
+                • 遺屬得領<strong>遺屬年金（原老年年金半數，最低 3,000 元）</strong>，同順位每多 1 人加發 25%、最多加計 50%（第 63-1、63-2 條）<br>
+                • 97.07.17 前有年資者，遺屬另可選一次請領差額
+              </td>
+              <td>
+                • 遺屬擇一請領：<strong>① 一次養老給付扣除已領年金之餘額</strong>，或 <strong>② 原養老年金半數之遺屬年金</strong>（第 22 條第 4 項）<br>
+                • 配偶領遺屬年金須未再婚、年滿 55 歲且婚姻存續滿 2 年（未滿 55 歲自 55 歲起領，第 28 條）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>跨職域年資保留與併計</strong></td>
+              <td>
+                • 轉投公保／私校保不合請領條件者，勞保年資保留，年老依法退職時得依第 59 條請領（第 76 條）<br>
+                • 與國保年資可併計成就年金資格（第 74-2 條）
+              </td>
+              <td>
+                • 94.01.21 後退保未領者年資保留，於參加勞保依法退休、領國保老年給付或年滿 65 歲時得請領（第 26 條）<br>
+                • <strong>公勞保併計（第 49 條）</strong>：99.01.01 後退保，公保及勞保年資<strong>各未滿 15 年但合計滿 15 年</strong>者，年滿 65 歲得併計成就公保養老年金（公保年資依 0.75% 計給）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>財務責任與請求權時效</strong></td>
+              <td>
+                • 中央政府負最後支付責任，114.12.30 修法明定每年編列預算撥補、每 3 年檢討財務（第 66、69 條）<br>
+                • 一般請求權 5 年，但<strong>老年給付不受 5 年時效限制</strong>（第 58 條第 4 項）
+              </td>
+              <td>
+                • 88.05.30 前年資由財政部撥補；88.05.31 後虧損應調整費率挹注（第 5 條）<br>
+                • 請求權時效：<strong>10 年</strong>（第 38 條）
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="sec-4-3"><span class="badge badge-pillar">第二層職業退休金</span> 4.3 勞工退休金（新制） vs. 私校退撫儲金</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-key">比較項目</th>
+              <th class="col-labor">一般勞工：勞工退休金（新制）</th>
+              <th class="col-edu">私校編制內職員：私校退撫儲金</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>法源依據</strong></td>
+              <td>《勞工退休金條例》（108.05.15 修正）</td>
+              <td>《學校法人及其所屬私立學校教職員退休撫卹離職資遣條例》（112.06.09 修正）</td>
+            </tr>
+            <tr>
+              <td><strong>制度性質</strong></td>
+              <td>個人退休金專戶制（確定提撥制）<br>※ 200 人以上事業單位經同意得改辦企業年金保險（第 35 條）</td>
+              <td>個人退撫儲金專戶制（確定提撥制）<br>※ 施行前舊年資仍由原私校退撫基金依舊制支給（第 12 條）</td>
+            </tr>
+            <tr>
+              <td><strong>提繳／提撥計算基數</strong></td>
+              <td>
+                • 按「<strong>實際每月工資</strong>」對照勞退月提繳分級表（第 14 條）<br>
+                • 116.01.01 生效分級表：11 組 62 級，<strong>1,500 元 ～ 150,000 元</strong>
+              </td>
+              <td>
+                • 按「<strong>本（年功）薪加一倍</strong>」× <strong>12%</strong>（= 本俸 <strong>24%</strong>，第 8 條第 4 項）<br>
+                • 114.01.01 費用表：90 薪額（17,390 元）月提撥合計 <strong>4,174 元</strong> ～ 770 薪額（63,570 元）月提撥合計 <strong>15,257 元</strong>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>強制提繳率與三方分擔</strong></td>
+              <td>
+                • <strong>雇主強制提繳</strong>：不得低於月工資 <strong>6%</strong>（100% 雇主負擔）<br>
+                • <strong>個人強制提繳</strong>：<strong>0%</strong><br>
+                • <strong>政府補助</strong>：<strong>0%</strong>
+              </td>
+              <td>
+                • <strong>總強制提撥率</strong>：本俸 × 2 × 12%（= 本俸 <strong>24%</strong>）<br>
+                • <strong>教職員自繳（強制）</strong>：<strong>35%</strong>（= 本俸 <strong>8.4%</strong>）<br>
+                • <strong>學校負擔</strong>：<strong>32.5%</strong>（準備專戶 26% + 私校 6.5%，= 本俸 <strong>7.8%</strong>）<br>
+                • <strong>政府負擔</strong>：<strong>32.5%</strong>（= 本俸 <strong>7.8%</strong>，政府撥繳以最高 <strong>42 年</strong> 為限，第 8 條第 7 項）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>自願增額提繳與免稅空間</strong></td>
+              <td>
+                • 勞工得在月工資 <strong>6%</strong> 內自願提繳（1 年限調 2 次，第 14、15 條）<br>
+                • <strong>免稅額度</strong>：自提 6% 部分（最高 9,000 元/月、108,000 元/年）<strong>不計入提繳年度薪資所得課稅</strong>（第 14 條第 3 項）
+              </td>
+              <td>
+                • 私校應辦理<strong>增額提撥</strong>作業，教職員另得自願增額提撥（第 9 條）<br>
+                • <strong>雙重免稅額度</strong>：<br>
+                　1. 法定強制自繳 35% 部分免計入年度薪資所得（第 8 條第 11 項）<br>
+                　2. 增額提撥<strong>不超過法定自繳 35% 額度內</strong>者，亦免計入年度薪資所得（第 9 條第 1 項）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>基金運用與自主投資</strong></td>
+              <td>由<strong>勞動基金運用局統一管理運用</strong>，勞工<strong>不可自選</strong>投資組合（第 33 條）</td>
+              <td>由儲金管理會設計不同收益／風險投資標的組合，供教職員<strong>自主選擇</strong>；未選者依年齡配置（第 10 條第 1 項）</td>
+            </tr>
+            <tr>
+              <td><strong>最低保證收益</strong></td>
+              <td>全部個人專戶皆享有<strong>當地銀行 2 年期定期存款利率</strong>最低收益保證，不足由國庫補足（第 23 條第 2 項）</td>
+              <td>
+                • <strong>僅風險程度最低（保守型）</strong>投資組合（及統一運用時期）享有<strong>2 年期定存利率</strong>保證，不足由國庫補足（第 10 條第 3 項）；其餘組合自負盈虧<br>
+                • 施行後年資扣除自繳本息後不低於施行前舊制標準，差額由主管機關補足（第 10 條第 4 項）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>退休／請領資格條件</strong></td>
+              <td>
+                • <strong>年滿 60 歲</strong>即可請領，<strong>不須離職</strong>（在職可領，續提退休金 1 年限領 1 次，第 24、24-1 條）<br>
+                • <strong>提前請領</strong>：未滿 60 歲喪失工作能力（領勞保失能年金、3 等以上失能一次金或國保身障年金等，第 24-2 條）
+              </td>
+              <td>
+                • <strong>自願退休</strong>：<strong>年滿 60 歲</strong>，或<strong>任職滿 25 年</strong>（不限年齡）；學校組織變更／停辦／合併精簡另有放寬（第 15 條）<br>
+                • <strong>屆齡退休</strong>：<strong>年滿 65 歲</strong>（校長／專科以上教授最長延至 70 歲，第 16 條）<br>
+                • <strong>命令退休</strong>：任滿 5 年因身心障礙不堪勝任逾二學期未癒（第 18 條）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>給付請領方式</strong></td>
+              <td>
+                • 年資<strong>未滿 15 年</strong>：限領<strong>一次退休金</strong><br>
+                • 年資<strong>滿 15 年以上</strong>：二選一（<strong>① 一次退休金</strong> 或 <strong>② 月退休金</strong>，核付後不得變更，<strong>無兼領</strong>）（第 24 條）<br>
+                • 月退休金依年金生命表、平均餘命及利率計算，<strong>按季發給</strong>（第 23、28 條）
+              </td>
+              <td>
+                • 年資<strong>未滿 15 年</strong>：限領<strong>一次給付</strong><br>
+                • 年資<strong>滿 15 年以上</strong>：三選一（第 20 條）：<br>
+                　① <strong>一次給付</strong><br>
+                　② <strong>定期給付</strong>（投保年金保險，或由儲金管理會提供<strong>分期請領</strong>並自選投資組合、自負盈虧）<br>
+                　③ <strong>兼領一次給付及定期給付</strong><br>
+                • 因公傷病退休不受 15 年限制，私校另給 20% 一次給付
+              </td>
+            </tr>
+            <tr>
+              <td><strong>中途離職與資遣處理</strong></td>
+              <td>
+                • <strong>離職不得提前領取</strong>：個人專戶攜帶累積，仍須至<strong>年滿 60 歲</strong>（或失能條件）始得請領<br>
+                • <strong>資遣費</strong>：雇主另按年資每滿 1 年給 0.5 個月平均工資，最高 6 個月（第 12 條）
+              </td>
+              <td>
+                • <strong>離職可直接領回全部專戶本息</strong>（含個人、學校、政府提撥；僅職務犯罪判刑確定者限領本人撥繳部分，第 24 條）<br>
+                • <strong>亦可選擇暫不領取</strong>：留存專戶至<strong>年滿 60 歲</strong>再領或辦定期／分期請領（第 25 條）<br>
+                • <strong>資遣給與</strong>：按一次給付標準領取專戶本息（第 23 條）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>在職死亡／未領完死亡</strong></td>
+              <td>請領前死亡或領月退未屆平均餘命死亡，由遺屬或指定請領人一次領回專戶本息／賸餘金額（請求權時效 <strong>10 年</strong>，第 26～28 條）</td>
+              <td>
+                • 在職死亡給與<strong>撫卹金</strong>（未滿 15 年一次撫卹金；滿 15 年可選一次或年金保險年撫卹金；因公死亡私校另增給 25% 或 50%，第 26～28 條）<br>
+                • 領年金保險未達保證金額亡故，餘額折現一次發還遺族（第 21 條）
+              </td>
+            </tr>
+            <tr>
+              <td><strong>債權保護機制</strong></td>
+              <td>不得讓與、扣押、抵銷或供擔保；得開立金融機構專屬防扣押專戶（第 29 條）</td>
+              <td>請領各項給與之權利不得作為扣押、讓與或供擔保之標的（第 6 條）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="sec-4-4">4.4 兩大身分別實務重點與關鍵法規差異整理</h3>
+      <div class="insight-grid">
+        <div class="insight-card">
+          <h4>1. 提繳基數與雇主／政府出資結構</h4>
+          <p>第一層勞保上限 <strong>45,800 元</strong>（全薪）、勞工自付 20%；公保私校表最高 <strong>63,570 元</strong>（僅本薪）、個人自付 35%。第二層勞退上限達 <strong>150,000 元</strong>（雇主法定 ≥6%）；私校退撫強制提撥達本俸 <strong>24%</strong>（學校＋政府合計出資 <strong>15.6%</strong>，個人強制 8.4% 並享增額雙重免稅）。</p>
+        </div>
+        <div class="insight-card">
+          <h4>2. 第一層年金給付率與加減給彈性</h4>
+          <p>勞保 B 式 <strong>1.55%/年無年資上限</strong>、採最高 60 個月平均、具 <strong>CPI ±5% 剛性調整</strong>與<strong>每年 +4% 展延加給</strong>。公保 <strong>0.75%～1.3%/年</strong>、採最後 10 年平均、設 35/40 年上限與「總月退不逾最後保俸 2 倍 × 80%」天花板，無展延加給，但提供「20 年 60 歲／30 年 55 歲」免減額起支。</p>
+        </div>
+        <div class="insight-card">
+          <h4>3. 第二層自主投資、保底與流動性</h4>
+          <p>勞退新制全數由政府統一操作、全面享 2 年定存保底，滿 60 歲「在職可領」，但離職不可提前領。私校退撫可<strong>自主選擇投資組合</strong>（僅保守型享 2 年定存保底），滿 25 年不限年齡可自願退休、滿 15 年可「<strong>兼領一次＋定期／分期</strong>」，中途離職亦可直接領回三方本息或留存至 60 歲。</p>
+        </div>
+        <div class="insight-card">
+          <h4>4. 跨體系轉換之年資保留與併計</h4>
+          <p>職涯橫跨一般勞工與私校編制內職員時，勞保（第 76 條）與公保（第 26 條）均保留年資；若公勞保年資<strong>各未滿 15 年但合計滿 15 年</strong>，年滿 65 歲時得依《公保法》第 49 條併計成就公保養老年金（按公保年資 0.75% 計給）。第二層勞退專戶與私校退撫專戶則各自獨立累積，互不衝突。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-5">
+      <h2>五、成果二：三情境退休金試算模型規劃規格藍圖（完整雙層版保留）</h2>
+
+      <h3>5.1 模型比較三大情境</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="center" style="width: 14%;">情境代號</th>
+              <th style="width: 24%;">情境名稱</th>
+              <th>職涯期間與適用制度</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="center"><span class="badge badge-labor">情境 A</span></td>
+              <td><strong>純勞保體系</strong></td>
+              <td>全職涯（開始工作年齡 → 退休年齡）適用「勞工保險＋勞工退休金新制」</td>
+            </tr>
+            <tr>
+              <td class="center"><span class="badge badge-edu">情境 B</span></td>
+              <td><strong>純私校體系</strong></td>
+              <td>全職涯（開始工作年齡 → 退休年齡）適用「公教人員保險（私校）＋私校退撫儲金」</td>
+            </tr>
+            <tr>
+              <td class="center"><span class="badge badge-pillar">情境 C</span></td>
+              <td><strong>勞保轉換私校</strong></td>
+              <td>前段（開始年齡 → 轉換年齡）適用「勞保＋勞退新制」；後段（轉換年齡 → 退休年齡）轉任私校編制內職員適用「公保＋私校退撫儲金」</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>5.2 內建法規級距表與輸入參數設計</h3>
+      <div class="insight-grid">
+        <div class="insight-card">
+          <h4>內建 4 份官方級距表</h4>
+          <ul>
+            <li>116.01.01 勞保投保薪資與分擔表（30,900～45,800 元，普通事故 12% + 就保 1%，20%/70%/10%）</li>
+            <li>116.01.01 勞退月提繳分級表（62 級，1,500～150,000 元，雇主強制 6%）</li>
+            <li>114.01.01 私校保險薪額表（39 級，90 薪額 17,390 ～ 770 薪額 63,570 元）</li>
+            <li>114.01.01 私校退撫費用表（本俸 × 2 × 12%，個人 35%／學校 32.5%／政府 32.5%）</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h4>職涯與獨立薪資曲線參數</h4>
+          <ul>
+            <li>開始工作年齡（預設 25 歲）、退休年齡（預設 65 歲，55～70 歲可調）、轉換私校年齡（預設 35 歲）、預期壽命（預設 85 歲，70～100 歲可調）</li>
+            <li>勞工曲線：起薪（預設 38,000 元）＋年調薪率（預設 2.5%）</li>
+            <li>私校曲線：純私校起聘薪級、轉任私校起聘薪級、最高晉級上限（逐年晉 1 級）</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h4>精算假設與進階開關（純法定強制提撥）</h4>
+          <ul>
+            <li>不含勞工自提 6% 與私校增額提撥，聚焦法定強制投入效益</li>
+            <li>公保費率預設 10.16%（7%～18% 可調）；可切換是否為 112.07.01 後初保（40 年 vs. 35 年上限）</li>
+            <li>勞退報酬率預設 4.0%；私校提供保守（2.0% 保底）／穩健（4.5%）／積極（6.5%）／自訂</li>
+            <li>可選開關：私校自繳 35% 免稅效益（邊際稅率 5%～30%）、通膨折現與勞保 CPI ±5% 模擬</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h4>法規引擎與四路徑自動分流</h4>
+          <ul>
+            <li><strong>勞保引擎</strong>：最高 60 月平均、A/B 式擇優、提前 -4%/年與展延 +4%/年</li>
+            <li><strong>公保引擎</strong>：前 10 年平均、三條件起支檢核、第 17/19/48 條 80% 天花板自動核定 0.75%～1.3% 年金率</li>
+            <li><strong>情境 C 四路徑</strong>：雙年金 / 勞一次＋公年金 / 勞年金＋公一次 / 《公保法》第 49 條併計年金（各未滿 15 年但合計 ≥15 年）</li>
+            <li><strong>圖表輸出</strong>：KPI 卡片、月領現金流堆疊圖、三方投入結構圖、60～95 歲累積領取與回本曲線、法規檢核明細表</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-6">
+      <h2>六、成果三：第一層「勞保 vs. 公保養老給付」三情境試算模型定案規格</h2>
+      <div class="callout">
+        <strong>預計交付檔案：</strong><code>勞保與公保養老給付試算模型.html</code>（獨立單頁互動式網頁，瀏覽器直接開啟）<br />
+        <strong>比較範圍：</strong>聚焦第一層社會保險（勞工保險老年給付 vs. 私校編制內公保養老給付）；第二層勞退新制與私校退撫儲金先保留至下一階段擴充。
+      </div>
+
+      <div class="insight-grid">
+        <div class="insight-card">
+          <h4>1. 薪資與逐年晉級回推規則</h4>
+          <ul>
+            <li><strong>勞保（選擇級距）</strong>：直接選取 116.01.01 全時勞工投保級距（30,900～45,800 元），查表帶出勞工 20%、單位 70%、政府 10% 月保費。</li>
+            <li><strong>私校公保（起敘→最高薪級回推）</strong>：依 114.01.01 薪額表（90～770 共 39 級）設定「起敘薪級（如 170）」與「最高薪級（如 525）」，每年晉 1 級至頂薪，依實際投保年資精算「退保前 10 年平均保俸」與「逐年累積保費」（費率預設 10.16%，7%～18% 可調）。</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h4>2. 法規公式與起支彈性</h4>
+          <ul>
+            <li><strong>勞保年金</strong>：A/B 式擇優、無年資上限；法定 65 歲起支，可選提前減額（-4%/年）或等到 65 歲全額領，65 歲後自動展延（+4%/年）。未滿 15 年領老年一次金。</li>
+            <li><strong>公保年金</strong>：給付率預設 1.3%（0.75%～1.3% 滑桿），35 年／40 年上限可切換；自動檢核 30 年 55 歲／20 年 60 歲／15 年 65 歲起支，支援減額（-4%/年）或展期（無 +4% 展延）。</li>
+            <li><strong>一次給付對照</strong>：並列公保一次養老（1.2 個月/年，最高 42 個月）與勞保一次金，自動算「領年金幾年贏過一次領」。</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h4>3. 情境 C（勞保轉私校）四路徑自動分流</h4>
+          <ul>
+            <li><strong>勞 ≥15、公 ≥15</strong>：雙年金（勞保年金＋公保年金）。</li>
+            <li><strong>勞 &lt;15、公 ≥15</strong>：勞保第 76 條保留老年一次金＋公保年金。</li>
+            <li><strong>勞 ≥15、公 &lt;15</strong>：勞保年金＋公保一次養老給付。</li>
+            <li><strong>各未滿 15 但合計 ≥15</strong>：觸發《公保法》第 49 條併計年金（65 歲公保鎖定 0.75% 領年金＋勞保一次金），並列雙一次金對照。</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h4>4. 視覺化圖表與 CPI 模擬</h4>
+          <ul>
+            <li><strong>KPI 總覽卡</strong>：三情境月領、一次金對照、個人實繳、85 歲（70～100 歲可調）總領取與回本年齡。</li>
+            <li><strong>轉換年齡掃描圖</strong>：逐年掃描不同轉換年齡對應月領與總領取，揭露 14 vs. 15 年、20 年、30 年法規斷崖。</li>
+            <li><strong>累積領取與回本曲線（55～95 歲）</strong>＋三方保費結構圖＋可選 CPI 通膨模擬開關＋私校逐年晉級明細表。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-7">
+      <h2>七、成果四：第一版交付檔案與 7 組法規自動化驗算結果</h2>
+
+      <h3>7.1 新增交付檔案清單</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 38%;">檔案名稱</th>
+              <th>用途說明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>執行計畫_勞保與公保養老給付試算模型.md</code></td>
+              <td>第一層社會保險雙模式試算模型之完整執行計畫、官方資料來源與法規引擎規格書。</td>
+            </tr>
+            <tr>
+              <td><code>勞保與公保養老給付試算模型.html</code></td>
+              <td>第一版獨立互動式試算網頁（純原生 HTML/CSS/JS + SVG 互動圖表，瀏覽器直接開啟即可離線操作）。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>7.2 Node.js 法規引擎自動化驗算結果（7/7 全數通過）</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="center">編號</th>
+              <th>測試情境與法規重點</th>
+              <th>驗算實測結果</th>
+              <th class="center">狀態</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="center"><strong>T1</strong></td>
+              <td>純勞保 40 年（45,800 級距、65 歲退，無年資上限與 116 年表自付）</td>
+              <td>月領 <strong>28,396 元</strong>；40 年個人實繳 <strong>571,680 元</strong></td>
+              <td class="center"><span class="badge badge-labor">通過</span></td>
+            </tr>
+            <tr>
+              <td class="center"><strong>T2</strong></td>
+              <td>私校公保 170→525 逐年晉級（第 22 年達頂薪），驗證 35 年 vs. 112.07 後 40 年上限</td>
+              <td>前 10 年均保俸 <strong>48,030 元</strong>；舊上限 35 年月領 <strong>21,854 元</strong>，新上限 40 年月領 <strong>24,976 元</strong></td>
+              <td class="center"><span class="badge badge-labor">通過</span></td>
+            </tr>
+            <tr>
+              <td class="center"><strong>T3</strong></td>
+              <td>雙滿 15 年雙年金分別請領（勞保 15 年 45,800 ＋ 公保 20 年 170→525，65 歲退）</td>
+              <td>勞保 <strong>10,649 元</strong> ＋ 公保 <strong>9,900 元</strong> ＝ 合計 <strong>20,549 元/月</strong></td>
+              <td class="center"><span class="badge badge-labor">通過</span></td>
+            </tr>
+            <tr>
+              <td class="center"><strong>T4</strong></td>
+              <td>模式二「14 年 vs. 15 年」法規斷崖（40 歲已保勞保 14 年、65 歲退、估至 85 歲）</td>
+              <td>立刻轉邊際淨獲益 <strong>389.97 萬</strong>；<strong>多撐 1 年滿 15 年再轉</strong>達 <strong>571.84 萬</strong>（差額 <strong>+181.87 萬</strong>）</td>
+              <td class="center"><span class="badge badge-labor">通過</span></td>
+            </tr>
+            <tr>
+              <td class="center"><strong>T5</strong></td>
+              <td>《公保法》第 49 條併計（勞保 10 年 ＋ 公保 10 年，合計 20 年 ≥ 15 年）</td>
+              <td>自動鎖定公保 <strong>0.75%</strong> 月領 <strong>2,180 元</strong> ＋ 勞保第 76 條一次金 <strong>458,000 元</strong></td>
+              <td class="center"><span class="badge badge-labor">通過</span></td>
+            </tr>
+            <tr>
+              <td class="center"><strong>T6</strong></td>
+              <td>提早 60 歲退休（年資 20 年，採提前減額策略）</td>
+              <td>勞保減額 -20% 月領 <strong>11,358 元</strong>；公保滿 20 年 60 歲免減額全額領 <strong>9,900 元</strong></td>
+              <td class="center"><span class="badge badge-labor">通過</span></td>
+            </tr>
+            <tr>
+              <td class="center"><strong>T7</strong></td>
+              <td>延後 70 歲退休（勞保 30 年展延 +20%）＋ CPI 2% 每累計 5% 調漲模擬</td>
+              <td>70 歲起支月領 <strong>25,556 元</strong>；開啟 CPI 至 85 歲累積領取 <strong>561.15 萬</strong></td>
+              <td class="center"><span class="badge badge-labor">通過</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="sec-8">
+      <h2>八、成果五：新增 4 份健保與核定薪資表解析及雇主成本比較框架</h2>
+
+      <h3>8.1 新增 4 份 PDF 檔案完整解析</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 32%;">檔案名稱</th>
+              <th class="center">生效／核定日</th>
+              <th>核心結構與關鍵數據</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>私立學校教職員適用健保保險費負擔金額表.pdf</code></td>
+              <td class="center">115.01.01</td>
+              <td><strong>健保表(二)</strong>：58 級（29,500～313,000 元），費率 5.17%，平均眷口 0.56 人（1.56 人計）。負擔比：<strong>個人 30% ／ 學校 35% ／ 政府 35%</strong>（學校 ≈ 投保金額 × <strong>2.823%</strong>）。</td>
+            </tr>
+            <tr>
+              <td><code>公、民營事業機構及有一定雇主受僱者適用健保保險費負擔金額表.pdf</code></td>
+              <td class="center">115.01.01</td>
+              <td><strong>健保表(三)</strong>：58 級（29,500～313,000 元），費率 5.17%，平均眷口 0.56 人（1.56 人計）。負擔比：<strong>個人 30% ／ 單位 60% ／ 政府 10%</strong>（單位 ≈ 投保金額 × <strong>4.839%</strong>，為編制內之 1.71 倍）。</td>
+            </tr>
+            <tr>
+              <td><code>編制內職員薪資表-20250417(核定版).pdf</code></td>
+              <td class="center">114.01.01 標準<br>(2025.04.17通過)</td>
+              <td>薪資＝<strong>月支本薪(A)＋專業加給(B)</strong>（主管另加主管加給）。涵蓋 10 大職稱：書記（38,140～53,270）、辦事員/管理員（41,970～55,570）、技佐（41,970～61,320）、護士（42,930～63,490）、組員/技士（44,460～69,910）、諮商心理師/護理師（46,760～69,910）、專員/輔導員（56,500～77,630）、秘書/組長/技正（58,800～83,760）、中心/人事/會計主任（79,370～94,690）、總務長/主秘/館長（82,450～101,050）。</td>
+            </tr>
+            <tr>
+              <td><code>約聘雇人員薪級表-20250417(核定版).pdf</code></td>
+              <td class="center">114.01.01 實施<br>(114.04.17通過)</td>
+              <td>某私校約聘雇薪級表，共 28 級（薪點 229～458），分<strong>行政類</strong>（折合率 118.1，27,060～54,130 元）與<strong>技術類</strong>（折合率 130.0，限專科以上，32,900～59,570 元）。四學歷軌跡：高中職（1～13 級）、專科（5～21 級）、學士（12～25 級，行政 36,160～50,580）、碩士（14～28 級，行政 38,290～54,130）。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>8.2 雇主法定聘用成本結構對照與試算例</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-key">成本項目</th>
+              <th class="col-labor">約聘雇人員（勞保＋勞退＋健保表三）</th>
+              <th class="col-edu">編制內職員（公保＋私校退撫＋健保表二）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. 月薪資支出</strong></td>
+              <td>表列月支數額（依行政／技術類與學歷等級）</td>
+              <td><strong>本薪(A) ＋ 專業加給(B)</strong>（主管另加主管加給）</td>
+            </tr>
+            <tr>
+              <td><strong>2. 第一層社會保險</strong></td>
+              <td><strong>勞保＋就保（單位 70%）</strong>：按全薪查 116 表（上限 45,800，月付 2,812～4,168 元）；另加職災險 100%</td>
+              <td><strong>公教人員保險（學校 32.5%）</strong>：<strong>僅按本薪(A)</strong> 計費（以 10.16% 計 ≈ 本薪 × 3.302%，不含專業加給）</td>
+            </tr>
+            <tr>
+              <td><strong>3. 第二層職業退休金</strong></td>
+              <td><strong>勞退新制（雇主強制 ≥6%）</strong>：按全薪查 116 勞退 62 級表（上限 150,000 元）</td>
+              <td><strong>私校退撫儲金（學校 32.5%）</strong>：<strong>本薪(A) × 2 × 12% × 32.5%</strong>（＝本薪 × 7.8%；其中 26% 可先由學費準備專戶支應，直接現金 6.5%）</td>
+            </tr>
+            <tr>
+              <td><strong>4. 全民健康保險</strong></td>
+              <td><strong>健保表(三)（單位 60% × 1.56 人）</strong>：按全薪查表（≈ 月薪 × <strong>4.84%</strong>）</td>
+              <td><strong>健保表(二)（學校 35% × 1.56 人）</strong>：按全薪(A+B)查表（≈ 月薪 × <strong>2.82%</strong>）</td>
+            </tr>
+            <tr style="background:#f8fafc;">
+              <td><strong>起薪案例速算</strong></td>
+              <td>學士行政第 1 年（月薪 36,160）：法定附加約 <strong>7,238 元（+20.0%）</strong>，月總成本 <strong>43,398 元</strong></td>
+              <td>組員第 1 年（160 薪額，月薪 44,460）：法定附加約 <strong>3,818 元（+8.6%）</strong>，月總成本 <strong>48,278 元</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <strong>待確認討論議題：</strong>① 私校退撫學校 32.5% 是否區分「學費準備專戶 26% vs. 校務現金 6.5%」雙口徑；② 比較視角（單月同職稱／同月薪橫斷面＋多年任職累積成本曲線）；③ 是否納入年終獎金（如 1.5 個月）、職災險、二代健保補充保費及公保超額年金提醒；④ 表列生效年度落差（114 薪資／115 健保／116 勞保勞退）之檢核處理；⑤ 交付形式（互動式 HTML 成本比較儀表板＋靜態報告）。
+      </div>
+    </section>
+
+    <section id="sec-9">
+      <h2>九、成果六：雇主聘用成本比較分析定案規格、交付成果與雙重驗算</h2>
+
+      <h3>9.1 新增交付檔案清單</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 36%;">檔案名稱</th>
+              <th>內容摘要與驗算狀態</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>雇主聘用成本比較分析報告.md</code></td>
+              <td>主管／董事會檢視版完整報告，含執行摘要、四大專題精算表（第 6 年轉編制 vs. 辦事員 170/200、最高薪天花板、同月薪橫斷面、1～40 年累計與公保超額年金帳本）及校務人事預算建議。</td>
+            </tr>
+            <tr>
+              <td><code>雇主聘用成本比較分析模型.html</code></td>
+              <td>零外部相依之獨立離線四分頁互動網頁（71.8 KB），內嵌 7 份官方 PDF 查表資料、1～40 年可調滑桿、原生互動 SVG 圖表、自選單月 PK 器與逐年明細表；經 Node.js 交叉驗算與 MD 報告 <strong>0 元誤差全數通過</strong>。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>9.2 核心精算與交叉驗算重點摘要</h3>
+      <div class="insight-grid">
+        <div class="insight-card">
+          <h4>第 6 年轉辦事員 170／200（雙贏紅利）</h4>
+          <p><strong>學士行政第 6 年</strong>（年 66.25 萬、實領 39,737）轉<strong>辦事員 170</strong>（年 64.59 萬、實領 40,748）→ <strong>學校年省 16,595 元、員工月多領 1,011 元</strong>。<br><strong>碩士行政第 6 年</strong>（年 69.57 萬、實領 41,777）轉<strong>辦事員 200</strong>（年 68.09 萬、實領 42,735）→ <strong>學校年省 14,843 元、員工月多領 958 元</strong>。</p>
+        </div>
+        <div class="insight-card">
+          <h4>最高薪天花板對決</h4>
+          <p><strong>辦事員頂薪 310</strong>（月薪 55,570）年總成本 <strong>81.66 萬</strong>，反而低於碩士行政頂薪（85.53 萬）、學士技術頂薪（87.93 萬）與碩士技術頂薪（93.59 萬）。<strong>組員頂薪 475</strong>（月薪 69,910）年總成本 <strong>103.06 萬</strong>，是長期預算分水嶺。</p>
+        </div>
+        <div class="insight-card">
+          <h4>40 年累計與超額年金（辦事員頂 310）</h4>
+          <p>學士 6 年轉辦事員 170（40 年在職 <strong>3,040.6 萬</strong>＋退後 20 年超額 76.0 萬）與全程學士行政（<strong>3,048.5 萬</strong>）近乎打平；碩士 6 年轉辦事員 200（<strong>3,108.8 萬</strong>＋超額 76.0 萬＝3,184.8 萬）較全程碩士行政（<strong>3,238.0 萬</strong>）<strong>全期淨省 53.2 萬</strong>。</p>
+        </div>
+        <div class="insight-card">
+          <h4>40 年累計與超額年金（升組員頂 475）</h4>
+          <p>若後續升組員至 475 薪額：學士 6 年轉 40 年在職 <strong>3,440.2 萬</strong>（＋退後 20 年超額 100.9 萬）、碩士 6 年轉 <strong>3,572.6 萬</strong>（＋超額 100.9 萬）、全程組員 <strong>3,667.9 萬</strong>（＋超額 103.9/118.7 萬）。</p>
+        </div>
+        <div class="insight-card">
+          <h4>v1.1 職員 40 年累積實領現金（＋退專本金）</h4>
+          <p>全程學士行政 <strong>2,499.9 萬</strong>（＋退專 139.4 萬）；學士 6 年轉辦事員 170 為 <strong>2,566.0 萬</strong>（＋329.2 萬＝2,895.2 萬）；全程碩士行政 <strong>2,663.3 萬</strong>（＋150.7 萬）；碩士 6 年轉辦事員 200 現金 <strong>2,620.5 萬</strong>（略少 42.8 萬，但退專 338.4 萬使總實質所得達 <strong>2,958.9 萬</strong>反贏 +144.9 萬）；升組員 475 達 <strong>2,895.3～3,101.1 萬</strong>（總實質所得 3,281.8～3,541.7 萬）。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-10">
+      <h2>十、成果七：完整雙層退休金試算模型（第一層＋第二層）定案規格與成果</h2>
+      <div class="callout">
+        <strong>交付檔案：</strong><code>完整雙層退休金試算模型.html</code>（獨立離線新檔）＋ <code>完整雙層退休金比較分析報告.md</code><br />
+        <strong>核心範疇：</strong>第一層（勞保老年給付 vs. 公保養老給付）＋ 第二層（勞工退休金新制 vs. 私校退撫儲金）全法規連動整合。
+      </div>
+      <div class="insight-grid">
+        <div class="insight-card">
+          <h4>1. 校內薪級表直連與雙模式</h4>
+          <ul>
+            <li>勞工端直接套用校內約聘雇薪級表（學士／碩士 × 行政／技術），同步查表計算 116 勞保（上限 45,800，精算最高 60 月平均）與 116 勞退 62 級表（上限 150,000）。</li>
+            <li>編制內對接 114 保險薪額與退撫費用表，提供辦事員頂 310／組員頂 475／專員頂 525／自選至 770 快捷。</li>
+            <li>沿用雙模式（模式一全職涯三情境＋模式二現職轉職邊際決策），模式二加設選填「既有勞退專戶餘額（附自動推估）」。</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h4>2. 第二層複利、自提與節稅</h4>
+          <ul>
+            <li>按月複利拆解「個人自出本金 vs. 雇主／學校／政府代出本金 vs. 複利收益」。</li>
+            <li>勞退報酬率預設 4.0%（1.7%～8.0%，2 年定存保底）；私校內建保守 2.0%（保底）／穩健 4.5%（預設）／積極 6.5%／自訂。</li>
+            <li>開放勞工自提 0%～6% 與私校增額提撥 0%～100% 法定自繳額度（預設 0%），估算節稅效益。</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h4>3. 公保法 80% 天花板自動檢核</h4>
+          <ul>
+            <li>預設開啟《公保法》第 17／19／48 條第 6 項三段式自動檢核（私校退撫換算月領＋公保年金 ≤ 最後本薪 × 2 × 上限比率／80%）。</li>
+            <li>超限自動調降公保年金率並顯示法規警示（並保留手動覆寫開關供對照）。</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h4>4. 三維退休現金流與驗算亮點（10/10 通過）</h4>
+          <ul>
+            <li>純學士約聘 0% 自提月領 <strong>44,477 元</strong>（專戶 333.2 萬）；開啟 <strong>6% 自提</strong>躍升至 <strong>60,558 元</strong>（專戶 666.5 萬），反超純編制辦事員 310（<strong>54,176 元</strong>，因撞第 48 條 80% 上限公保遭砍至 0.52%）。</li>
+            <li>純編制組員 475 選<strong>積極型 6.5%</strong>（專戶 1,804.2 萬）將使公保年金歸零，系統自動提示改領<strong>公保一次養老給付 188.9 萬</strong>；第 9 條增額提撥不計入上限。</li>
+            <li>模式二 40 歲已保 14 年＋既有勞退 50 萬：立刻轉淨獲益 <strong>966.8 萬</strong>，多留 1 年滿 15 年再轉躍升至 <strong>1,149.4 萬（+182.6 萬）</strong>。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-11">
+      <h2>十一、成果八：三合一統合平台（<code>私校退休與人事成本決策平台.html</code>）架構與驗收</h2>
+      <div class="callout">
+        <strong>交付檔案：</strong><code>私校退休與人事成本決策平台.html</code>（319.5 KB，零外部相依、可完全離線執行）<br />
+        <strong>原有檔案：</strong>完整保留原 3 套獨立互動 HTML 工具，供個別分享或單獨檢視使用。
+      </div>
+      <div class="insight-grid">
+        <div class="insight-card">
+          <h4>1. Enterprise App Shell 導覽架構</h4>
+          <ul>
+            <li>左側 256px 導覽軌（<code>≤960px</code> 自動收合為側邊抽屜），依視角區分「決策總覽」、「員工個人退休金（模組一、二）」與「校方雇主與實領（模組三）」。</li>
+            <li>全站採客製化 SVG 向量圖示與明確視覺階層，無多餘雜訊。</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h4>2. 決策總覽儀表板（Overview Hub）</h4>
+          <ul>
+            <li>首頁直出全專案 4 大核心指標（第 6 年轉辦事員 170 校省 1.66 萬／年、14 vs. 15 年斷崖 +182.6 萬、積極 6.5% 觸發公保歸零、附加率 20.2% vs. 8.8%）。</li>
+            <li>三模組快速入口支援一鍵深層跳轉至各指定子分頁（如「現職雙層決策」、「職員累積實領」、「第 6 年專題」、「單月 PK 器」）。</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h4>3. 零衝突隔離＋狀態保留＋雙主題同步</h4>
+          <ul>
+            <li>以 <code>iframe srcdoc</code> 延遲掛載 3 套原版引擎並於切換時保留實例，所有滑桿與試算條件切換模組完全不遺失。</li>
+            <li>內建 <code>unified-bridge-css</code> 與 <code>postMessage</code> 雙向橋接，自動收斂子頁大橫幅為清爽次級分頁列，並即時同步「<strong>商務淺色／OLED 深色</strong>」雙主題。</li>
+          </ul>
+        </div>
+        <div class="insight-card">
+          <h4>4. WCAG 2.2 AA 無障礙與自動化驗收</h4>
+          <ul>
+            <li>支援 Skip Link、高對比焦點框、<code>prefers-reduced-motion</code> 與鍵盤快捷鍵（<code>Alt+0</code>～<code>3</code> 切換視圖、<code>Alt+T</code> 切換主題、<code>Esc</code> 關閉抽屜）。</li>
+            <li>經 Node.js 自動化檢查：主殼層與 3 套內嵌模組共 7 段 <code>&lt;script&gt;</code>、<code>.hidden</code> CSS 與 <code>SET_THEME</code>／<code>SET_SUBTAB</code> 橋接<strong>全數通過</strong>。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Retirement 專案紀錄文件 &bull; 同步維護於 專案討論與執行紀錄.md 與 專案討論與執行紀錄.html
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>勞保老年給付 vs. 私校公保養老給付｜雙模式互動試算比較模型 v1.0</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --surface: #ffffff;
+      --surface-alt: #f8fafc;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --labor: #059669;
+      --labor-bg: #ecfdf5;
+      --labor-border: #a7f3d0;
+      --edu: #7c3aed;
+      --edu-bg: #f5f3ff;
+      --edu-border: #ddd6fe;
+      --switch: #0284c7;
+      --switch-bg: #f0f9ff;
+      --switch-border: #bae6fd;
+      --warn: #d97706;
+      --warn-bg: #fffbeb;
+      --warn-border: #fde68a;
+      --danger: #dc2626;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .app-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #0369a1 100%);
+      color: #fff;
+      padding: 1.5rem 1.5rem 1.25rem;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    }
+    .header-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .app-header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      letter-spacing: 0.02em;
+    }
+    .app-header p {
+      margin: 0.35rem 0 0;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+    .version-pill {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: #e0f2fe;
+      white-space: nowrap;
+    }
+    .mode-tabs {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.15rem;
+      flex-wrap: wrap;
+    }
+    .mode-tab {
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+      padding: 0.65rem 1.2rem;
+      border-radius: 10px;
+      font-size: 0.94rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      font-family: inherit;
+    }
+    .mode-tab:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .mode-tab.active {
+      background: #ffffff;
+      color: #0f172a;
+      border-color: #ffffff;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+    }
+    .mode-tab span.sub {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 400;
+      opacity: 0.82;
+      margin-top: 0.1rem;
+    }
+    .main-layout {
+      max-width: 1360px;
+      margin: 1.25rem auto 2.5rem;
+      padding: 0 1.25rem;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+    @media (max-width: 1040px) {
+      .main-layout { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.3rem;
+      box-shadow: var(--shadow);
+    }
+    .sidebar {
+      position: sticky;
+      top: 1rem;
+      max-height: calc(100vh - 2rem);
+      overflow-y: auto;
+    }
+    @media (max-width: 1040px) {
+      .sidebar { position: static; max-height: none; }
+    }
+    .panel-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      margin: 0 0 0.85rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e0f2fe;
+      color: #0369a1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .control-group {
+      margin-bottom: 0.95rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px dashed var(--border);
+    }
+    .control-group:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .group-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--muted);
+      margin-bottom: 0.55rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .field {
+      margin-bottom: 0.65rem;
+    }
+    .field:last-child { margin-bottom: 0; }
+    .field-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.86rem;
+      margin-bottom: 0.25rem;
+      gap: 0.5rem;
+    }
+    .field-val {
+      font-weight: 700;
+      color: #0369a1;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    input[type="range"] {
+      width: 100%;
+      accent-color: #0284c7;
+      cursor: pointer;
+    }
+    select, input[type="number"] {
+      width: 100%;
+      padding: 0.45rem 0.6rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      font-family: inherit;
+      background: #fff;
+      color: var(--text);
+    }
+    select:focus, input[type="number"]:focus {
+      outline: 2px solid #bae6fd;
+      border-color: #0284c7;
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    .toggle-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #0284c7;
+      cursor: pointer;
+    }
+    .preset-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.75rem;
+    }
+    .preset-btn {
+      font-size: 0.76rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: var(--surface-alt);
+      color: #334155;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .preset-btn:hover {
+      background: #e0f2fe;
+      border-color: #0284c7;
+      color: #0369a1;
+    }
+    .hint {
+      font-size: 0.77rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+      line-height: 1.4;
+    }
+    .content-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .banner-insight {
+      background: linear-gradient(90deg, #eff6ff 0%, #f0fdf4 100%);
+      border: 1px solid #bfdbfe;
+      border-left: 5px solid #0284c7;
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      font-size: 0.92rem;
+    }
+    .banner-insight strong { color: #0c4a6e; }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 780px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.15rem;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .kpi-card.labor { border-top-color: var(--labor); }
+    .kpi-card.edu { border-top-color: var(--edu); }
+    .kpi-card.switch { border-top-color: var(--switch); }
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.45rem;
+    }
+    .kpi-name {
+      font-weight: 700;
+      font-size: 0.98rem;
+    }
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.14rem 0.5rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .badge-labor { background: var(--labor-bg); color: var(--labor); border: 1px solid var(--labor-border); }
+    .badge-edu { background: var(--edu-bg); color: var(--edu); border: 1px solid var(--edu-border); }
+    .badge-switch { background: var(--switch-bg); color: var(--switch); border: 1px solid var(--switch-border); }
+    .badge-best { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+    .kpi-big {
+      font-size: 1.65rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.01em;
+      margin: 0.15rem 0;
+    }
+    .kpi-big small {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .kpi-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.65rem;
+      min-height: 2.3em;
+    }
+    .kpi-stats {
+      border-top: 1px solid var(--border);
+      padding-top: 0.6rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.45rem 0.6rem;
+      font-size: 0.8rem;
+    }
+    .stat-item span.lbl {
+      display: block;
+      color: var(--muted);
+      font-size: 0.73rem;
+    }
+    .stat-item span.val {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .chart-controls {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+    .pill-btn {
+      font-size: 0.78rem;
+      padding: 0.28rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #475569;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .pill-btn.active {
+      background: #0284c7;
+      border-color: #0284c7;
+      color: #fff;
+      font-weight: 600;
+    }
+    .chart-box {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+    }
+    .chart-box svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      user-select: none;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+    .charts-two-col {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 1.2rem;
+    }
+    @media (max-width: 920px) {
+      .charts-two-col { grid-template-columns: 1fr; }
+    }
+    .table-wrap {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.52rem 0.68rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f1f5f9;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    td.num, th.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    td.center, th.center {
+      text-align: center;
+      white-space: nowrap;
+    }
+    tr.highlight-last10 {
+      background: #f5f3ff;
+    }
+    details summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: #0369a1;
+      font-size: 0.92rem;
+      padding: 0.25rem 0;
+    }
+    .tooltip {
+      position: fixed;
+      pointer-events: none;
+      background: rgba(15, 23, 42, 0.94);
+      color: #f8fafc;
+      padding: 0.55rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+      z-index: 9999;
+      display: none;
+      max-width: 300px;
+    }
+    .footnote {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.6;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.9rem 1.15rem;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div>
+          <h1>勞保老年給付 vs. 私校編制內公保養老給付｜互動試算比較模型</h1>
+          <p>內建 116.01.01 勞保分擔表與 114.01.01 私校保險薪額表（39 級），支援《勞保條例》與《公保法》完整條文分流及現職轉職邊際決策</p>
+        </div>
+        <div class="version-pill">v1.0 第一層社會保險專版</div>
+      </div>
+      <div class="mode-tabs">
+        <button class="mode-tab active" id="tab-career" onclick="setMode('career')">
+          模式一｜全職涯三情境比較
+          <span class="sub">純勞保 vs. 純私校公保 vs. 中途轉換（含全職涯轉換年齡掃描）</span>
+        </button>
+        <button class="mode-tab" id="tab-switch" onclick="setMode('switch')">
+          模式二｜現職轉職邊際決策模擬
+          <span class="sub">已有勞保年資與級距：續留勞保 vs. 現在轉公保 vs. 最佳延後轉職點</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-layout">
+    <!-- Left Sidebar Controls -->
+    <aside class="panel sidebar">
+      <div class="panel-title">
+        <span>參數設定面板</span>
+        <button class="preset-btn" onclick="resetDefaults()">重設預設</button>
+      </div>
+
+      <!-- Quick Presets -->
+      <div class="control-group">
+        <div class="group-label">快速情境範本</div>
+        <div class="preset-bar" id="preset-career">
+          <button class="preset-btn" onclick="applyPreset('c1')">25→65歲｜35歲轉私校</button>
+          <button class="preset-btn" onclick="applyPreset('c2')">25→65歲｜40歲轉(雙15+)</button>
+          <button class="preset-btn" onclick="applyPreset('c3')">25→60歲｜提早退休對決</button>
+          <button class="preset-btn" onclick="applyPreset('c4')">40→65歲｜公保第49條併計</button>
+        </div>
+        <div class="preset-bar hidden" id="preset-switch">
+          <button class="preset-btn" onclick="applyPreset('s1')">45歲｜已保15年→65歲退</button>
+          <button class="preset-btn" onclick="applyPreset('s2')">40歲｜已保14年(門檻斷崖)</button>
+          <button class="preset-btn" onclick="applyPreset('s3')">50歲｜已保10年(第49條)</button>
+          <button class="preset-btn" onclick="applyPreset('s4')">45歲｜已保20年→60歲退</button>
+        </div>
+      </div>
+
+      <!-- Mode 1 Timeline -->
+      <div class="control-group" id="grp-career-time">
+        <div class="group-label"><span class="dot" style="background:#0284c7"></span>職涯時間軸（模式一）</div>
+        <div class="field">
+          <div class="field-row"><label for="startAge">開始工作年齡</label><span class="field-val" id="val-startAge">25 歲</span></div>
+          <input type="range" id="startAge" min="20" max="50" value="25" />
+        </div>
+        <div class="field">
+          <div class="field-row"><label for="switchAge">情境 C 轉換私校年齡</label><span class="field-val" id="val-switchAge">40 歲</span></div>
+          <input type="range" id="switchAge" min="21" max="69" value="40" />
+          <div class="hint" id="hint-careerYears"></div>
+        </div>
+        <div class="field">
+          <div class="field-row"><label for="retireAge">預計退休年齡</label><span class="field-val" id="val-retireAge">65 歲</span></div>
+          <input type="range" id="retireAge" min="55" max="70" value="65" />
+        </div>
+      </div>
+
+      <!-- Mode 2 Timeline -->
+      <div class="control-group hidden" id="grp-switch-time">
+        <div class="group-label"><span class="dot" style="background:#0284c7"></span>現職條件與退休規劃（模式二）</div>
+        <div class="field">
+          <div class="field-row"><label for="nowAge">目前年齡</label><span class="field-val" id="val-nowAge">45 歲</span></div>
+          <input type="range" id="nowAge" min="25" max="64" value="45" />
+        </div>
+        <div class="field">
+          <div class="field-row"><label for="existingLaborYears">目前已累積勞保年資</label><span class="field-val" id="val-existingLaborYears">15 年</span></div>
+          <input type="range" id="existingLaborYears" min="1" max="40" value="15" />
+        </div>
+        <div class="field">
+          <div class="field-row"><label for="retireAge2">預計退休年齡</label><span class="field-val" id="val-retireAge2">65 歲</span></div>
+          <input type="range" id="retireAge2" min="55" max="70" value="65" />
+          <div class="hint" id="hint-switchYears"></div>
+        </div>
+      </div>
+
+      <!-- Labor Insurance Bracket -->
+      <div class="control-group">
+        <div class="group-label"><span class="dot" style="background:#059669"></span>勞工保險投保級距（116.01.01 表）</div>
+        <div class="field">
+          <div class="field-row"><label for="laborBracket">選擇月投保薪資級距</label></div>
+          <select id="laborBracket"></select>
+          <div class="hint" id="hint-laborPremium"></div>
+        </div>
+      </div>
+
+      <!-- Private School Public Insurance Salary Grades -->
+      <div class="control-group">
+        <div class="group-label"><span class="dot" style="background:#7c3aed"></span>私校編制內公保薪級（114.01.01 表）</div>
+        <div class="two-col">
+          <div class="field">
+            <div class="field-row"><label for="eduStartRank">起敘薪級</label></div>
+            <select id="eduStartRank"></select>
+          </div>
+          <div class="field">
+            <div class="field-row"><label for="eduMaxRank">最高薪級（頂薪）</label></div>
+            <select id="eduMaxRank"></select>
+          </div>
+        </div>
+        <div class="hint" id="hint-eduLadder"></div>
+
+        <div class="field" id="wrap-switchStartRank" style="margin-top:0.65rem;">
+          <label class="toggle-row" style="margin-bottom:0.4rem;">
+            <input type="checkbox" id="customSwitchRank" />
+            <span>情境 C 轉任私校使用獨立起敘／最高薪級</span>
+          </label>
+          <div class="two-col hidden" id="box-switchRanks">
+            <div class="field">
+              <div class="field-row"><label for="eduSwitchStartRank">轉任起敘薪級</label></div>
+              <select id="eduSwitchStartRank"></select>
+            </div>
+            <div class="field">
+              <div class="field-row"><label for="eduSwitchMaxRank">轉任最高薪級</label></div>
+              <select id="eduSwitchMaxRank"></select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actuarial & Legal Parameters -->
+      <div class="control-group">
+        <div class="group-label"><span class="dot" style="background:#d97706"></span>法規費率、給付率與壽命設定</div>
+        <div class="field">
+          <div class="field-row"><label for="eduPremRate">公保（私校年金）費率</label><span class="field-val" id="val-eduPremRate">10.16%</span></div>
+          <input type="range" id="eduPremRate" min="7" max="18" step="0.01" value="10.16" />
+          <div class="hint">法定區間 7%～18%（個人自付 35%、學校 32.5%、政府 32.5%）</div>
+        </div>
+        <div class="field">
+          <div class="field-row"><label for="eduAnnuityRate">公保養老年金給付率</label><span class="field-val" id="val-eduAnnuityRate">1.30%</span></div>
+          <input type="range" id="eduAnnuityRate" min="0.75" max="1.30" step="0.05" value="1.30" />
+          <div class="hint">法定 0.75%～1.30%；觸發《公保法》第 49 條併計時自動鎖定 0.75%</div>
+        </div>
+        <div class="field">
+          <div class="field-row"><label for="lifeExpectancy">預期壽命（評估累積總領取）</label><span class="field-val" id="val-lifeExpectancy">85 歲</span></div>
+          <input type="range" id="lifeExpectancy" min="70" max="100" value="85" />
+        </div>
+        <div class="field">
+          <div class="field-row"><label for="earlyStrategy">未達全額起支年齡時之策略</label></div>
+          <select id="earlyStrategy">
+            <option value="defer">展期／等到全額起支年齡再領（100% 無減額）</option>
+            <option value="early">退休即提前減額請領（每年 -4%，最多提前 5 年 -20%）</option>
+          </select>
+        </div>
+        <div class="field" style="margin-top:0.55rem;">
+          <label class="toggle-row">
+            <input type="checkbox" id="isPost11207" />
+            <span>112.07.01 以後初次加保公保（年資上限 40 年／52%）</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Optional CPI Simulation -->
+      <div class="control-group">
+        <div class="group-label"><span class="dot" style="background:#dc2626"></span>進階：CPI 物價調整模擬</div>
+        <label class="toggle-row">
+          <input type="checkbox" id="cpiEnabled" />
+          <span>開啟 CPI 調整模擬（比較勞保第 65-4 條 vs. 公保第 31 條）</span>
+        </label>
+        <div id="box-cpi" class="hidden" style="margin-top:0.65rem;">
+          <div class="field">
+            <div class="field-row"><label for="cpiRate">假設年通膨率（CPI）</label><span class="field-val" id="val-cpiRate">2.0%</span></div>
+            <input type="range" id="cpiRate" min="0.5" max="4.0" step="0.1" value="2.0" />
+          </div>
+          <div class="field">
+            <div class="field-row"><label for="eduCpiRatio">公保物價反映比率（第 31 條另定）</label><span class="field-val" id="val-eduCpiRatio">50%</span></div>
+            <input type="range" id="eduCpiRatio" min="0" max="100" step="10" value="50" />
+            <div class="hint">勞保累計通膨達 5% 即全額調漲（100%）；公保由考政兩院另定比率。</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Dashboard Content -->
+    <section class="content-col">
+      <!-- Dynamic Decision Insight Banner -->
+      <div class="banner-insight" id="insight-banner"></div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid" id="kpi-grid"></div>
+
+      <!-- Chart 1: Transition / Delay Sensitivity Scan -->
+      <div class="panel">
+        <div class="chart-header">
+          <div>
+            <h2 class="panel-title" style="border:none; margin:0; padding:0;" id="scan-title">轉換年齡敏感度掃描圖</h2>
+            <div class="hint" id="scan-subtitle" style="margin:0.15rem 0 0;"></div>
+          </div>
+          <div class="chart-controls">
+            <button class="pill-btn active" id="scan-metric-net" onclick="setScanMetric('net')">淨獲益（總領取－自付）</button>
+            <button class="pill-btn" id="scan-metric-total" onclick="setScanMetric('total')">至設定壽命總領取</button>
+            <button class="pill-btn" id="scan-metric-monthly" onclick="setScanMetric('monthly')">65歲/起支月領總額</button>
+          </div>
+        </div>
+        <div class="chart-box" id="chart-scan"></div>
+        <div class="legend" id="legend-scan"></div>
+      </div>
+
+      <!-- Charts 2 & 3 -->
+      <div class="charts-two-col">
+        <div class="panel">
+          <div class="chart-header">
+            <h2 class="panel-title" style="border:none; margin:0; padding:0;">退休後逐年累積領取與回本曲線（55～95 歲）</h2>
+          </div>
+          <div class="chart-box" id="chart-cum"></div>
+          <div class="legend" id="legend-cum"></div>
+        </div>
+        <div class="panel">
+          <div class="chart-header">
+            <h2 class="panel-title" style="border:none; margin:0; padding:0;" id="prem-title">生涯三方保費負擔結構</h2>
+          </div>
+          <div class="chart-box" id="chart-prem"></div>
+          <div class="legend">
+            <span class="legend-item"><span class="legend-swatch" style="background:#0f172a"></span>個人自付</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:#38bdf8"></span>雇主／私校補助</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:#a78bfa"></span>政府補助</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Comparison & Statutory Audit Table -->
+      <div class="panel">
+        <div class="panel-title">
+          <span id="table-title">法規檢核、給付明細與一次給付對照表</span>
+        </div>
+        <div class="table-wrap" id="detail-table-wrap"></div>
+      </div>
+
+      <!-- Collapsible Private School Annual Salary Ladder -->
+      <div class="panel">
+        <details id="ladder-details">
+          <summary id="ladder-summary">展開檢視：私校公保逐年晉級軌跡、前 10 年平均保俸與年度保費明細</summary>
+          <div class="hint" style="margin:0.4rem 0 0.75rem;">淺紫色底色列代表計入「退保前 10 年平均保險薪額」（《公保法》第 12 條）之年份區間。</div>
+          <div class="table-wrap" id="ladder-table-wrap"></div>
+        </details>
+      </div>
+
+      <!-- Legal Disclaimer & Assumptions -->
+      <div class="footnote">
+        <strong>法源依據與模型說明：</strong>
+        1. 勞工保險依《勞工保險條例》（115.01.21 修正）及 116.01.01 適用之普通事故（12%）＋就業保險（1%）合計分擔金額表（勞工 20%、投保單位 70%、中央政府 10%）；不含職業災害保險費（全由單位負擔）。
+        2. 公教人員保險依《公教人員保險法》（113.01.03 修正）及 114.01.01 實施之私立學校教職員保險薪額標準表（90～770 薪額共 39 級）；私校分擔比例為個人 35%、學校 32.5%、政府 32.5%。
+        3. 先後不同時期分別參加勞保滿 15 年與私校公保滿 15 年者，依《勞保條例》第 58 條與《公保法》第 16、48 條可分別請領雙年金（但不可同一期間重複加保，第 6 條）。兩邊各未滿 15 年而合計達 15 年者，於年滿 65 歲時依《公保法》第 49 條併計勞保年資成就公保養老年金（按 0.75% 計給，並另依《勞保條例》第 76 條領取勞保老年一次金）。
+        4. 本版專注於「第一層社會保險（勞保 vs. 公保）」比較，暫不納入第二層勞工退休金新制與私校退撫儲金；若欲檢核《公保法》第 17／48 條 80% 總月退上限，須待第二階段併入私校退撫後一併連動計算。
+      </div>
+    </section>
+  </main>
+
+  <div class="tooltip" id="tooltip"></div>
+
+  <script>
+    // =========================================================================
+    // 1. OFFICIAL TABLES VERIFIED FROM PROJECT PDFs
+    // =========================================================================
+    const LABOR_116 = [
+      { grade: "第1級", salary: 30900, emp: 804, unit: 2812 },
+      { grade: "第2級", salary: 31800, emp: 827, unit: 2894 },
+      { grade: "第3級", salary: 33300, emp: 866, unit: 3030 },
+      { grade: "第4級", salary: 34800, emp: 905, unit: 3167 },
+      { grade: "第5級", salary: 36300, emp: 944, unit: 3303 },
+      { grade: "第6級", salary: 38200, emp: 993, unit: 3476 },
+      { grade: "第7級", salary: 40100, emp: 1042, unit: 3649 },
+      { grade: "第8級", salary: 42000, emp: 1092, unit: 3822 },
+      { grade: "第9級", salary: 43900, emp: 1142, unit: 3995 },
+      { grade: "第10級", salary: 45800, emp: 1191, unit: 4168 }
+    ];
+
+    const EDU_114 = [
+      { rank: "三六級", points: 90, salary: 17390 },
+      { rank: "三五級", points: 100, salary: 18160 },
+      { rank: "三四級", points: 110, salary: 18920 },
+      { rank: "三三級", points: 120, salary: 19690 },
+      { rank: "三二級", points: 130, salary: 20460 },
+      { rank: "三一級", points: 140, salary: 21220 },
+      { rank: "三十級", points: 150, salary: 21990 },
+      { rank: "二九級", points: 160, salary: 22750 },
+      { rank: "二八級", points: 170, salary: 23520 },
+      { rank: "二七級", points: 180, salary: 24290 },
+      { rank: "二六級", points: 190, salary: 25050 },
+      { rank: "二五級", points: 200, salary: 25820 },
+      { rank: "二四級", points: 210, salary: 26580 },
+      { rank: "二三級", points: 220, salary: 27350 },
+      { rank: "二二級", points: 230, salary: 28120 },
+      { rank: "二一級", points: 245, salary: 29270 },
+      { rank: "二十級", points: 260, salary: 30410 },
+      { rank: "十九級", points: 275, salary: 31560 },
+      { rank: "十八級", points: 290, salary: 32710 },
+      { rank: "十七級", points: 310, salary: 33860 },
+      { rank: "十六級", points: 330, salary: 35010 },
+      { rank: "十五級", points: 350, salary: 36160 },
+      { rank: "十四級", points: 370, salary: 37310 },
+      { rank: "十三級", points: 390, salary: 38460 },
+      { rank: "十二級", points: 410, salary: 39610 },
+      { rank: "十一級", points: 430, salary: 40760 },
+      { rank: "十級", points: 450, salary: 41900 },
+      { rank: "九級", points: 475, salary: 44970 },
+      { rank: "八級", points: 500, salary: 46500 },
+      { rank: "七級", points: 525, salary: 48030 },
+      { rank: "六級", points: 550, salary: 49560 },
+      { rank: "五級", points: 575, salary: 51100 },
+      { rank: "四級", points: 600, salary: 52630 },
+      { rank: "三級", points: 625, salary: 54160 },
+      { rank: "二級", points: 650, salary: 55690 },
+      { rank: "一級", points: 680, salary: 57220 },
+      { rank: "年功三", points: 710, salary: 59520 },
+      { rank: "年功二", points: 740, salary: 60290 },
+      { rank: "年功一", points: 770, salary: 63570 }
+    ];
+
+    // =========================================================================
+    // 2. CORE STATUTORY CALCULATION ENGINE (Pure Functions for Verification)
+    // =========================================================================
+    function simulateEduCareer(startIdx, maxIdx, years, eduPremRatePct) {
+      if (years <= 0) {
+        return {
+          years: 0, avgSalary: 0, finalSalary: 0, finalRank: "-",
+          yearsToCap: 0, empPrem: 0, schoolPrem: 0, govPrem: 0, schedule: []
+        };
+      }
+      const effMax = Math.max(startIdx, maxIdx);
+      const rate = eduPremRatePct / 100;
+      const schedule = [];
+      let empPrem = 0, schoolPrem = 0, govPrem = 0;
+
+      for (let y = 1; y <= years; y++) {
+        const idx = Math.min(startIdx + (y - 1), effMax);
+        const row = EDU_114[idx];
+        const mEmp = Math.round(row.salary * rate * 0.35);
+        const mSchool = Math.round(row.salary * rate * 0.325);
+        const mGov = Math.round(row.salary * rate * 0.325);
+        empPrem += mEmp * 12;
+        schoolPrem += mSchool * 12;
+        govPrem += mGov * 12;
+        schedule.push({
+          year: y,
+          rank: row.rank,
+          points: row.points,
+          salary: row.salary,
+          monthlyEmp: mEmp,
+          annualEmp: mEmp * 12,
+          inLast10: false
+        });
+      }
+      const win = Math.min(years, 10);
+      let sumLast10 = 0;
+      for (let i = years - win; i < years; i++) {
+        schedule[i].inLast10 = true;
+        sumLast10 += schedule[i].salary;
+      }
+      const avgSalary = Math.round(sumLast10 / win);
+      const last = schedule[years - 1];
+      return {
+        years,
+        avgSalary,
+        finalSalary: last.salary,
+        finalRank: `${last.rank} (${last.points})`,
+        yearsToCap: effMax - startIdx + 1,
+        empPrem,
+        schoolPrem,
+        govPrem,
+        schedule
+      };
+    }
+
+    function calcLaborBenefit(years, bracket, retireAge, earlyStrategy, isTransferredOut) {
+      if (years <= 0) {
+        return {
+          years: 0, avgSalary: bracket.salary, type: "none",
+          monthly: 0, lumpSum: 0, lumpSumRef: 0, claimAge: retireAge,
+          formula: "-", adjustText: "-",
+          empPrem: 0, unitPrem: 0, govPrem: 0
+        };
+      }
+      const avgSalary = bracket.salary;
+      const mGov = Math.round(bracket.salary * 0.13 * 0.10);
+      const empPrem = bracket.emp * 12 * years;
+      const unitPrem = bracket.unit * 12 * years;
+      const govPrem = mGov * 12 * years;
+
+      // Statutory old-age lump sum formula (Art. 59: <=15y -> 1 mo/yr; >15y -> 2 mo/yr, cap 45)
+      const lumpMonths = years <= 15 ? years : Math.min(45, 15 + (years - 15) * 2);
+      const lumpSumRef = Math.round(avgSalary * lumpMonths);
+
+      if (years < 15) {
+        // Art. 58(1)(2) / Art. 76 retention -> old-age lump sum (1 mo per year)
+        const claimAge = isTransferredOut ? retireAge : Math.max(65, retireAge);
+        return {
+          years,
+          avgSalary,
+          type: "lump_sum",
+          monthly: 0,
+          lumpSum: Math.round(avgSalary * years),
+          lumpSumRef: Math.round(avgSalary * years),
+          claimAge,
+          formula: "老年一次金 (每年1個月)",
+          adjustText: isTransferredOut ? "依勞保第76條保留退職領取" : "年資未滿15年領一次金",
+          empPrem, unitPrem, govPrem
+        };
+      }
+
+      // Art. 58-1: A vs B formula, NO year cap
+      const baseA = avgSalary * years * 0.00775 + 3000;
+      const baseB = avgSalary * years * 0.0155;
+      const useB = baseB >= baseA;
+      const baseMonthly = useB ? baseB : baseA;
+      const formula = useB ? "B式 (1.55%×年資)" : "A式 (0.775%×年資+3,000)";
+
+      let claimAge = retireAge;
+      let factor = 1;
+      let adjustText = "65歲全額 (100%)";
+
+      if (retireAge >= 65) {
+        const delayYears = Math.min(5, retireAge - 65);
+        factor = 1 + delayYears * 0.04;
+        claimAge = retireAge;
+        adjustText = delayYears > 0 ? `展延 +${delayYears * 4}% (${claimAge}歲起領)` : "65歲全額 (100%)";
+      } else {
+        if (earlyStrategy === "early") {
+          claimAge = Math.max(60, retireAge);
+          const earlyYears = 65 - claimAge;
+          factor = 1 - earlyYears * 0.04;
+          adjustText = `提前減額 -${earlyYears * 4}% (${claimAge}歲起領)`;
+        } else {
+          claimAge = 65;
+          factor = 1;
+          adjustText = "等到 65 歲全額領 (100%)";
+        }
+      }
+
+      return {
+        years,
+        avgSalary,
+        type: "annuity",
+        monthly: Math.round(baseMonthly * factor),
+        lumpSum: 0,
+        lumpSumRef,
+        claimAge,
+        formula,
+        adjustText,
+        empPrem, unitPrem, govPrem
+      };
+    }
+
+    function calcEduBenefit(years, startIdx, maxIdx, retireAge, eduPremRatePct, eduAnnuityRatePct, isPost11207, earlyStrategy, forceClause49) {
+      const career = simulateEduCareer(startIdx, maxIdx, years, eduPremRatePct);
+      if (years <= 0) {
+        return {
+          years: 0, countedYears: 0, avgSalary: 0, type: "none",
+          monthly: 0, lumpSum: 0, lumpSumRef: 0, claimAge: retireAge,
+          formula: "-", adjustText: "-",
+          empPrem: 0, schoolPrem: 0, govPrem: 0, career
+        };
+      }
+
+      const maxYearsCap = isPost11207 ? 40 : 35;
+      const countedYears = Math.min(years, maxYearsCap);
+      const lumpMonths = Math.min(42, years * 1.2);
+      const lumpSumRef = Math.round(career.avgSalary * lumpMonths);
+
+      // Special Clause 49: both labor & edu < 15, sum >= 15 -> 0.75% annuity at age 65
+      if (forceClause49) {
+        const claimAge = Math.max(65, retireAge);
+        const monthly = Math.round(career.avgSalary * countedYears * 0.0075);
+        return {
+          years,
+          countedYears,
+          avgSalary: career.avgSalary,
+          type: "annuity_49",
+          monthly,
+          lumpSum: 0,
+          lumpSumRef,
+          claimAge,
+          formula: "公保第49條併計 (鎖定 0.75%)",
+          adjustText: `65歲起支 (基本年金率0.75%)`,
+          empPrem: career.empPrem,
+          schoolPrem: career.schoolPrem,
+          govPrem: career.govPrem,
+          career
+        };
+      }
+
+      if (years < 15) {
+        return {
+          years,
+          countedYears: years,
+          avgSalary: career.avgSalary,
+          type: "lump_sum",
+          monthly: 0,
+          lumpSum: lumpSumRef,
+          lumpSumRef,
+          claimAge: retireAge,
+          formula: `一次養老給付 (${lumpMonths.toFixed(1)}個月)`,
+          adjustText: "公保年資未滿15年領一次給付",
+          empPrem: career.empPrem,
+          schoolPrem: career.schoolPrem,
+          govPrem: career.govPrem,
+          career
+        };
+      }
+
+      // Art. 16(3): 30y->55, 20y->60, 15y->65
+      let fullAge = 65;
+      if (years >= 30) fullAge = 55;
+      else if (years >= 20) fullAge = 60;
+
+      let claimAge = retireAge;
+      let factor = 1;
+      let adjustText = `${fullAge}歲門檻全額 (100%)`;
+
+      if (retireAge >= fullAge) {
+        claimAge = retireAge;
+        factor = 1;
+        adjustText = retireAge > fullAge
+          ? `全額 (${claimAge}歲起領，公保無展延加給)`
+          : `${claimAge}歲起支全額 (100%)`;
+      } else {
+        if (earlyStrategy === "early") {
+          const earliestAge = fullAge - 5;
+          claimAge = Math.max(earliestAge, retireAge);
+          const earlyYears = fullAge - claimAge;
+          factor = 1 - earlyYears * 0.04;
+          adjustText = `提前減額 -${earlyYears * 4}% (${claimAge}歲起領)`;
+        } else {
+          claimAge = fullAge;
+          factor = 1;
+          adjustText = `展期至 ${fullAge} 歲全額領 (100%)`;
+        }
+      }
+
+      const rate = eduAnnuityRatePct / 100;
+      const monthly = Math.round(career.avgSalary * countedYears * rate * factor);
+      const capNote = years > maxYearsCap ? `，上限${maxYearsCap}年` : "";
+
+      return {
+        years,
+        countedYears,
+        avgSalary: career.avgSalary,
+        type: "annuity",
+        monthly,
+        lumpSum: 0,
+        lumpSumRef,
+        claimAge,
+        formula: `公保年金 (${eduAnnuityRatePct.toFixed(2)}%×${countedYears}年${capNote})`,
+        adjustText,
+        empPrem: career.empPrem,
+        schoolPrem: career.schoolPrem,
+        govPrem: career.govPrem,
+        career
+      };
+    }
+
+    // Cumulative payout series from age 55 to 100 (supports optional 5% step CPI)
+    function buildPayoutTimeline(laborRes, eduRes, maxAge, cpiCfg) {
+      const timeline = {};
+      let cumTotal = 0;
+      let laborCur = laborRes.monthly;
+      let eduCur = eduRes.monthly;
+      let laborCumCpi = 1;
+      let eduCumCpi = 1;
+      const r = cpiCfg.enabled ? cpiCfg.rate / 100 : 0;
+      const eduRatio = cpiCfg.enabled ? cpiCfg.eduRatio / 100 : 0;
+
+      for (let age = 55; age <= Math.max(95, maxAge); age++) {
+        let annual = 0;
+        // Labor lump sum paid once at claimAge
+        if (laborRes.lumpSum > 0 && age === laborRes.claimAge) {
+          annual += laborRes.lumpSum;
+        }
+        // Edu lump sum paid once at claimAge
+        if (eduRes.lumpSum > 0 && age === eduRes.claimAge) {
+          annual += eduRes.lumpSum;
+        }
+        // Labor annuity
+        if (laborRes.monthly > 0 && age >= laborRes.claimAge) {
+          if (age > laborRes.claimAge && cpiCfg.enabled) {
+            laborCumCpi *= (1 + r);
+            if (laborCumCpi - 1 >= 0.05) {
+              laborCur = Math.round(laborCur * laborCumCpi);
+              laborCumCpi = 1;
+            }
+          }
+          annual += laborCur * 12;
+        }
+        // Edu annuity
+        if (eduRes.monthly > 0 && age >= eduRes.claimAge) {
+          if (age > eduRes.claimAge && cpiCfg.enabled) {
+            eduCumCpi *= (1 + r);
+            if (eduCumCpi - 1 >= 0.05) {
+              const adj = 1 + (eduCumCpi - 1) * eduRatio;
+              eduCur = Math.round(eduCur * adj);
+              eduCumCpi = 1;
+            }
+          }
+          annual += eduCur * 12;
+        }
+        cumTotal += annual;
+        timeline[age] = { annual, cumTotal };
+      }
+      return timeline;
+    }
+
+    function evaluateScenario(name, tag, colorClass, laborYears, eduYears, cfg) {
+      const isCombined = laborYears > 0 && eduYears > 0;
+      const trigger49 = isCombined && laborYears < 15 && eduYears < 15 && (laborYears + eduYears) >= 15;
+
+      const laborRes = calcLaborBenefit(
+        laborYears, cfg.laborBracket, cfg.retireAge, cfg.earlyStrategy, isCombined
+      );
+      const eduRes = calcEduBenefit(
+        eduYears, cfg.eduStartIdx, cfg.eduMaxIdx, cfg.retireAge,
+        cfg.eduPremRate, cfg.eduAnnuityRate, cfg.isPost11207, cfg.earlyStrategy, trigger49
+      );
+
+      let pathLabel = "";
+      if (laborYears > 0 && eduYears === 0) {
+        pathLabel = laborYears >= 15 ? "純勞保｜老年年金（第58-1條）" : "純勞保｜老年一次金（第58、59條）";
+      } else if (laborYears === 0 && eduYears > 0) {
+        pathLabel = eduYears >= 15 ? "純私校公保｜養老年金（第16、48條）" : "純私校公保｜一次養老給付（第16條）";
+      } else {
+        if (laborYears >= 15 && eduYears >= 15) pathLabel = "路徑1：雙年金分別請領（勞保第58條＋公保第16條）";
+        else if (laborYears < 15 && eduYears >= 15) pathLabel = "路徑2：勞保一次金（第76條保留）＋公保養老年金";
+        else if (laborYears >= 15 && eduYears < 15) pathLabel = "路徑3：勞保老年年金＋公保一次養老給付";
+        else if (trigger49) pathLabel = "路徑4：公保第49條併計年金（0.75%）＋勞保一次金";
+        else pathLabel = "雙未滿15年且合計未滿15年：雙一次給付";
+      }
+
+      const timeline = buildPayoutTimeline(laborRes, eduRes, cfg.lifeExpectancy, cfg.cpiCfg);
+      const totalAtLife = timeline[cfg.lifeExpectancy]?.cumTotal || 0;
+
+      // Total premiums (or marginal premiums if cfg.marginalMode)
+      const marginalLaborYears = cfg.marginalMode ? Math.max(0, laborYears - cfg.sunkLaborYears) : laborYears;
+      const mGovLabor = Math.round(cfg.laborBracket.salary * 0.13 * 0.10);
+      const empPrem = (cfg.marginalMode ? cfg.laborBracket.emp * 12 * marginalLaborYears : laborRes.empPrem) + eduRes.empPrem;
+      const unitPrem = (cfg.marginalMode ? cfg.laborBracket.unit * 12 * marginalLaborYears : laborRes.unitPrem) + eduRes.schoolPrem;
+      const govPrem = (cfg.marginalMode ? mGovLabor * 12 * marginalLaborYears : laborRes.govPrem) + eduRes.govPrem;
+
+      const totalMonthly = laborRes.monthly + eduRes.monthly;
+      const totalLumpSum = laborRes.lumpSum + eduRes.lumpSum;
+      const totalLumpSumRef = laborRes.lumpSumRef + eduRes.lumpSumRef;
+      const netGain = totalAtLife - empPrem;
+
+      // Find break-even age where cumulative payout >= personal paid premiums
+      let breakEvenAge = null;
+      for (let age = 55; age <= 100; age++) {
+        if (timeline[age] && timeline[age].cumTotal >= empPrem && timeline[age].cumTotal > 0) {
+          breakEvenAge = age;
+          break;
+        }
+      }
+
+      // Years of annuity needed to beat lump-sum reference (for annuity scenarios)
+      let annuityVsLumpYears = null;
+      if (totalMonthly > 0) {
+        const refDiff = Math.max(0, totalLumpSumRef - totalLumpSum);
+        if (refDiff > 0) annuityVsLumpYears = refDiff / (totalMonthly * 12);
+      }
+
+      return {
+        name, tag, colorClass, pathLabel, trigger49,
+        laborYears, eduYears, laborRes, eduRes,
+        totalMonthly, totalLumpSum, totalLumpSumRef,
+        empPrem, unitPrem, govPrem,
+        totalAtLife, netGain, breakEvenAge, annuityVsLumpYears,
+        timeline
+      };
+    }
+
+    // =========================================================================
+    // 3. UI STATE & INITIALIZATION
+    // =========================================================================
+    const state = {
+      mode: "career", // 'career' | 'switch'
+      scanMetric: "net" // 'net' | 'total' | 'monthly'
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const fmt = (n) => Math.round(n).toLocaleString("zh-TW");
+    const fmtWan = (n) => (n / 10000).toFixed(1) + " 萬";
+
+    function populateSelects() {
+      const lbSel = $("laborBracket");
+      LABOR_116.forEach((b, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = `${b.grade}｜${fmt(b.salary)} 元（勞工月付 ${fmt(b.emp)} 元）`;
+        lbSel.appendChild(opt);
+      });
+      lbSel.value = 9; // default 第10級 45,800
+
+      ["eduStartRank", "eduMaxRank", "eduSwitchStartRank", "eduSwitchMaxRank"].forEach((id) => {
+        const sel = $(id);
+        EDU_114.forEach((r, idx) => {
+          const opt = document.createElement("option");
+          opt.value = idx;
+          opt.textContent = `${r.points} 薪額（${r.rank}）｜${fmt(r.salary)} 元`;
+          sel.appendChild(opt);
+        });
+      });
+      // Default: 起敘 170 (index 8), 最高 525 (index 29)
+      $("eduStartRank").value = 8;
+      $("eduMaxRank").value = 29;
+      $("eduSwitchStartRank").value = 8;
+      $("eduSwitchMaxRank").value = 29;
+    }
+
+    function setMode(m) {
+      state.mode = m;
+      $("tab-career").classList.toggle("active", m === "career");
+      $("tab-switch").classList.toggle("active", m === "switch");
+      $("grp-career-time").classList.toggle("hidden", m !== "career");
+      $("grp-switch-time").classList.toggle("hidden", m !== "switch");
+      $("preset-career").classList.toggle("hidden", m !== "career");
+      $("preset-switch").classList.toggle("hidden", m !== "switch");
+      $("wrap-switchStartRank").classList.toggle("hidden", m !== "career");
+      render();
+    }
+
+    function setScanMetric(metric) {
+      state.scanMetric = metric;
+      ["net", "total", "monthly"].forEach((k) => {
+        $("scan-metric-" + k).classList.toggle("active", k === metric);
+      });
+      render();
+    }
+
+    function resetDefaults() {
+      $("startAge").value = 25;
+      $("switchAge").value = 40;
+      $("retireAge").value = 65;
+      $("nowAge").value = 45;
+      $("existingLaborYears").value = 15;
+      $("retireAge2").value = 65;
+      $("laborBracket").value = 9;
+      $("eduStartRank").value = 8;
+      $("eduMaxRank").value = 29;
+      $("eduSwitchStartRank").value = 8;
+      $("eduSwitchMaxRank").value = 29;
+      $("customSwitchRank").checked = false;
+      $("box-switchRanks").classList.add("hidden");
+      $("eduPremRate").value = 10.16;
+      $("eduAnnuityRate").value = 1.30;
+      $("lifeExpectancy").value = 85;
+      $("earlyStrategy").value = "defer";
+      $("isPost11207").checked = false;
+      $("cpiEnabled").checked = false;
+      $("box-cpi").classList.add("hidden");
+      $("cpiRate").value = 2.0;
+      $("eduCpiRatio").value = 50;
+      render();
+    }
+
+    function applyPreset(key) {
+      if (key === "c1") {
+        $("startAge").value = 25; $("switchAge").value = 35; $("retireAge").value = 65;
+        $("eduStartRank").value = 8; $("eduMaxRank").value = 29; $("earlyStrategy").value = "defer";
+      } else if (key === "c2") {
+        $("startAge").value = 25; $("switchAge").value = 40; $("retireAge").value = 65;
+        $("eduStartRank").value = 8; $("eduMaxRank").value = 29; $("earlyStrategy").value = "defer";
+      } else if (key === "c3") {
+        $("startAge").value = 25; $("switchAge").value = 40; $("retireAge").value = 60;
+        $("eduStartRank").value = 8; $("eduMaxRank").value = 29; $("earlyStrategy").value = "early";
+      } else if (key === "c4") {
+        $("startAge").value = 40; $("switchAge").value = 52; $("retireAge").value = 65;
+        $("eduStartRank").value = 10; $("eduMaxRank").value = 29; $("earlyStrategy").value = "defer";
+      } else if (key === "s1") {
+        $("nowAge").value = 45; $("existingLaborYears").value = 15; $("retireAge2").value = 65;
+        $("eduStartRank").value = 8; $("eduMaxRank").value = 29; $("earlyStrategy").value = "defer";
+      } else if (key === "s2") {
+        $("nowAge").value = 40; $("existingLaborYears").value = 14; $("retireAge2").value = 65;
+        $("eduStartRank").value = 8; $("eduMaxRank").value = 29; $("earlyStrategy").value = "defer";
+      } else if (key === "s3") {
+        $("nowAge").value = 50; $("existingLaborYears").value = 10; $("retireAge2").value = 65;
+        $("eduStartRank").value = 10; $("eduMaxRank").value = 29; $("earlyStrategy").value = "defer";
+      } else if (key === "s4") {
+        $("nowAge").value = 45; $("existingLaborYears").value = 20; $("retireAge2").value = 60;
+        $("eduStartRank").value = 8; $("eduMaxRank").value = 29; $("earlyStrategy").value = "early";
+      }
+      render();
+    }
+
+    // =========================================================================
+    // 4. INTERACTIVE SVG CHART RENDERERS (Zero External Dependency)
+    // =========================================================================
+    const tooltipEl = $("tooltip");
+    function showTip(evt, html) {
+      tooltipEl.innerHTML = html;
+      tooltipEl.style.display = "block";
+      const pad = 14;
+      let left = evt.clientX + pad;
+      let top = evt.clientY + pad;
+      if (left + 290 > window.innerWidth) left = evt.clientX - 290;
+      if (top + 160 > window.innerHeight) top = evt.clientY - 140;
+      tooltipEl.style.left = left + "px";
+      tooltipEl.style.top = top + "px";
+    }
+    function hideTip() { tooltipEl.style.display = "none"; }
+
+    function renderScanChart(points, refs, currentX, xLabel, isDelayMode) {
+      const W = 760, H = 290;
+      const m = { t: 26, r: 26, b: 42, l: 72 };
+      const cw = W - m.l - m.r, ch = H - m.t - m.b;
+
+      const metricKey = state.scanMetric;
+      const getY = (p) => metricKey === "net" ? p.netGain : (metricKey === "total" ? p.totalAtLife : p.totalMonthly);
+      const refA = getY(refs.stayLabor);
+      const refB = refs.pureEdu ? getY(refs.pureEdu) : null;
+
+      let allY = points.map(getY).concat([refA]);
+      if (refB !== null) allY.push(refB);
+      let minY = Math.min(0, ...allY);
+      let maxY = Math.max(1000, ...allY) * 1.1;
+
+      const minX = points[0].x;
+      const maxX = points[points.length - 1].x;
+      const sx = (x) => maxX === minX ? m.l + cw / 2 : m.l + ((x - minX) / (maxX - minX)) * cw;
+      const sy = (y) => m.t + ch - ((y - minY) / (maxY - minY)) * ch;
+
+      let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+
+      // Gridlines
+      for (let i = 0; i <= 4; i++) {
+        const yv = minY + ((maxY - minY) * i) / 4;
+        const yy = sy(yv);
+        svg += `<line x1="${m.l}" y1="${yy}" x2="${W - m.r}" y2="${yy}" stroke="#e2e8f0" stroke-width="1" />`;
+        const lbl = metricKey === "monthly" ? fmt(yv) : fmtWan(yv);
+        svg += `<text x="${m.l - 8}" y="${yy + 4}" text-anchor="end" font-size="11" fill="#64748b">${lbl}</text>`;
+      }
+
+      // Reference line A (Stay Labor / Pure Labor)
+      const yA = sy(refA);
+      svg += `<line x1="${m.l}" y1="${yA}" x2="${W - m.r}" y2="${yA}" stroke="#059669" stroke-width="1.8" stroke-dasharray="6 4" />`;
+      svg += `<text x="${W - m.r - 4}" y="${yA - 6}" text-anchor="end" font-size="11" font-weight="700" fill="#059669">${isDelayMode ? "基準：續留勞保" : "基準：純勞保"} (${metricKey === "monthly" ? fmt(refA) + "元" : fmtWan(refA)})</text>`;
+
+      // Reference line B (Pure Edu in Mode 1)
+      if (refB !== null) {
+        const yB = sy(refB);
+        svg += `<line x1="${m.l}" y1="${yB}" x2="${W - m.r}" y2="${yB}" stroke="#7c3aed" stroke-width="1.8" stroke-dasharray="4 4" />`;
+        const dyB = Math.abs(yB - yA) < 16 ? 14 : -6;
+        svg += `<text x="${m.l + 6}" y="${yB + dyB}" text-anchor="start" font-size="11" font-weight="700" fill="#7c3aed">基準：純私校公保 (${metricKey === "monthly" ? fmt(refB) + "元" : fmtWan(refB)})</text>`;
+      }
+
+      // Main line path
+      const pathD = points.map((p, i) => `${i === 0 ? "M" : "L"}${sx(p.x).toFixed(1)},${sy(getY(p)).toFixed(1)}`).join(" ");
+      svg += `<path d="${pathD}" fill="none" stroke="#0284c7" stroke-width="2.6" />`;
+
+      // Highlight best point
+      let bestPt = points[0];
+      points.forEach((p) => { if (getY(p) > getY(bestPt)) bestPt = p; });
+
+      // Interactive data points
+      points.forEach((p) => {
+        const cx = sx(p.x);
+        const cy = sy(getY(p));
+        const isCur = p.x === currentX;
+        const isBest = p.x === bestPt.x;
+        const fill = isBest ? "#f59e0b" : (isCur ? "#0284c7" : "#ffffff");
+        const stroke = isBest ? "#b45309" : "#0284c7";
+        const r = isBest || isCur ? 5.5 : 3.5;
+
+        const tip = `<strong>${isDelayMode ? (p.x === 0 ? "現在立刻轉公保" : `延後 ${p.x} 年（${p.switchAge}歲）轉公保`) : `${p.x} 歲轉進私校公保`}</strong><br>` +
+          `勞保 ${p.laborYears} 年 ＋ 公保 ${p.eduYears} 年<br>` +
+          `<span style="color:#7dd3fc">${p.pathLabel}</span><br>` +
+          `月領合計：<strong>${fmt(p.totalMonthly)} 元</strong>${p.totalLumpSum > 0 ? ` ＋ 一次金 ${fmtWan(p.totalLumpSum)}` : ""}<br>` +
+          `${refs.lifeExpectancy} 歲總領取：<strong>${fmtWan(p.totalAtLife)}</strong><br>` +
+          `${isDelayMode ? "未來邊際自付" : "個人實繳"}：${fmtWan(p.empPrem)}<br>` +
+          `淨獲益：<strong>${fmtWan(p.netGain)}</strong>`;
+
+        svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="2" style="cursor:pointer" data-tip="${tip.replace(/"/g, "&quot;")}" />`;
+      });
+
+      // X axis ticks
+      const step = Math.max(1, Math.ceil(points.length / 10));
+      points.forEach((p, idx) => {
+        if (idx % step === 0 || idx === points.length - 1) {
+          svg += `<text x="${sx(p.x)}" y="${H - 18}" text-anchor="middle" font-size="11" fill="#64748b">${isDelayMode ? (p.x + "年後") : (p.x + "歲")}</text>`;
+        }
+      });
+      svg += `<text x="${m.l + cw / 2}" y="${H - 3}" text-anchor="middle" font-size="11" fill="#475569">${xLabel}</text>`;
+      svg += `</svg>`;
+
+      const container = $("chart-scan");
+      container.innerHTML = svg;
+      container.querySelectorAll("circle[data-tip]").forEach((el) => {
+        el.addEventListener("mousemove", (e) => showTip(e, el.getAttribute("data-tip")));
+        el.addEventListener("mouseleave", hideTip);
+      });
+
+      $("legend-scan").innerHTML = `
+        <span class="legend-item"><span class="legend-swatch" style="background:#0284c7"></span>轉換路徑曲線</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:#f59e0b"></span>最佳轉換點（${isDelayMode ? (bestPt.x === 0 ? "現在立刻轉" : "延後 " + bestPt.x + " 年轉") : (bestPt.x + " 歲轉")}）</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:#059669"></span>${isDelayMode ? "續留勞保基準線" : "純勞保基準線"}</span>
+        ${refB !== null ? `<span class="legend-item"><span class="legend-swatch" style="background:#7c3aed"></span>純私校公保基準線</span>` : ""}
+      `;
+    }
+
+    function renderCumChart(scenarios, lifeExpectancy) {
+      const W = 560, H = 280;
+      const m = { t: 20, r: 24, b: 38, l: 64 };
+      const cw = W - m.l - m.r, ch = H - m.t - m.b;
+      const ages = [];
+      for (let a = 55; a <= 95; a++) ages.push(a);
+
+      let maxY = 100000;
+      scenarios.forEach((s) => {
+        ages.forEach((a) => { if (s.timeline[a].cumTotal > maxY) maxY = s.timeline[a].cumTotal; });
+      });
+      maxY *= 1.08;
+
+      const sx = (a) => m.l + ((a - 55) / (95 - 55)) * cw;
+      const sy = (y) => m.t + ch - (y / maxY) * ch;
+      const colors = { labor: "#059669", edu: "#7c3aed", switch: "#0284c7" };
+
+      let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+      for (let i = 0; i <= 4; i++) {
+        const yv = (maxY * i) / 4;
+        const yy = sy(yv);
+        svg += `<line x1="${m.l}" y1="${yy}" x2="${W - m.r}" y2="${yy}" stroke="#e2e8f0" stroke-width="1" />`;
+        svg += `<text x="${m.l - 6}" y="${yy + 4}" text-anchor="end" font-size="11" fill="#64748b">${fmtWan(yv)}</text>`;
+      }
+
+      // Vertical marker at lifeExpectancy
+      const lx = sx(Math.min(95, lifeExpectancy));
+      svg += `<line x1="${lx}" y1="${m.t}" x2="${lx}" y2="${m.t + ch}" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 3" />`;
+      svg += `<text x="${lx}" y="${m.t - 5}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#b45309">設定壽命 ${lifeExpectancy}歲</text>`;
+
+      scenarios.forEach((s) => {
+        const col = colors[s.colorClass];
+        const d = ages.map((a, i) => `${i === 0 ? "M" : "L"}${sx(a).toFixed(1)},${sy(s.timeline[a].cumTotal).toFixed(1)}`).join(" ");
+        svg += `<path d="${d}" fill="none" stroke="${col}" stroke-width="2.4" />`;
+        // Marker at break-even age
+        if (s.breakEvenAge && s.breakEvenAge <= 95) {
+          svg += `<circle cx="${sx(s.breakEvenAge)}" cy="${sy(s.timeline[s.breakEvenAge].cumTotal)}" r="4.2" fill="#fff" stroke="${col}" stroke-width="2.2" />`;
+        }
+      });
+
+      // Hover hit bars every 5 years (plus lifeExpectancy)
+      for (let a = 55; a <= 95; a += 2) {
+        const tipLines = scenarios.map((s) => {
+          const col = colors[s.colorClass];
+          return `<span style="color:${col}">●</span> ${s.name}：<strong>${fmtWan(s.timeline[a].cumTotal)}</strong>`;
+        }).join("<br>");
+        const tip = `<strong>${a} 歲累積領取總額</strong><br>${tipLines}`;
+        svg += `<rect x="${sx(a) - 6}" y="${m.t}" width="12" height="${ch}" fill="transparent" style="cursor:crosshair" data-tip="${tip.replace(/"/g, "&quot;")}" />`;
+      }
+
+      [55, 60, 65, 70, 75, 80, 85, 90, 95].forEach((a) => {
+        svg += `<text x="${sx(a)}" y="${H - 14}" text-anchor="middle" font-size="11" fill="#64748b">${a}歲</text>`;
+      });
+      svg += `</svg>`;
+
+      const container = $("chart-cum");
+      container.innerHTML = svg;
+      container.querySelectorAll("rect[data-tip]").forEach((el) => {
+        el.addEventListener("mousemove", (e) => showTip(e, el.getAttribute("data-tip")));
+        el.addEventListener("mouseleave", hideTip);
+      });
+
+      $("legend-cum").innerHTML = scenarios.map((s) => {
+        const col = colors[s.colorClass];
+        return `<span class="legend-item"><span class="legend-swatch" style="background:${col}"></span>${s.name}（○ 回本：${s.breakEvenAge ? s.breakEvenAge + "歲" : "-"}）</span>`;
+      }).join("");
+    }
+
+    function renderPremChart(scenarios) {
+      const W = 400, H = 280;
+      const m = { t: 24, r: 16, b: 44, l: 58 };
+      const cw = W - m.l - m.r, ch = H - m.t - m.b;
+
+      let maxTot = 100000;
+      scenarios.forEach((s) => {
+        const t = s.empPrem + s.unitPrem + s.govPrem;
+        if (t > maxTot) maxTot = t;
+      });
+      maxTot *= 1.15;
+
+      const sy = (y) => m.t + ch - (y / maxTot) * ch;
+      const barW = Math.min(64, cw / scenarios.length - 26);
+
+      let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+      for (let i = 0; i <= 4; i++) {
+        const yv = (maxTot * i) / 4;
+        const yy = sy(yv);
+        svg += `<line x1="${m.l}" y1="${yy}" x2="${W - m.r}" y2="${yy}" stroke="#e2e8f0" stroke-width="1" />`;
+        svg += `<text x="${m.l - 6}" y="${yy + 4}" text-anchor="end" font-size="10.5" fill="#64748b">${fmtWan(yv)}</text>`;
+      }
+
+      scenarios.forEach((s, idx) => {
+        const cx = m.l + (cw / scenarios.length) * (idx + 0.5);
+        const x = cx - barW / 2;
+        const tot = s.empPrem + s.unitPrem + s.govPrem;
+
+        const hEmp = (s.empPrem / maxTot) * ch;
+        const hUnit = (s.unitPrem / maxTot) * ch;
+        const hGov = (s.govPrem / maxTot) * ch;
+
+        const yEmp = m.t + ch - hEmp;
+        const yUnit = yEmp - hUnit;
+        const yGov = yUnit - hGov;
+
+        const tip = `<strong>${s.name}</strong><br>` +
+          `個人自付：<strong>${fmtWan(s.empPrem)}</strong> (${tot ? ((s.empPrem / tot) * 100).toFixed(1) : 0}%)<br>` +
+          `雇主／私校：${fmtWan(s.unitPrem)}<br>` +
+          `政府補助：${fmtWan(s.govPrem)}<br>` +
+          `三方總計：<strong>${fmtWan(tot)}</strong>`;
+
+        svg += `<g style="cursor:pointer" data-tip="${tip.replace(/"/g, "&quot;")}">`;
+        svg += `<rect x="${x}" y="${yEmp}" width="${barW}" height="${Math.max(0, hEmp)}" fill="#0f172a" />`;
+        svg += `<rect x="${x}" y="${yUnit}" width="${barW}" height="${Math.max(0, hUnit)}" fill="#38bdf8" />`;
+        svg += `<rect x="${x}" y="${yGov}" width="${barW}" height="${Math.max(0, hGov)}" fill="#a78bfa" />`;
+        svg += `<text x="${cx}" y="${yGov - 6}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0f172a">自付 ${fmtWan(s.empPrem)}</text>`;
+        svg += `<text x="${cx}" y="${H - 22}" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">${s.tag}</text>`;
+        svg += `<text x="${cx}" y="${H - 7}" text-anchor="middle" font-size="10" fill="#64748b">總 ${fmtWan(tot)}</text>`;
+        svg += `</g>`;
+      });
+
+      svg += `</svg>`;
+      const container = $("chart-prem");
+      container.innerHTML = svg;
+      container.querySelectorAll("g[data-tip]").forEach((el) => {
+        el.addEventListener("mousemove", (e) => showTip(e, el.getAttribute("data-tip")));
+        el.addEventListener("mouseleave", hideTip);
+      });
+    }
+
+    // =========================================================================
+    // 5. MAIN RENDER PIPELINE
+    // =========================================================================
+    function render() {
+      // Read common inputs
+      const laborBracket = LABOR_116[parseInt($("laborBracket").value, 10)];
+      let eduStartIdx = parseInt($("eduStartRank").value, 10);
+      let eduMaxIdx = parseInt($("eduMaxRank").value, 10);
+      if (eduMaxIdx < eduStartIdx) {
+        eduMaxIdx = eduStartIdx;
+        $("eduMaxRank").value = eduMaxIdx;
+      }
+
+      const customSwitch = $("customSwitchRank").checked;
+      $("box-switchRanks").classList.toggle("hidden", !customSwitch);
+      let eduSwitchStartIdx = customSwitch ? parseInt($("eduSwitchStartRank").value, 10) : eduStartIdx;
+      let eduSwitchMaxIdx = customSwitch ? parseInt($("eduSwitchMaxRank").value, 10) : eduMaxIdx;
+      if (eduSwitchMaxIdx < eduSwitchStartIdx) {
+        eduSwitchMaxIdx = eduSwitchStartIdx;
+        $("eduSwitchMaxRank").value = eduSwitchMaxIdx;
+      }
+
+      const eduPremRate = parseFloat($("eduPremRate").value);
+      const eduAnnuityRate = parseFloat($("eduAnnuityRate").value);
+      const lifeExpectancy = parseInt($("lifeExpectancy").value, 10);
+      const earlyStrategy = $("earlyStrategy").value;
+      const isPost11207 = $("isPost11207").checked;
+      const cpiEnabled = $("cpiEnabled").checked;
+      $("box-cpi").classList.toggle("hidden", !cpiEnabled);
+      const cpiCfg = {
+        enabled: cpiEnabled,
+        rate: parseFloat($("cpiRate").value),
+        eduRatio: parseFloat($("eduCpiRatio").value)
+      };
+
+      // Update display values
+      $("val-eduPremRate").textContent = eduPremRate.toFixed(2) + "%";
+      $("val-eduAnnuityRate").textContent = eduAnnuityRate.toFixed(2) + "%";
+      $("val-lifeExpectancy").textContent = lifeExpectancy + " 歲";
+      $("val-cpiRate").textContent = cpiCfg.rate.toFixed(1) + "%";
+      $("val-eduCpiRatio").textContent = cpiCfg.eduRatio + "%";
+
+      const mGovLabor = Math.round(laborBracket.salary * 0.13 * 0.10);
+      $("hint-laborPremium").innerHTML = `官方 30 日保費（12%普通+1%就保）：勞工 <strong>${fmt(laborBracket.emp)}</strong> 元 ／ 單位 <strong>${fmt(laborBracket.unit)}</strong> 元 ／ 政府約 ${fmt(mGovLabor)} 元`;
+
+      const stepsToCap = eduMaxIdx - eduStartIdx;
+      $("hint-eduLadder").innerHTML = `由 ${EDU_114[eduStartIdx].points}（${fmt(EDU_114[eduStartIdx].salary)}元）每年晉 1 級，第 <strong>${stepsToCap + 1}</strong> 年達頂薪 ${EDU_114[eduMaxIdx].points}（${fmt(EDU_114[eduMaxIdx].salary)}元）`;
+
+      let scenarios = [];
+      let scanPoints = [];
+      let scanRefs = {};
+      let scanCurrentX = 0;
+      let ladderScenario = null;
+
+      if (state.mode === "career") {
+        let startAge = parseInt($("startAge").value, 10);
+        let retireAge = parseInt($("retireAge").value, 10);
+        if (retireAge <= startAge + 1) {
+          retireAge = startAge + 2;
+          $("retireAge").value = retireAge;
+        }
+        $("switchAge").min = startAge + 1;
+        $("switchAge").max = retireAge - 1;
+        let switchAge = parseInt($("switchAge").value, 10);
+        if (switchAge <= startAge) { switchAge = startAge + 1; $("switchAge").value = switchAge; }
+        if (switchAge >= retireAge) { switchAge = retireAge - 1; $("switchAge").value = switchAge; }
+
+        $("val-startAge").textContent = startAge + " 歲";
+        $("val-switchAge").textContent = switchAge + " 歲";
+        $("val-retireAge").textContent = retireAge + " 歲";
+
+        const totalYears = retireAge - startAge;
+        const cLaborY = switchAge - startAge;
+        const cEduY = retireAge - switchAge;
+        $("hint-careerYears").innerHTML = `全職涯共 <strong>${totalYears}</strong> 年｜情境 C：先勞保 <strong>${cLaborY}</strong> 年 → 後公保 <strong>${cEduY}</strong> 年`;
+
+        const baseCfg = {
+          laborBracket, retireAge, eduStartIdx, eduMaxIdx,
+          eduPremRate, eduAnnuityRate, isPost11207, earlyStrategy,
+          lifeExpectancy, cpiCfg, marginalMode: false, sunkLaborYears: 0
+        };
+        const switchCfg = { ...baseCfg, eduStartIdx: eduSwitchStartIdx, eduMaxIdx: eduSwitchMaxIdx };
+
+        const scA = evaluateScenario("情境 A｜純勞保體系", "純勞保", "labor", totalYears, 0, baseCfg);
+        const scB = evaluateScenario("情境 B｜純私校公保", "純私校公保", "edu", 0, totalYears, baseCfg);
+        const scC = evaluateScenario(`情境 C｜${switchAge}歲轉私校`, `${switchAge}歲轉公保`, "switch", cLaborY, cEduY, switchCfg);
+        scenarios = [scA, scB, scC];
+        ladderScenario = scC.eduYears > 0 ? scC : scB;
+
+        // Scan all switch ages
+        for (let sa = startAge + 1; sa <= retireAge - 1; sa++) {
+          const r = evaluateScenario("", "", "switch", sa - startAge, retireAge - sa, switchCfg);
+          scanPoints.push({ x: sa, switchAge: sa, ...r });
+        }
+        scanRefs = { stayLabor: scA, pureEdu: scB, lifeExpectancy };
+        scanCurrentX = switchAge;
+
+        $("scan-title").textContent = "全職涯「轉換年齡」敏感度掃描圖";
+        $("scan-subtitle").textContent = `固定 ${startAge} 歲起算、${retireAge} 歲退休，掃描每一歲由勞保轉入私校公保之法規斷崖與效益變化`;
+        $("prem-title").textContent = "生涯三方保費負擔結構（全職涯累計）";
+        $("table-title").textContent = "三情境法規檢核、給付明細與一次給付對照表";
+
+        const bestSc = [...scenarios].sort((a, b) => b.netGain - a.netGain)[0];
+        const bestScan = [...scanPoints].sort((a, b) => b.netGain - a.netGain)[0];
+        $("insight-banner").innerHTML =
+          `<strong>【模式一結論摘要】</strong>依目前設定（${startAge}→${retireAge} 歲，評估至 ${lifeExpectancy} 歲${cpiEnabled ? "，含 CPI 調整" : ""}）：<br>` +
+          `• 三情境中以 <strong>${bestSc.name}</strong> 淨獲益最高（總領取 <strong>${fmtWan(bestSc.totalAtLife)}</strong> − 自付 <strong>${fmtWan(bestSc.empPrem)}</strong> ＝ <strong>${fmtWan(bestSc.netGain)}</strong>）。<br>` +
+          `• 情境 C（${switchAge}歲轉）觸發「<strong>${scC.pathLabel}</strong>」；若在全職涯中選擇中途轉換，最佳轉換時點為 <strong>${bestScan.x} 歲</strong>（勞保 ${bestScan.laborYears} 年＋公保 ${bestScan.eduYears} 年，淨獲益 ${fmtWan(bestScan.netGain)}）。`;
+
+      } else {
+        // MODE 2: Mid-career Switch Marginal Decision
+        let nowAge = parseInt($("nowAge").value, 10);
+        let existingLaborYears = parseInt($("existingLaborYears").value, 10);
+        let retireAge = parseInt($("retireAge2").value, 10);
+        if (retireAge <= nowAge) {
+          retireAge = Math.min(70, nowAge + 1);
+          $("retireAge2").value = retireAge;
+        }
+        $("val-nowAge").textContent = nowAge + " 歲";
+        $("val-existingLaborYears").textContent = existingLaborYears + " 年";
+        $("val-retireAge2").textContent = retireAge + " 歲";
+
+        const futureYears = retireAge - nowAge;
+        $("hint-switchYears").innerHTML = `未來剩餘工作年資 <strong>${futureYears}</strong> 年｜續留勞保總年資 <strong>${existingLaborYears + futureYears}</strong> 年；現在轉公保＝舊勞保 <strong>${existingLaborYears}</strong> 年＋新公保 <strong>${futureYears}</strong> 年`;
+
+        const baseCfg = {
+          laborBracket, retireAge, eduStartIdx, eduMaxIdx,
+          eduPremRate, eduAnnuityRate, isPost11207, earlyStrategy,
+          lifeExpectancy, cpiCfg, marginalMode: true, sunkLaborYears: existingLaborYears
+        };
+
+        const scStay = evaluateScenario("策略 1｜續留勞保至退休", "續留勞保", "labor", existingLaborYears + futureYears, 0, baseCfg);
+        const scNow = evaluateScenario("策略 2｜現在立刻轉公保", "現在立刻轉", "edu", existingLaborYears, futureYears, baseCfg);
+
+        // Scan delay = 0..futureYears (delay=futureYears equals staying in labor)
+        for (let d = 0; d <= futureYears - 1; d++) {
+          const r = evaluateScenario("", "", "switch", existingLaborYears + d, futureYears - d, baseCfg);
+          scanPoints.push({ x: d, switchAge: nowAge + d, ...r });
+        }
+        const bestDelay = [...scanPoints].sort((a, b) => b.netGain - a.netGain)[0];
+        const scBest = evaluateScenario(
+          bestDelay.x === 0 ? "策略 3｜最佳轉換點（即刻轉）" : `策略 3｜延後 ${bestDelay.x} 年（${nowAge + bestDelay.x}歲）再轉`,
+          bestDelay.x === 0 ? "最佳:即刻轉" : `延後${bestDelay.x}年轉`,
+          "switch",
+          existingLaborYears + bestDelay.x,
+          futureYears - bestDelay.x,
+          baseCfg
+        );
+
+        scenarios = [scStay, scNow, scBest];
+        ladderScenario = scNow;
+        scanRefs = { stayLabor: scStay, pureEdu: null, lifeExpectancy };
+        scanCurrentX = 0;
+
+        $("scan-title").textContent = "「延後 N 年再轉公保」邊際決策掃描圖";
+        $("scan-subtitle").textContent = `站在目前 ${nowAge} 歲（已保勞保 ${existingLaborYears} 年），橫軸為再撐 N 年後轉進私校公保，與「續留勞保基準線」直接對決（已剔除歷史沉沒保費）`;
+        $("prem-title").textContent = "從現在起到退休之「未來邊際保費」結構";
+        $("table-title").textContent = "現職轉職決策：法規路徑、邊際新增保費與給付對照表";
+
+        const diffNowVsStay = scNow.netGain - scStay.netGain;
+        const winAll = scStay.netGain >= bestDelay.netGain ? "繼續留在勞保至退休" : (bestDelay.x === 0 ? "現在立刻轉進私校公保" : `先留勞保 ${bestDelay.x} 年（補滿 ${existingLaborYears + bestDelay.x} 年）再於 ${nowAge + bestDelay.x} 歲轉進私校公保`);
+        const extraNote = (existingLaborYears < 15 && existingLaborYears + futureYears >= 15)
+          ? `<br>⚠️ <strong>門檻警示：</strong>您目前勞保 ${existingLaborYears} 年未滿 15 年，若現在立刻轉出將失去勞保終身年金資格；只要再留 <strong>${15 - existingLaborYears} 年</strong>跨過 15 年門檻再轉，即可鎖定雙重保障！`
+          : (existingLaborYears >= 15 && futureYears >= 15
+            ? `<br>💡 <strong>雙年金邊際解析：</strong>因勞保已滿 15 年且未來公保亦滿 15 年，原有勞保年金兩邊相同；每多 1 年續留勞保多領 <strong>${fmt(laborBracket.salary * 0.0155)} 元/月</strong>（自付 ${fmt(laborBracket.emp)} 元/月），轉公保前 10 年均保俸 ${fmt(scNow.eduRes.avgSalary)} 元則每年多領 <strong>${fmt(scNow.eduRes.avgSalary * eduAnnuityRate / 100)} 元/月</strong>。`
+            : "");
+
+        $("insight-banner").innerHTML =
+          `<strong>【模式二現職轉職結論】</strong>以「扣除未來新增保費後，活至 ${lifeExpectancy} 歲之邊際淨獲益」評估，最佳策略為：<strong>${winAll}</strong>。<br>` +
+          `• 「現在立刻轉公保」相較「續留勞保」：未來新增自付保費差 <strong>${scNow.empPrem - scStay.empPrem >= 0 ? "+" : ""}${fmtWan(scNow.empPrem - scStay.empPrem)}</strong>，${lifeExpectancy} 歲淨獲益差 <strong>${diffNowVsStay >= 0 ? "+" : ""}${fmtWan(diffNowVsStay)}</strong>。${extraNote}`;
+      }
+
+      // Render KPI Cards
+      const maxNet = Math.max(...scenarios.map((s) => s.netGain));
+      $("kpi-grid").innerHTML = scenarios.map((s) => {
+        const isBest = s.netGain === maxNet;
+        const badgeCls = s.colorClass === "labor" ? "badge-labor" : (s.colorClass === "edu" ? "badge-edu" : "badge-switch");
+        const premLabel = state.mode === "switch" ? "未來新增自付" : "生涯個人自付";
+        return `
+          <div class="kpi-card ${s.colorClass}">
+            <div class="kpi-header">
+              <div class="kpi-name">${s.name}</div>
+              <span class="badge ${isBest ? "badge-best" : badgeCls}">${isBest ? "★ 淨獲益最優" : s.tag}</span>
+            </div>
+            <div class="kpi-big">${fmt(s.totalMonthly)} <small>元 / 月</small></div>
+            <div class="kpi-sub">
+              ${s.totalLumpSum > 0 ? `<strong style="color:#0369a1">＋ 一次金 ${fmtWan(s.totalLumpSum)}</strong><br>` : ""}
+              ${s.pathLabel}
+            </div>
+            <div class="kpi-stats">
+              <div class="stat-item"><span class="lbl">${lifeExpectancy}歲累積總領</span><span class="val">${fmtWan(s.totalAtLife)}</span></div>
+              <div class="stat-item"><span class="lbl">${premLabel}</span><span class="val">${fmtWan(s.empPrem)}</span></div>
+              <div class="stat-item"><span class="lbl">淨獲益（總領－自付）</span><span class="val" style="color:${s.netGain >= 0 ? "#059669" : "#dc2626"}">${fmtWan(s.netGain)}</span></div>
+              <div class="stat-item"><span class="lbl">保費回本年齡</span><span class="val">${s.breakEvenAge ? s.breakEvenAge + " 歲" : "未回本"}</span></div>
+            </div>
+          </div>`;
+      }).join("");
+
+      // Render Charts
+      renderScanChart(
+        scanPoints, scanRefs, scanCurrentX,
+        state.mode === "career" ? "由勞保轉換至私校公保之年齡（歲）" : "從現在起延後轉入私校公保之年數（年）",
+        state.mode === "switch"
+      );
+      renderCumChart(scenarios, lifeExpectancy);
+      renderPremChart(scenarios);
+
+      // Render Detail Table
+      const premHdr = state.mode === "switch" ? "未來新增自付保費" : "生涯個人實繳保費";
+      $("detail-table-wrap").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>比較項目</th>
+              ${scenarios.map((s) => `<th class="center">${s.name}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>觸發法規路徑</strong></td>${scenarios.map((s) => `<td>${s.pathLabel}</td>`).join("")}</tr>
+            <tr><td><strong>勞保／公保年資</strong></td>${scenarios.map((s) => `<td class="center">勞 ${s.laborYears} 年 ／ 公 ${s.eduYears} 年</td>`).join("")}</tr>
+            <tr><td><strong>勞保平均投保薪資與公式</strong></td>${scenarios.map((s) => `<td>${s.laborYears > 0 ? `${fmt(s.laborRes.avgSalary)} 元<br><span style="color:#475569">${s.laborRes.formula}｜${s.laborRes.adjustText}</span>` : "—"}</td>`).join("")}</tr>
+            <tr><td><strong>公保前 10 年平均保俸與公式</strong></td>${scenarios.map((s) => `<td>${s.eduYears > 0 ? `${fmt(s.eduRes.avgSalary)} 元（終薪 ${s.eduRes.career.finalRank}）<br><span style="color:#475569">${s.eduRes.formula}｜${s.eduRes.adjustText}</span>` : "—"}</td>`).join("")}</tr>
+            <tr><td><strong>每月年金拆解（勞保＋公保）</strong></td>${scenarios.map((s) => `<td class="num"><strong>${fmt(s.totalMonthly)} 元</strong><br><span style="color:#64748b">勞 ${fmt(s.laborRes.monthly)} ＋ 公 ${fmt(s.eduRes.monthly)}</span></td>`).join("")}</tr>
+            <tr><td><strong>實際發放一次金（未滿15年段）</strong></td>${scenarios.map((s) => `<td class="num">${s.totalLumpSum > 0 ? `<strong>${fmt(s.totalLumpSum)} 元</strong>` : "0 元（全領年金）"}</td>`).join("")}</tr>
+            <tr><td><strong>若改領一次給付參考總額</strong></td>${scenarios.map((s) => `<td class="num">${fmt(s.totalLumpSumRef)} 元<br><span style="color:#64748b">${s.annuityVsLumpYears ? `領年金約 ${s.annuityVsLumpYears.toFixed(1)} 年贏過一次領` : "—"}</span></td>`).join("")}</tr>
+            <tr><td><strong>${premHdr}</strong></td>${scenarios.map((s) => `<td class="num">${fmt(s.empPrem)} 元</td>`).join("")}</tr>
+            <tr><td><strong>雇主／學校 ＋ 政府補助總保費</strong></td>${scenarios.map((s) => `<td class="num">${fmt(s.unitPrem + s.govPrem)} 元<br><span style="color:#64748b">單位 ${fmtWan(s.unitPrem)} ＋ 政府 ${fmtWan(s.govPrem)}</span></td>`).join("")}</tr>
+            <tr style="background:#f8fafc"><td><strong>活至 ${lifeExpectancy} 歲累積總領取</strong></td>${scenarios.map((s) => `<td class="num"><strong>${fmt(s.totalAtLife)} 元</strong></td>`).join("")}</tr>
+            <tr style="background:#eff6ff"><td><strong>淨獲益（總領取 − ${state.mode === "switch" ? "未來自付" : "個人實繳"}）</strong></td>${scenarios.map((s) => `<td class="num"><strong style="color:${s.netGain >= 0 ? "#059669" : "#dc2626"}">${fmt(s.netGain)} 元</strong></td>`).join("")}</tr>
+          </tbody>
+        </table>`;
+
+      // Render Private School Annual Salary Ladder Table
+      const sched = ladderScenario?.eduRes?.career?.schedule || [];
+      $("ladder-summary").textContent = `展開檢視：${ladderScenario.name} — 私校公保逐年晉級軌跡（共 ${sched.length} 年，前 10 年平均保俸 ${fmt(ladderScenario.eduRes.avgSalary)} 元）`;
+      if (sched.length === 0) {
+        $("ladder-table-wrap").innerHTML = `<div class="hint">此情境無私校公保年資。</div>`;
+      } else {
+        $("ladder-table-wrap").innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th class="center">公保第 N 年</th>
+                <th class="center">薪級（薪額）</th>
+                <th class="num">月保險薪額</th>
+                <th class="num">個人月自付（35%）</th>
+                <th class="num">個人年自付</th>
+                <th class="center">計入前 10 年平均</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${sched.map((row) => `
+                <tr class="${row.inLast10 ? "highlight-last10" : ""}">
+                  <td class="center">第 ${row.year} 年</td>
+                  <td class="center">${row.rank}（${row.points}）</td>
+                  <td class="num">${fmt(row.salary)} 元</td>
+                  <td class="num">${fmt(row.monthlyEmp)} 元</td>
+                  <td class="num">${fmt(row.annualEmp)} 元</td>
+                  <td class="center">${row.inLast10 ? "✓ 計入" : "—"}</td>
+                </tr>`).join("")}
+            </tbody>
+          </table>`;
+      }
+    }
+
+    // Bind events & boot
+    populateSelects();
+    document.querySelectorAll("aside input, aside select").forEach((el) => {
+      el.addEventListener("input", render);
+      el.addEventListener("change", render);
+    });
+    render();
+  </script>
+</body>
+</html>
