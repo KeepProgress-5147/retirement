@@ -195,6 +195,267 @@
       background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.85rem 1.1rem;
     }
     .hidden { display: none !important; }
+
+    /* ================= V2.0 READABILITY & GUIDED UX UPGRADE ================= */
+    html { font-size: 17px; }
+    html[data-font="lg"] { font-size: 19px; }
+    html[data-font="xl"] { font-size: 21px; }
+
+    body { line-height: 1.68 !important; }
+    .main-layout {
+      max-width: 1480px !important;
+      grid-template-columns: 380px 1fr !important;
+      gap: 1.35rem !important;
+    }
+    @media (max-width: 1140px) {
+      .main-layout { grid-template-columns: 1fr !important; }
+      .sidebar { position: static !important; max-height: none !important; }
+    }
+    @media (max-width: 1280px) {
+      .charts-2, .charts-two-col { grid-template-columns: 1fr !important; }
+    }
+    @media (max-width: 1380px) {
+      .kpi-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+    }
+    @media (max-width: 680px) {
+      .kpi-grid-4 { grid-template-columns: 1fr !important; }
+    }
+
+    .panel { padding: 1.3rem 1.45rem !important; }
+    .panel-title { font-size: 1.08rem !important; line-height: 1.4 !important; }
+    .group-label {
+      font-size: 0.93rem !important;
+      color: var(--text) !important;
+      text-transform: none !important;
+      letter-spacing: 0.01em !important;
+      line-height: 1.4 !important;
+    }
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 0.14rem 0.52rem;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .field-row { font-size: 0.95rem !important; margin-bottom: 0.3rem !important; }
+    .field-val { font-size: 0.98rem !important; }
+    select, input[type="number"] {
+      font-size: 0.94rem !important;
+      padding: 0.52rem 0.7rem !important;
+      min-height: 42px;
+    }
+    .chip-btn, .preset-btn, .pill-btn {
+      font-size: 0.86rem !important;
+      padding: 0.38rem 0.74rem !important;
+      min-height: 34px;
+      line-height: 1.35;
+    }
+    .toggle-row { font-size: 0.92rem !important; line-height: 1.5 !important; }
+    .hint { font-size: 0.86rem !important; line-height: 1.58 !important; }
+    .mode-tab, .nav-tab { font-size: 0.96rem !important; padding: 0.68rem 1.15rem !important; }
+    .mode-tab span.sub { font-size: 0.82rem !important; margin-top: 0.18rem !important; opacity: 0.9 !important; }
+
+    .banner, .banner-insight, .alert-cap {
+      font-size: 0.98rem !important;
+      line-height: 1.72 !important;
+      padding: 1.1rem 1.35rem !important;
+    }
+    .kpi-card { padding: 1.15rem 1.25rem !important; }
+    .kpi-name, .kpi-title { font-size: 1.04rem !important; }
+    .badge { font-size: 0.8rem !important; padding: 0.18rem 0.58rem !important; }
+    .kpi-big { font-size: 1.76rem !important; margin: 0.22rem 0 !important; }
+    .kpi-big small { font-size: 0.86rem !important; }
+    .kpi-sub { font-size: 0.89rem !important; line-height: 1.55 !important; }
+    .kpi-stats, .kpi-meta { font-size: 0.9rem !important; gap: 0.55rem 0.7rem !important; padding-top: 0.65rem !important; }
+    .kpi-stats .lbl, .kpi-meta .lbl, .stat-item span.lbl { font-size: 0.82rem !important; margin-bottom: 0.1rem; }
+    table { font-size: 0.93rem !important; }
+    th, td { padding: 0.64rem 0.8rem !important; line-height: 1.52 !important; }
+    .legend { font-size: 0.88rem !important; gap: 1rem !important; }
+    details summary { font-size: 0.98rem !important; line-height: 1.5 !important; }
+    .footnote { font-size: 0.88rem !important; line-height: 1.72 !important; padding: 1.05rem 1.3rem !important; }
+    .tooltip { font-size: 0.88rem !important; line-height: 1.55 !important; max-width: 360px !important; padding: 0.65rem 0.85rem !important; }
+
+    /* Standalone header font-size bar */
+    .standalone-tools { display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap; }
+    .font-seg {
+      display: inline-flex; align-items: center; background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.28); border-radius: 999px; padding: 0.16rem;
+    }
+    .font-seg button {
+      border: 0; background: transparent; color: #e2e8f0; font-size: 0.8rem; font-weight: 700;
+      padding: 0.22rem 0.58rem; border-radius: 999px; cursor: pointer; font-family: inherit;
+    }
+    .font-seg button.active { background: #ffffff; color: #0f172a; }
+
+    /* Progressive Disclosure Advanced Box in Sidebar */
+    details.adv-box {
+      margin-top: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-alt);
+      padding: 0.65rem 0.85rem;
+    }
+    details.adv-box > summary {
+      font-size: 0.9rem !important;
+      font-weight: 700;
+      color: #334155;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.4rem;
+    }
+    details.adv-box > summary::-webkit-details-marker { display: none; }
+    details.adv-box > summary::after {
+      content: "展開微調 ▾";
+      font-size: 0.78rem;
+      color: #0284c7;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+    details.adv-box[open] > summary::after { content: "收合 ▴"; }
+    details.adv-box .adv-inner {
+      margin-top: 0.8rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed var(--border);
+    }
+
+    /* 3-Step Quick How-To Strip */
+    details.howto-box {
+      background: #ffffff;
+      border: 1px solid #bae6fd;
+      border-left: 5px solid #0284c7;
+      border-radius: var(--radius);
+      padding: 0.95rem 1.25rem;
+      box-shadow: var(--shadow);
+    }
+    details.howto-box > summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      font-size: 1rem !important;
+      color: #0c4a6e;
+    }
+    details.howto-box > summary::-webkit-details-marker { display: none; }
+    .howto-toggle-hint {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #0284c7;
+      white-space: nowrap;
+    }
+    .howto-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.85rem;
+      margin-top: 0.8rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid #e0f2fe;
+    }
+    @media (max-width: 900px) { .howto-steps { grid-template-columns: 1fr; } }
+    .howto-step {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 0.75rem 0.95rem;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: #1e293b;
+    }
+    .howto-step strong {
+      display: inline-block;
+      color: #0369a1;
+      margin-bottom: 0.2rem;
+      font-size: 0.93rem;
+    }
+
+    /* Plain-Language Dynamic Result Interpreter */
+    .explain-panel {
+      background: var(--surface);
+      border: 2px solid #0284c7;
+      border-radius: 14px;
+      padding: 1.25rem 1.4rem;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.08);
+    }
+    .explain-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.95rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .explain-head h2 {
+      margin: 0;
+      font-size: 1.14rem;
+      font-weight: 800;
+      color: #0c4a6e;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .explain-tag {
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+    .explain-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.95rem;
+    }
+    @media (max-width: 880px) { .explain-grid { grid-template-columns: 1fr; } }
+    .ex-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #0284c7;
+      border-radius: 10px;
+      padding: 0.9rem 1.05rem;
+      font-size: 0.94rem;
+      line-height: 1.65;
+      color: #1e293b;
+    }
+    .ex-card.c-win { border-left-color: #059669; background: #f0fdf4; border-color: #bbf7d0; }
+    .ex-card.c-cash { border-left-color: #0284c7; background: #f0f9ff; border-color: #bae6fd; }
+    .ex-card.c-cost { border-left-color: #7c3aed; background: #faf5ff; border-color: #e9d5ff; }
+    .ex-card.c-tip { border-left-color: #d97706; background: #fffbeb; border-color: #fde68a; }
+    .ex-title {
+      font-size: 0.96rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .ex-num {
+      font-weight: 800;
+      color: #0369a1;
+      font-variant-numeric: tabular-nums;
+    }
+    .ex-card.c-win .ex-num { color: #047857; }
+    .ex-card.c-cost .ex-num { color: #6d28d9; }
+    .ex-card.c-tip .ex-num { color: #b45309; }
+    .ex-glossary {
+      margin-top: 0.85rem;
+      padding-top: 0.7rem;
+      border-top: 1px dashed var(--border);
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
   </style>
 </head>
 <body>
@@ -205,7 +466,11 @@
           <h1>雇主聘用成本比較分析模型｜約聘雇（學士／碩士）vs. 編制內（辦事員／組員）</h1>
           <p>內建 2025/04/17 核定版校內薪資表、115 年健保表(二)/(三)、116 年勞保/勞退分級表與 114 年私校退撫表｜含雙視角與 1～40 年長期負債估算</p>
         </div>
-        <div class="pill-ver">v1.1 雇主成本＋職員累積實領雙視角</div>
+        <div class="standalone-tools"><div class="font-seg" role="group" aria-label="字體大小切換">
+            <button type="button" class="active" data-fscale="md" onclick="setFontScale('md')">標準字</button>
+            <button type="button" data-fscale="lg" onclick="setFontScale('lg')">大字 A+</button>
+            <button type="button" data-fscale="xl" onclick="setFontScale('xl')">特大 A++</button>
+          </div><div class="pill-ver">v2.0 清楚易讀導引版</div></div>
       </div>
       <div class="nav-tabs">
         <button class="nav-tab active" id="tab-long" onclick="setTab('long')">一、雇主長期成本（1～40年／含6年轉編制）</button>
@@ -226,7 +491,7 @@
       </div>
 
       <div class="control-group">
-        <div class="group-label"><span class="dot" style="background:#0f766e"></span>長期模擬條件（分頁一）</div>
+        <div class="group-label"><span class="dot" style="background:#0f766e"></span><span class="step-badge">步驟 1</span> 設定觀察年限、學歷與轉編制條件</div>
         <div class="field">
           <div class="field-row"><label for="horizonYears">觀察任職年限</label><span class="field-val" id="val-horizonYears">40 年</span></div>
           <input type="range" id="horizonYears" min="1" max="40" value="40" />
@@ -271,6 +536,9 @@
         </div>
       </div>
 
+      <details class="adv-box">
+        <summary>進階費率與超額年金設定（預設 1.5 月年終、領 20 年，一般免調）</summary>
+        <div class="adv-inner">
       <div class="control-group">
         <div class="group-label"><span class="dot" style="background:#0284c7"></span>獎金與保險費率基準（全分頁連動）</div>
         <div class="field">
@@ -308,10 +576,25 @@
           </label>
         </div>
       </div>
+        </div>
+      </details>
     </aside>
 
     <!-- Main Content Views -->
     <section class="content-col">
+      <details class="howto-box" open>
+        <summary>
+          <span><strong>操作說明｜只要 3 步驟，30 秒看懂試算結果</strong></span>
+          <span class="howto-toggle-hint">點此可收合／展開說明</span>
+        </summary>
+        <div class="howto-steps">
+          <div class="howto-step"><strong>步驟 1：選情境或套用範本</strong><br>先點上方 5 個分頁選擇您想看的主題：看學校總預算選「一、雇主長期成本」；看員工能拿多少錢選「二、職員累積實領」；想任選兩職級對比選「五、單月 PK 器」。</div>
+          <div class="howto-step"><strong>步驟 2：調整左側基本條件</strong><br>在左側「步驟 1」調整觀察年限（例如 6 年、25 年或 40 年）與起始學歷職類；若切到「五、單月 PK 器」則直接在右側選單挑選兩個職級即可。</div>
+          <div class="howto-step"><strong>步驟 3：直接閱讀下方「白話成果解讀」</strong><br>正下方的「白話成果解讀專區」會隨您切換的分頁自動換成對應的白話說明，告訴您學校省多少、員工多拿多少、為什麼會這樣！</div>
+        </div>
+      </details>
+      <div class="explain-panel" id="plain-guide" aria-live="polite"></div>
+
       <!-- TAB 1: Long-Term 1~40Y -->
       <div id="view-long" class="content-col">
         <div class="banner" id="long-banner"></div>
@@ -650,7 +933,7 @@
         const yv = minY + ((maxY - minY) * i) / 4;
         const yy = sy(yv);
         svg += `<line x1="${m.l}" y1="${yy}" x2="${W - m.r}" y2="${yy}" stroke="#e2e8f0" stroke-width="1"/>`;
-        svg += `<text x="${m.l - 6}" y="${yy + 4}" text-anchor="end" font-size="10.5" fill="#64748b">${isWan ? fmtWan(yv) : (yv/10000).toFixed(0)+"萬"}</text>`;
+        svg += `<text x="${m.l - 6}" y="${yy + 4}" text-anchor="end" font-size="12.5" fill="#64748b">${isWan ? fmtWan(yv) : (yv/10000).toFixed(0)+"萬"}</text>`;
       }
 
       series.forEach(s => {
@@ -681,7 +964,7 @@
       const xStep = horizon <= 10 ? 1 : (horizon <= 25 ? 5 : 5);
       for (let y = 1; y <= horizon; y++) {
         if (y === 1 || y === horizon || y % xStep === 0) {
-          svg += `<text x="${sx(y)}" y="${H - 12}" text-anchor="middle" font-size="10.5" fill="#64748b">第${y}年</text>`;
+          svg += `<text x="${sx(y)}" y="${H - 12}" text-anchor="middle" font-size="12.5" fill="#64748b">第${y}年</text>`;
         }
       }
       svg += `</svg>`;
@@ -707,7 +990,7 @@
         const yv = (maxVal * i) / 4;
         const yy = sy(yv);
         svg += `<line x1="${m.l}" y1="${yy}" x2="${W - m.r}" y2="${yy}" stroke="#e2e8f0" stroke-width="1"/>`;
-        svg += `<text x="${m.l - 6}" y="${yy + 4}" text-anchor="end" font-size="10.5" fill="#64748b">${mode === "mo" ? fmt(yv) : fmtWan(yv)}</text>`;
+        svg += `<text x="${m.l - 6}" y="${yy + 4}" text-anchor="end" font-size="12.5" fill="#64748b">${mode === "mo" ? fmt(yv) : fmtWan(yv)}</text>`;
       }
 
       items.forEach((it, idx) => {
@@ -742,14 +1025,14 @@
           curY -= h;
           svg += `<rect x="${x}" y="${curY}" width="${barW}" height="${Math.max(0, h)}" fill="${sg.col}" />`;
         });
-        svg += `<text x="${cx}" y="${curY - 6}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0f172a">${mode === "mo" ? fmt(topVal) : fmtWan(topVal)}</text>`;
+        svg += `<text x="${cx}" y="${curY - 6}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f172a">${mode === "mo" ? fmt(topVal) : fmtWan(topVal)}</text>`;
         if (mode === "mo") {
           const ty = sy(c.takeMo);
           svg += `<circle cx="${cx}" cy="${ty}" r="4.8" fill="#ef4444" stroke="#fff" stroke-width="1.8"/>`;
         }
         const parts = it.short.split("\n");
         parts.forEach((p, pi) => {
-          svg += `<text x="${cx}" y="${H - 42 + pi * 14}" text-anchor="middle" font-size="10.5" font-weight="${pi === 0 ? 700 : 400}" fill="${pi === 0 ? "#0f172a" : "#64748b"}">${p}</text>`;
+          svg += `<text x="${cx}" y="${H - 42 + pi * 14}" text-anchor="middle" font-size="12.5" font-weight="${pi === 0 ? 700 : 400}" fill="${pi === 0 ? "#0f172a" : "#64748b"}">${p}</text>`;
         });
         svg += `</g>`;
       });
@@ -1212,6 +1495,151 @@
             }).join("")}
           </tbody>
         </table>`;
+      renderPlainGuideM3({ tab: uiState.tab, empCumMode: uiState.empCumMode, cfg, meta, pCon, pSw1, pSw2, pReg, ba6, ma6, ck170, ck200, mCk, mOf, mMa, mMt, pkC, pkR, pkConLv, pkConType, pkRegRole, pkRegPts });
+    }
+
+
+    function setFontScale(sc) {
+      if (sc === "md") document.documentElement.removeAttribute("data-font");
+      else document.documentElement.setAttribute("data-font", sc);
+      document.querySelectorAll("[data-fscale]").forEach(function(b) {
+        b.classList.toggle("active", b.getAttribute("data-fscale") === sc);
+      });
+      try { localStorage.setItem("retire_font_scale", sc); } catch (e) {}
+    }
+    (function initSavedFont() {
+      try {
+        var saved = localStorage.getItem("retire_font_scale");
+        if (saved && (saved === "lg" || saved === "xl")) setFontScale(saved);
+      } catch (e) {}
+    })();
+
+
+    function renderPlainGuideM3(ctx) {
+      const t = ctx.tab;
+      const cfg = ctx.cfg;
+      let badge = "", cards = "", gloss = "";
+
+      if (t === "long") {
+        badge = `學校預算視角（觀察 ${cfg.horizon} 年）`;
+        const diffSw1 = ctx.pSw1.totalInService - ctx.pCon.totalInService;
+        const diffSw2 = ctx.pSw2.totalInService - ctx.pCon.totalInService;
+        const saveOrMore1 = diffSw1 <= 0 ? `反而幫學校節省 <span class="ex-num">${fmtWan(Math.abs(diffSw1))}</span>` : `在職總支出僅多出 <span class="ex-num">${fmtWan(diffSw1)}</span>`;
+        cards = `
+          <div class="ex-card c-win">
+            <div class="ex-title">1. 一句話給學校／人事的預算結論</div>
+            聘用一位「${ctx.meta.label}」觀察 <strong>${cfg.horizon} 年</strong>：若在滿 ${cfg.switchAfter} 年轉為編制內辦事員（${cfg.switchStartPts} 起敘、頂薪 310），在職總成本為 <span class="ex-num">${fmtWan(ctx.pSw1.totalInService)}</span>，比一直當約聘雇（${fmtWan(ctx.pCon.totalInService)}）<strong>${saveOrMore1}</strong>！若後續升任到組員（頂薪 475），在職總成本則為 <span class="ex-num">${fmtWan(ctx.pSw2.totalInService)}</span>（較全程約聘 ${diffSw2 >= 0 ? "+" : ""}${fmtWan(diffSw2)}）。
+          </div>
+          <div class="ex-card c-cash">
+            <div class="ex-title">2. 為什麼編制內月薪較高，學校負擔卻沒有變貴？</div>
+            關鍵在<strong>「政府補助差很大」</strong>！約聘雇的勞保、勞退、健保幾乎都由學校扛（雇主法定附加費率高達 <span class="ex-num">約 20.2%</span>）；轉為私校編制內後，公保、退撫與健保都有政府補助 32.5%～35%，且公保／退撫只用「本薪」計算，使學校法定附加費率大降至 <span class="ex-num">約 8.8%</span>。
+          </div>
+          <div class="ex-card c-cost">
+            <div class="ex-title">3. 什麼是「退休後公保超額年金」隱性成本？</div>
+            員工在職期間學校不用付這筆錢；但當編制內年資滿 15 年並領取「公保養老年金」退休後，依《公保法》第 20 條，學校每個月須固定分擔一筆超額年金（辦事員約 <span class="ex-num">${fmt(ctx.pSw1.excessMoSch)} 元/月</span>、組員約 <span class="ex-num">${fmt(ctx.pSw2.excessMoSch)} 元/月</span>）直到該同仁過世，領 ${cfg.retirePayoutYears} 年合計約 <span class="ex-num">${fmtWan(ctx.pSw1.excessTot)}～${fmtWan(ctx.pSw2.excessTot)}</span>。
+          </div>
+          <div class="ex-card c-tip">
+            <div class="ex-title">4. 留才效益檢核：學校花這筆錢，員工有感嗎？</div>
+            非常有感！轉辦事員路徑下員工 ${cfg.horizon} 年實領現金共 <span class="ex-num">${fmtWan(ctx.pSw1.totalTakeHome)}</span>，而且退休專戶累積本金高達 <span class="ex-num">${fmtWan(ctx.pSw1.totalRetPrincipal)}</span>（全程約聘僅 ${fmtWan(ctx.pCon.totalRetPrincipal)}），能大幅降低行政人員流動率。
+          </div>`;
+        gloss = `<strong>名詞小辭典：</strong><strong>「雇主在職總成本」</strong>＝12個月薪資＋雇主勞健保／公保退撫＋年終獎金＋雇主二代健保補充保費（2.11%）｜<strong>「公保超額年金」</strong>＝退休後公保年金超過基本率 0.75% 的部分，法定由政府與私校各付一半。`;
+      } else if (t === "emp") {
+        badge = `職員收入視角（觀察 ${cfg.horizon} 年）`;
+        const dCash = ctx.pSw1.totalTakeHome - ctx.pCon.totalTakeHome;
+        const dReal = ctx.pSw1.totalRealComp - ctx.pCon.totalRealComp;
+        cards = `
+          <div class="ex-card c-win">
+            <div class="ex-title">1. 一句話給職員的收入結論</div>
+            工作 <strong>${cfg.horizon} 年</strong>下來（含每年 ${cfg.bonusMonths.toFixed(1)} 個月年終）：滿 ${cfg.switchAfter} 年轉辦事員的<strong>口袋實領現金共 <span class="ex-num">${fmtWan(ctx.pSw1.totalTakeHome)}</span></strong>（較一直當約聘 ${dCash >= 0 ? "多領 +" : "略少 "}${fmtWan(dCash)}）；若升到組員則實領現金高達 <span class="ex-num">${fmtWan(ctx.pSw2.totalTakeHome)}</span>！
+          </div>
+          <div class="ex-card c-cash">
+            <div class="ex-title">2. 加計「退休專戶本金」後，真實總身價差多少？</div>
+            一直當約聘 ${cfg.horizon} 年雇主幫存的勞退 6% 本金共 <span class="ex-num">${fmtWan(ctx.pCon.totalRetPrincipal)}</span>；轉辦事員後「自己＋學校＋政府」三方存入退撫專戶的本金高達 <span class="ex-num">${fmtWan(ctx.pSw1.totalRetPrincipal)}</span>（還沒算投資複利！），使<strong>「實領現金＋退專本金」總實質所得反贏約聘 <span class="ex-num">${dReal >= 0 ? "+" : ""}${fmtWan(dReal)}</span></strong>！
+          </div>
+          <div class="ex-card c-cost">
+            <div class="ex-title">3. 為什麼轉編制每月扣的自付比較多，還是比較划算？</div>
+            因為編制內每月從薪水扣掉的「強制退撫自繳（本薪 8.4%）」<strong>100% 存進您自己的個人退休專戶（而且當年免扣所得稅）</strong>，並同時換來學校與政府合計再送「本薪 15.6%」進您的帳戶！
+          </div>
+          <div class="ex-card c-tip">
+            <div class="ex-title">4. 怎麼看下方圖表最清楚？</div>
+            您可以點擊下方右側圖表標題旁的<strong>「僅看實領現金 ／ 實領＋退專本金」切換按鈕</strong>，一眼看出「在職拿到的現金」與「加上退休金本金後的總資產」黃金交叉點！
+          </div>`;
+        gloss = `<strong>名詞小辭典：</strong><strong>「累積實領現金」</strong>＝每月發薪扣掉員工自付勞健保（或公保、退撫自繳、健保）後實際進銀行帳戶的錢＋全薪年終獎金｜<strong>「退專累計本金」</strong>＝在職期間存進勞退或私校退撫專戶的本金總和（投資賺的複利請至模組二試算）。`;
+      } else if (t === "yr6") {
+        badge = `第 6 年轉編制專題解讀`;
+        cards = `
+          <div class="ex-card c-win">
+            <div class="ex-title">1. 為什麼「約聘滿 6 年轉辦事員」被稱為黃金三贏點？</div>
+            以<strong>學士行政第 6 年（月薪 ${fmt(ctx.ba6.sal)}）轉辦事員 170 薪額（月薪 ${fmt(ctx.ck170.sal)}）</strong>為例：① 學校每年總支出<strong>反而省下 <span class="ex-num">${fmt(ctx.ba6.empYr - ctx.ck170.empYr)} 元</span></strong>；② 員工每月實領現金<strong>反而增加 <span class="ex-num">+${fmt(ctx.ck170.takeMo - ctx.ba6.takeMo)} 元</span></strong>；③ 每月存入退休專戶的錢由 ${fmt(ctx.ba6.retIn)} 元跳升至 <span class="ex-num">${fmt(ctx.ck170.retIn)} 元</span>！
+          </div>
+          <div class="ex-card c-cash">
+            <div class="ex-title">2. 碩士行政第 6 年轉辦事員 200 薪額也是雙贏嗎？</div>
+            是的！碩士行政第 6 年轉辦事員 200 薪額，<strong>學校每年省 <span class="ex-num">${fmt(ctx.ma6.empYr - ctx.ck200.empYr)} 元</span></strong>，員工每月實領也<strong>多拿 <span class="ex-num">+${fmt(ctx.ck200.takeMo - ctx.ma6.takeMo)} 元</span></strong>，退休專戶月入帳由 ${fmt(ctx.ma6.retIn)} 元翻倍至 <span class="ex-num">${fmt(ctx.ck200.retIn)} 元</span>。
+          </div>
+          <div class="ex-card c-cost">
+            <div class="ex-title">3. 圖表上的彩色柱狀跟紅點怎麼看？</div>
+            下方長條圖的<strong>「總高度」代表學校每個月要花的總成本</strong>；柱子上的<strong>「紅色圓點 ●」則代表員工扣掉自付保費後實際領到口袋的月薪</strong>。柱子越低、紅點越高，就代表學校越省、員工領越多！
+          </div>
+          <div class="ex-card c-tip">
+            <div class="ex-title">4. 技術類約聘轉任時的特別注意事項</div>
+            技術類約聘因薪點折合率較高（130.0），第 6 年月薪已達 45,650～48,000 元；若直接以辦事員 170／200 起敘，學校雖大省成本，但員工每月實領現金會比原技術約聘略減，建議評估較高起敘薪額或技佐／技士職缺銜接。
+          </div>`;
+        gloss = `<strong>閱讀提示：</strong>將滑鼠移到下方長條圖任一根柱子上，即可彈出該職級完整的「月薪、保險、退休提撥、健保與員工實領」明細數字。`;
+      } else if (t === "max") {
+        badge = `各職類最高薪天花板解讀`;
+        cards = `
+          <div class="ex-card c-win">
+            <div class="ex-title">1. 資深員工做到頂薪時，哪一種對學校最省？</div>
+            <strong>編制內辦事員頂薪（310 薪額，月薪 55,570 元）</strong>學校全年總成本為 <span class="ex-num">${fmt(ctx.mCk.empYr)} 元</span>，竟然比「碩士行政約聘頂薪（${fmt(ctx.mMa.empYr)} 元）」每年還便宜 <span class="ex-num">${fmt(ctx.mMa.empYr - ctx.mCk.empYr)} 元</span>！
+          </div>
+          <div class="ex-card c-cash">
+            <div class="ex-title">2. 學校長期人事預算真正的分水嶺在哪裡？</div>
+            分水嶺在於<strong>「是否升任組員（頂薪 475 薪額，月薪 69,910 元）」</strong>！組員頂薪的學校全年總成本達 <span class="ex-num">${fmt(ctx.mOf.empYr)} 元</span>（突破百萬元），每年比辦事員頂薪多出 <span class="ex-num">+${fmt(ctx.mOf.empYr - ctx.mCk.empYr)} 元</span>。
+          </div>
+          <div class="ex-card c-cost">
+            <div class="ex-title">3. 為什麼約聘人員薪水超過 45,800 元後成本還在漲？</div>
+            雖然勞保投保上限卡在 45,800 元，但<strong>「勞退 6%（上限 15 萬）」與「健保雇主 60%（上限 31.3 萬）」與「1.5 個月年終」都會跟著全薪一路往上加</strong>，因此高階約聘對學校並不便宜。
+          </div>
+          <div class="ex-card c-tip">
+            <div class="ex-title">4. 人事制度規劃建議</div>
+            讓表現穩定的行政約聘轉任「編制內辦事員」可同時控管預算天花板並穩定留才；而「組員（475）」員額則可作為績優晉升與核心業務骨幹之激勵職缺。
+          </div>`;
+        gloss = `<strong>名詞小辭典：</strong><strong>「最高薪天花板」</strong>＝該學歷或職稱在現行薪級表上每年晉級所能到達的最高一級（到頂後不再晉級）。`;
+      } else {
+        badge = `自選職級一對一 PK 解讀`;
+        const moDiff = ctx.pkR.empMo - ctx.pkC.empMo;
+        const yrDiff = ctx.pkR.empYr - ctx.pkC.empYr;
+        const takeDiff = ctx.pkR.takeMo - ctx.pkC.takeMo;
+        const retDiff = ctx.pkR.retIn - ctx.pkC.retIn;
+        const regName = `${ctx.pkRegRole === "clerk" ? "辦事員" : "組員"} ${ctx.pkRegPts} 薪額`;
+        const conName = `約聘等級 ${ctx.pkConLv}（${ctx.pkConType === "adm" ? "行政" : "技術"}）`;
+        cards = `
+          <div class="ex-card c-win">
+            <div class="ex-title">1. 學校支出對決：聘哪一位比較省錢？</div>
+            比較您選的「${conName}」與「${regName}」：編制內對學校而言，每個月總支出<strong>${moDiff <= 0 ? `少花 <span class="ex-num">${fmt(Math.abs(moDiff))} 元</span>` : `多花 <span class="ex-num">${fmt(moDiff)} 元</span>`}</strong>，加計年終後<strong>全年學校總成本${yrDiff <= 0 ? `省下 <span class="ex-num">${fmt(Math.abs(yrDiff))} 元</span>` : `增加 <span class="ex-num">${fmt(yrDiff)} 元</span>`}</strong>。
+          </div>
+          <div class="ex-card c-cash">
+            <div class="ex-title">2. 員工口袋對決：誰每個月實領比較多？</div>
+            雖然兩者表面應發月薪差 ${fmtDiff(ctx.pkR.sal - ctx.pkC.sal)} 元，扣掉各自自付保費後，「${regName}」每個月實際領進口袋的現金為 <span class="ex-num">${fmt(ctx.pkR.takeMo)} 元</span>（比「${conName}」的 ${fmt(ctx.pkC.takeMo)} 元 <strong>${takeDiff >= 0 ? `多拿 +${fmt(takeDiff)}` : `少拿 ${fmt(takeDiff)}`} 元/月</strong>）。
+          </div>
+          <div class="ex-card c-cost">
+            <div class="ex-title">3. 退休金累積速度對決：每個月差多少？</div>
+            「${conName}」每月勞退入帳 <span class="ex-num">${fmt(ctx.pkC.retIn)} 元</span>；「${regName}」每月三方合計存入私校退撫專戶達 <span class="ex-num">${fmt(ctx.pkR.retIn)} 元</span>（每月<strong>${retDiff >= 0 ? `多存 +${fmt(retDiff)}` : `差 ${fmt(retDiff)}`} 元</strong>）。
+          </div>
+          <div class="ex-card c-tip">
+            <div class="ex-title">4. 怎麼使用下方兩個比較工具？</div>
+            您可以在正下方<strong>「自選單月 PK 比較器」</strong>自由下拉切換任意兩個職級即時比價；最下方還整理好「4.2 萬～5.9 萬同月薪橫斷面表」，證明<strong>只要月薪相同，編制內每年一定幫學校省 5 萬～7.2 萬元</strong>！
+          </div>`;
+        gloss = `<strong>表格顏色說明：</strong>在下方 PK 表「差額欄」中，<span class="pos">綠色數字</span>代表對學校更省成本（或對員工實領／退專更有利），<span class="neg">紅色數字</span>則代表學校支出增加（或員工實領減少）。`;
+      }
+
+      $("plain-guide").innerHTML = `
+        <div class="explain-head">
+          <h2>白話成果解讀｜一眼看懂目前分頁的關鍵數字</h2>
+          <span class="explain-tag">${badge}</span>
+        </div>
+        <div class="explain-grid">${cards}</div>
+        <div class="ex-glossary">${gloss}</div>`;
     }
 
     // Init

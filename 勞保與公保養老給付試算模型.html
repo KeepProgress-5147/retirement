@@ -478,6 +478,267 @@
       padding: 0.9rem 1.15rem;
     }
     .hidden { display: none !important; }
+
+    /* ================= V2.0 READABILITY & GUIDED UX UPGRADE ================= */
+    html { font-size: 17px; }
+    html[data-font="lg"] { font-size: 19px; }
+    html[data-font="xl"] { font-size: 21px; }
+
+    body { line-height: 1.68 !important; }
+    .main-layout {
+      max-width: 1480px !important;
+      grid-template-columns: 380px 1fr !important;
+      gap: 1.35rem !important;
+    }
+    @media (max-width: 1140px) {
+      .main-layout { grid-template-columns: 1fr !important; }
+      .sidebar { position: static !important; max-height: none !important; }
+    }
+    @media (max-width: 1280px) {
+      .charts-2, .charts-two-col { grid-template-columns: 1fr !important; }
+    }
+    @media (max-width: 1380px) {
+      .kpi-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+    }
+    @media (max-width: 680px) {
+      .kpi-grid-4 { grid-template-columns: 1fr !important; }
+    }
+
+    .panel { padding: 1.3rem 1.45rem !important; }
+    .panel-title { font-size: 1.08rem !important; line-height: 1.4 !important; }
+    .group-label {
+      font-size: 0.93rem !important;
+      color: var(--text) !important;
+      text-transform: none !important;
+      letter-spacing: 0.01em !important;
+      line-height: 1.4 !important;
+    }
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 0.14rem 0.52rem;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .field-row { font-size: 0.95rem !important; margin-bottom: 0.3rem !important; }
+    .field-val { font-size: 0.98rem !important; }
+    select, input[type="number"] {
+      font-size: 0.94rem !important;
+      padding: 0.52rem 0.7rem !important;
+      min-height: 42px;
+    }
+    .chip-btn, .preset-btn, .pill-btn {
+      font-size: 0.86rem !important;
+      padding: 0.38rem 0.74rem !important;
+      min-height: 34px;
+      line-height: 1.35;
+    }
+    .toggle-row { font-size: 0.92rem !important; line-height: 1.5 !important; }
+    .hint { font-size: 0.86rem !important; line-height: 1.58 !important; }
+    .mode-tab, .nav-tab { font-size: 0.96rem !important; padding: 0.68rem 1.15rem !important; }
+    .mode-tab span.sub { font-size: 0.82rem !important; margin-top: 0.18rem !important; opacity: 0.9 !important; }
+
+    .banner, .banner-insight, .alert-cap {
+      font-size: 0.98rem !important;
+      line-height: 1.72 !important;
+      padding: 1.1rem 1.35rem !important;
+    }
+    .kpi-card { padding: 1.15rem 1.25rem !important; }
+    .kpi-name, .kpi-title { font-size: 1.04rem !important; }
+    .badge { font-size: 0.8rem !important; padding: 0.18rem 0.58rem !important; }
+    .kpi-big { font-size: 1.76rem !important; margin: 0.22rem 0 !important; }
+    .kpi-big small { font-size: 0.86rem !important; }
+    .kpi-sub { font-size: 0.89rem !important; line-height: 1.55 !important; }
+    .kpi-stats, .kpi-meta { font-size: 0.9rem !important; gap: 0.55rem 0.7rem !important; padding-top: 0.65rem !important; }
+    .kpi-stats .lbl, .kpi-meta .lbl, .stat-item span.lbl { font-size: 0.82rem !important; margin-bottom: 0.1rem; }
+    table { font-size: 0.93rem !important; }
+    th, td { padding: 0.64rem 0.8rem !important; line-height: 1.52 !important; }
+    .legend { font-size: 0.88rem !important; gap: 1rem !important; }
+    details summary { font-size: 0.98rem !important; line-height: 1.5 !important; }
+    .footnote { font-size: 0.88rem !important; line-height: 1.72 !important; padding: 1.05rem 1.3rem !important; }
+    .tooltip { font-size: 0.88rem !important; line-height: 1.55 !important; max-width: 360px !important; padding: 0.65rem 0.85rem !important; }
+
+    /* Standalone header font-size bar */
+    .standalone-tools { display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap; }
+    .font-seg {
+      display: inline-flex; align-items: center; background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.28); border-radius: 999px; padding: 0.16rem;
+    }
+    .font-seg button {
+      border: 0; background: transparent; color: #e2e8f0; font-size: 0.8rem; font-weight: 700;
+      padding: 0.22rem 0.58rem; border-radius: 999px; cursor: pointer; font-family: inherit;
+    }
+    .font-seg button.active { background: #ffffff; color: #0f172a; }
+
+    /* Progressive Disclosure Advanced Box in Sidebar */
+    details.adv-box {
+      margin-top: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-alt);
+      padding: 0.65rem 0.85rem;
+    }
+    details.adv-box > summary {
+      font-size: 0.9rem !important;
+      font-weight: 700;
+      color: #334155;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.4rem;
+    }
+    details.adv-box > summary::-webkit-details-marker { display: none; }
+    details.adv-box > summary::after {
+      content: "展開微調 ▾";
+      font-size: 0.78rem;
+      color: #0284c7;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+    details.adv-box[open] > summary::after { content: "收合 ▴"; }
+    details.adv-box .adv-inner {
+      margin-top: 0.8rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed var(--border);
+    }
+
+    /* 3-Step Quick How-To Strip */
+    details.howto-box {
+      background: #ffffff;
+      border: 1px solid #bae6fd;
+      border-left: 5px solid #0284c7;
+      border-radius: var(--radius);
+      padding: 0.95rem 1.25rem;
+      box-shadow: var(--shadow);
+    }
+    details.howto-box > summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      font-size: 1rem !important;
+      color: #0c4a6e;
+    }
+    details.howto-box > summary::-webkit-details-marker { display: none; }
+    .howto-toggle-hint {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #0284c7;
+      white-space: nowrap;
+    }
+    .howto-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.85rem;
+      margin-top: 0.8rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid #e0f2fe;
+    }
+    @media (max-width: 900px) { .howto-steps { grid-template-columns: 1fr; } }
+    .howto-step {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 0.75rem 0.95rem;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: #1e293b;
+    }
+    .howto-step strong {
+      display: inline-block;
+      color: #0369a1;
+      margin-bottom: 0.2rem;
+      font-size: 0.93rem;
+    }
+
+    /* Plain-Language Dynamic Result Interpreter */
+    .explain-panel {
+      background: var(--surface);
+      border: 2px solid #0284c7;
+      border-radius: 14px;
+      padding: 1.25rem 1.4rem;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.08);
+    }
+    .explain-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.95rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .explain-head h2 {
+      margin: 0;
+      font-size: 1.14rem;
+      font-weight: 800;
+      color: #0c4a6e;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .explain-tag {
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+    .explain-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.95rem;
+    }
+    @media (max-width: 880px) { .explain-grid { grid-template-columns: 1fr; } }
+    .ex-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #0284c7;
+      border-radius: 10px;
+      padding: 0.9rem 1.05rem;
+      font-size: 0.94rem;
+      line-height: 1.65;
+      color: #1e293b;
+    }
+    .ex-card.c-win { border-left-color: #059669; background: #f0fdf4; border-color: #bbf7d0; }
+    .ex-card.c-cash { border-left-color: #0284c7; background: #f0f9ff; border-color: #bae6fd; }
+    .ex-card.c-cost { border-left-color: #7c3aed; background: #faf5ff; border-color: #e9d5ff; }
+    .ex-card.c-tip { border-left-color: #d97706; background: #fffbeb; border-color: #fde68a; }
+    .ex-title {
+      font-size: 0.96rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .ex-num {
+      font-weight: 800;
+      color: #0369a1;
+      font-variant-numeric: tabular-nums;
+    }
+    .ex-card.c-win .ex-num { color: #047857; }
+    .ex-card.c-cost .ex-num { color: #6d28d9; }
+    .ex-card.c-tip .ex-num { color: #b45309; }
+    .ex-glossary {
+      margin-top: 0.85rem;
+      padding-top: 0.7rem;
+      border-top: 1px dashed var(--border);
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
   </style>
 </head>
 <body>
@@ -488,7 +749,11 @@
           <h1>勞保老年給付 vs. 私校編制內公保養老給付｜互動試算比較模型</h1>
           <p>內建 116.01.01 勞保分擔表與 114.01.01 私校保險薪額表（39 級），支援《勞保條例》與《公保法》完整條文分流及現職轉職邊際決策</p>
         </div>
-        <div class="version-pill">v1.0 第一層社會保險專版</div>
+        <div class="standalone-tools"><div class="font-seg" role="group" aria-label="字體大小切換">
+            <button type="button" class="active" data-fscale="md" onclick="setFontScale('md')">標準字</button>
+            <button type="button" data-fscale="lg" onclick="setFontScale('lg')">大字 A+</button>
+            <button type="button" data-fscale="xl" onclick="setFontScale('xl')">特大 A++</button>
+          </div><div class="version-pill">v2.0 清楚易讀導引版</div></div>
       </div>
       <div class="mode-tabs">
         <button class="mode-tab active" id="tab-career" onclick="setMode('career')">
@@ -513,7 +778,7 @@
 
       <!-- Quick Presets -->
       <div class="control-group">
-        <div class="group-label">快速情境範本</div>
+        <div class="group-label"><span class="step-badge">起點</span> 點選常見案例直接套用（可選）</div>
         <div class="preset-bar" id="preset-career">
           <button class="preset-btn" onclick="applyPreset('c1')">25→65歲｜35歲轉私校</button>
           <button class="preset-btn" onclick="applyPreset('c2')">25→65歲｜40歲轉(雙15+)</button>
@@ -530,7 +795,7 @@
 
       <!-- Mode 1 Timeline -->
       <div class="control-group" id="grp-career-time">
-        <div class="group-label"><span class="dot" style="background:#0284c7"></span>職涯時間軸（模式一）</div>
+        <div class="group-label"><span class="dot" style="background:#0284c7"></span><span class="step-badge">步驟 1</span> 設定年齡與轉職時間</div>
         <div class="field">
           <div class="field-row"><label for="startAge">開始工作年齡</label><span class="field-val" id="val-startAge">25 歲</span></div>
           <input type="range" id="startAge" min="20" max="50" value="25" />
@@ -548,7 +813,7 @@
 
       <!-- Mode 2 Timeline -->
       <div class="control-group hidden" id="grp-switch-time">
-        <div class="group-label"><span class="dot" style="background:#0284c7"></span>現職條件與退休規劃（模式二）</div>
+        <div class="group-label"><span class="dot" style="background:#0284c7"></span><span class="step-badge">步驟 1</span> 設定目前年齡與已保勞保年資</div>
         <div class="field">
           <div class="field-row"><label for="nowAge">目前年齡</label><span class="field-val" id="val-nowAge">45 歲</span></div>
           <input type="range" id="nowAge" min="25" max="64" value="45" />
@@ -566,7 +831,7 @@
 
       <!-- Labor Insurance Bracket -->
       <div class="control-group">
-        <div class="group-label"><span class="dot" style="background:#059669"></span>勞工保險投保級距（116.01.01 表）</div>
+        <div class="group-label"><span class="dot" style="background:#059669"></span><span class="step-badge">步驟 2</span> 選擇勞保月投保薪資級距</div>
         <div class="field">
           <div class="field-row"><label for="laborBracket">選擇月投保薪資級距</label></div>
           <select id="laborBracket"></select>
@@ -576,7 +841,7 @@
 
       <!-- Private School Public Insurance Salary Grades -->
       <div class="control-group">
-        <div class="group-label"><span class="dot" style="background:#7c3aed"></span>私校編制內公保薪級（114.01.01 表）</div>
+        <div class="group-label"><span class="dot" style="background:#7c3aed"></span><span class="step-badge">步驟 3</span> 選擇私校編制內起薪與頂薪</div>
         <div class="two-col">
           <div class="field">
             <div class="field-row"><label for="eduStartRank">起敘薪級</label></div>
@@ -607,6 +872,9 @@
         </div>
       </div>
 
+      <details class="adv-box">
+        <summary>進階微調參數（預設壽命 85 歲、公保率 1.30%，一般免調）</summary>
+        <div class="adv-inner">
       <!-- Actuarial & Legal Parameters -->
       <div class="control-group">
         <div class="group-label"><span class="dot" style="background:#d97706"></span>法規費率、給付率與壽命設定</div>
@@ -658,10 +926,25 @@
           </div>
         </div>
       </div>
+        </div>
+      </details>
     </aside>
 
     <!-- Main Dashboard Content -->
     <section class="content-col">
+      <details class="howto-box" open>
+        <summary>
+          <span><strong>操作說明｜只要 3 步驟，30 秒看懂試算結果</strong></span>
+          <span class="howto-toggle-hint">點此可收合／展開說明</span>
+        </summary>
+        <div class="howto-steps">
+          <div class="howto-step"><strong>步驟 1：選情境或套用範本</strong><br>上方可切換「模式一（從頭規劃全職涯）」或「模式二（我現在已經有勞保，猶豫要不要轉私校）」，也可點左上角範本一鍵帶入。</div>
+          <div class="howto-step"><strong>步驟 2：調整左側基本條件</strong><br>只要調整左側標有「步驟 1～3」的年齡與薪資級距即可；下方「進階微調參數」已設為官方標準值，不調整也沒關係。</div>
+          <div class="howto-step"><strong>步驟 3：直接閱讀下方「白話成果解讀」</strong><br>調整滑桿時畫面會自動即時重算！請先看正下方 4 張「白話成果解讀卡」，一秒看懂每月領多少、幾歲回本、哪個最划算。</div>
+        </div>
+      </details>
+      <div class="explain-panel" id="plain-guide" aria-live="polite"></div>
+
       <!-- Dynamic Decision Insight Banner -->
       <div class="banner-insight" id="insight-banner"></div>
 
@@ -1312,20 +1595,20 @@
         const yy = sy(yv);
         svg += `<line x1="${m.l}" y1="${yy}" x2="${W - m.r}" y2="${yy}" stroke="#e2e8f0" stroke-width="1" />`;
         const lbl = metricKey === "monthly" ? fmt(yv) : fmtWan(yv);
-        svg += `<text x="${m.l - 8}" y="${yy + 4}" text-anchor="end" font-size="11" fill="#64748b">${lbl}</text>`;
+        svg += `<text x="${m.l - 8}" y="${yy + 4}" text-anchor="end" font-size="13" fill="#64748b">${lbl}</text>`;
       }
 
       // Reference line A (Stay Labor / Pure Labor)
       const yA = sy(refA);
       svg += `<line x1="${m.l}" y1="${yA}" x2="${W - m.r}" y2="${yA}" stroke="#059669" stroke-width="1.8" stroke-dasharray="6 4" />`;
-      svg += `<text x="${W - m.r - 4}" y="${yA - 6}" text-anchor="end" font-size="11" font-weight="700" fill="#059669">${isDelayMode ? "基準：續留勞保" : "基準：純勞保"} (${metricKey === "monthly" ? fmt(refA) + "元" : fmtWan(refA)})</text>`;
+      svg += `<text x="${W - m.r - 4}" y="${yA - 6}" text-anchor="end" font-size="13" font-weight="700" fill="#059669">${isDelayMode ? "基準：續留勞保" : "基準：純勞保"} (${metricKey === "monthly" ? fmt(refA) + "元" : fmtWan(refA)})</text>`;
 
       // Reference line B (Pure Edu in Mode 1)
       if (refB !== null) {
         const yB = sy(refB);
         svg += `<line x1="${m.l}" y1="${yB}" x2="${W - m.r}" y2="${yB}" stroke="#7c3aed" stroke-width="1.8" stroke-dasharray="4 4" />`;
         const dyB = Math.abs(yB - yA) < 16 ? 14 : -6;
-        svg += `<text x="${m.l + 6}" y="${yB + dyB}" text-anchor="start" font-size="11" font-weight="700" fill="#7c3aed">基準：純私校公保 (${metricKey === "monthly" ? fmt(refB) + "元" : fmtWan(refB)})</text>`;
+        svg += `<text x="${m.l + 6}" y="${yB + dyB}" text-anchor="start" font-size="13" font-weight="700" fill="#7c3aed">基準：純私校公保 (${metricKey === "monthly" ? fmt(refB) + "元" : fmtWan(refB)})</text>`;
       }
 
       // Main line path
@@ -1361,10 +1644,10 @@
       const step = Math.max(1, Math.ceil(points.length / 10));
       points.forEach((p, idx) => {
         if (idx % step === 0 || idx === points.length - 1) {
-          svg += `<text x="${sx(p.x)}" y="${H - 18}" text-anchor="middle" font-size="11" fill="#64748b">${isDelayMode ? (p.x + "年後") : (p.x + "歲")}</text>`;
+          svg += `<text x="${sx(p.x)}" y="${H - 18}" text-anchor="middle" font-size="13" fill="#64748b">${isDelayMode ? (p.x + "年後") : (p.x + "歲")}</text>`;
         }
       });
-      svg += `<text x="${m.l + cw / 2}" y="${H - 3}" text-anchor="middle" font-size="11" fill="#475569">${xLabel}</text>`;
+      svg += `<text x="${m.l + cw / 2}" y="${H - 3}" text-anchor="middle" font-size="13" fill="#475569">${xLabel}</text>`;
       svg += `</svg>`;
 
       const container = $("chart-scan");
@@ -1404,13 +1687,13 @@
         const yv = (maxY * i) / 4;
         const yy = sy(yv);
         svg += `<line x1="${m.l}" y1="${yy}" x2="${W - m.r}" y2="${yy}" stroke="#e2e8f0" stroke-width="1" />`;
-        svg += `<text x="${m.l - 6}" y="${yy + 4}" text-anchor="end" font-size="11" fill="#64748b">${fmtWan(yv)}</text>`;
+        svg += `<text x="${m.l - 6}" y="${yy + 4}" text-anchor="end" font-size="13" fill="#64748b">${fmtWan(yv)}</text>`;
       }
 
       // Vertical marker at lifeExpectancy
       const lx = sx(Math.min(95, lifeExpectancy));
       svg += `<line x1="${lx}" y1="${m.t}" x2="${lx}" y2="${m.t + ch}" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 3" />`;
-      svg += `<text x="${lx}" y="${m.t - 5}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#b45309">設定壽命 ${lifeExpectancy}歲</text>`;
+      svg += `<text x="${lx}" y="${m.t - 5}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#b45309">設定壽命 ${lifeExpectancy}歲</text>`;
 
       scenarios.forEach((s) => {
         const col = colors[s.colorClass];
@@ -1433,7 +1716,7 @@
       }
 
       [55, 60, 65, 70, 75, 80, 85, 90, 95].forEach((a) => {
-        svg += `<text x="${sx(a)}" y="${H - 14}" text-anchor="middle" font-size="11" fill="#64748b">${a}歲</text>`;
+        svg += `<text x="${sx(a)}" y="${H - 14}" text-anchor="middle" font-size="13" fill="#64748b">${a}歲</text>`;
       });
       svg += `</svg>`;
 
@@ -1470,7 +1753,7 @@
         const yv = (maxTot * i) / 4;
         const yy = sy(yv);
         svg += `<line x1="${m.l}" y1="${yy}" x2="${W - m.r}" y2="${yy}" stroke="#e2e8f0" stroke-width="1" />`;
-        svg += `<text x="${m.l - 6}" y="${yy + 4}" text-anchor="end" font-size="10.5" fill="#64748b">${fmtWan(yv)}</text>`;
+        svg += `<text x="${m.l - 6}" y="${yy + 4}" text-anchor="end" font-size="12.5" fill="#64748b">${fmtWan(yv)}</text>`;
       }
 
       scenarios.forEach((s, idx) => {
@@ -1496,9 +1779,9 @@
         svg += `<rect x="${x}" y="${yEmp}" width="${barW}" height="${Math.max(0, hEmp)}" fill="#0f172a" />`;
         svg += `<rect x="${x}" y="${yUnit}" width="${barW}" height="${Math.max(0, hUnit)}" fill="#38bdf8" />`;
         svg += `<rect x="${x}" y="${yGov}" width="${barW}" height="${Math.max(0, hGov)}" fill="#a78bfa" />`;
-        svg += `<text x="${cx}" y="${yGov - 6}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0f172a">自付 ${fmtWan(s.empPrem)}</text>`;
-        svg += `<text x="${cx}" y="${H - 22}" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">${s.tag}</text>`;
-        svg += `<text x="${cx}" y="${H - 7}" text-anchor="middle" font-size="10" fill="#64748b">總 ${fmtWan(tot)}</text>`;
+        svg += `<text x="${cx}" y="${yGov - 6}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f172a">自付 ${fmtWan(s.empPrem)}</text>`;
+        svg += `<text x="${cx}" y="${H - 22}" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">${s.tag}</text>`;
+        svg += `<text x="${cx}" y="${H - 7}" text-anchor="middle" font-size="12" fill="#64748b">總 ${fmtWan(tot)}</text>`;
         svg += `</g>`;
       });
 
@@ -1774,6 +2057,76 @@
             </tbody>
           </table>`;
       }
+      renderPlainGuideM1({ mode: state.mode, scenarios, scanPoints, lifeExpectancy, laborBracket, eduAnnuityRate, cpiEnabled });
+    }
+
+
+    function setFontScale(sc) {
+      if (sc === "md") document.documentElement.removeAttribute("data-font");
+      else document.documentElement.setAttribute("data-font", sc);
+      document.querySelectorAll("[data-fscale]").forEach(function(b) {
+        b.classList.toggle("active", b.getAttribute("data-fscale") === sc);
+      });
+      try { localStorage.setItem("retire_font_scale", sc); } catch (e) {}
+    }
+    (function initSavedFont() {
+      try {
+        var saved = localStorage.getItem("retire_font_scale");
+        if (saved && (saved === "lg" || saved === "xl")) setFontScale(saved);
+      } catch (e) {}
+    })();
+
+
+    function renderPlainGuideM1(ctx) {
+      const sorted = [...ctx.scenarios].sort((a, b) => b.netGain - a.netGain);
+      const best = sorted[0], second = sorted[1];
+      const diffWan = fmtWan(best.netGain - second.netGain);
+      const bestScan = [...ctx.scanPoints].sort((a, b) => b.netGain - a.netGain)[0];
+      const payRatio = best.empPrem > 0 ? (best.totalAtLife / best.empPrem).toFixed(1) : "—";
+
+      let tipHtml = "";
+      if (ctx.mode === "switch") {
+        const exY = parseInt($("existingLaborYears").value, 10);
+        const futY = parseInt($("retireAge2").value, 10) - parseInt($("nowAge").value, 10);
+        if (exY < 15 && exY + futY >= 15) {
+          tipHtml = `您目前已保勞保 <span class="ex-num">${exY} 年</span>（未滿 15 年門檻）。若現在馬上轉走，勞保只能領一次金、拿不到終身月退！<strong>建議至少再留勞保 <span class="ex-num">${15 - exY} 年</span>湊滿 15 年再轉</strong>，未來就能同時領「勞保＋公保」雙份終身月退。`;
+        } else if (exY >= 15 && futY >= 15) {
+          tipHtml = `您的勞保已滿 15 年，轉去私校後到退休也滿 15 年，<strong>兩邊都符合終身月退資格，退休後可同時領兩張支票（互不扣減）！</strong>關鍵差異在於公保個人自付比例（35%）比勞保（20%）略高。`;
+        } else {
+          tipHtml = `因為未來剩餘年資僅 <span class="ex-num">${futY} 年</span>（轉私校後公保未滿 15 年），轉職後公保原則上只能領一次養老給付（除非兩邊皆未滿 15 年而觸發《公保法》第 49 條併計領 0.75% 基本年金）。`;
+        }
+      } else {
+        tipHtml = `本頁僅比較「第一層政府社會保險（勞保 vs. 公保）」，不含勞退 6% 與私校退撫個人專戶。若在中途轉職，掃描圖顯示最佳轉換年齡為 <span class="ex-num">${bestScan.x} 歲</span>（勞保 ${bestScan.laborYears} 年＋公保 ${bestScan.eduYears} 年）。若想看加上個人退休金專戶的完整金額，請切換至「模組二｜完整雙層退休金」。`;
+      }
+
+      $("plain-guide").innerHTML = `
+        <div class="explain-head">
+          <h2>白話成果解讀｜這組試算結果代表什麼意思？</h2>
+          <span class="explain-tag">隨左側條件即時白話翻譯</span>
+        </div>
+        <div class="explain-grid">
+          <div class="ex-card c-win">
+            <div class="ex-title">1. 一句話結論：哪種選擇最划算？</div>
+            在您目前的設定下，以<strong>「${best.name}」</strong>最划算！假設活到 ${ctx.lifeExpectancy} 歲，扣除自己繳出去的保費後，總共淨賺 <span class="ex-num">${fmtWan(best.netGain)}</span>（比第二名「${second.name}」多拿 <span class="ex-num">+${diffWan}</span>）。
+          </div>
+          <div class="ex-card c-cash">
+            <div class="ex-title">2. 退休後每個月實際領多少錢？</div>
+            最優方案退休後<strong>每個月可固定領 <span class="ex-num">${fmt(best.totalMonthly)} 元</span></strong>（活到老領到老，終身發放）${best.totalLumpSum > 0 ? `，另外退休時還有一筆一次金 <span class="ex-num">${fmtWan(best.totalLumpSum)}</span> 入袋` : ""}。
+          </div>
+          <div class="ex-card c-cost">
+            <div class="ex-title">3. 自己繳多少保費？幾歲可以回本？</div>
+            ${ctx.mode === "switch" ? "從現在到退休新增" : "整個職涯"}您自己掏腰包繳的保費共 <span class="ex-num">${fmtWan(best.empPrem)}</span>，累積領到 ${ctx.lifeExpectancy} 歲共拿回 <span class="ex-num">${fmtWan(best.totalAtLife)}</span>（約自己每繳 1 元拿回 <strong>${payRatio} 元</strong>），大約在 <strong><span class="ex-num">${best.breakEvenAge ? best.breakEvenAge + " 歲" : "—"}</span> 就把繳的保費全部領回來了</strong>！
+          </div>
+          <div class="ex-card c-tip">
+            <div class="ex-title">4. 為什麼會這樣？關鍵法規提醒</div>
+            ${tipHtml}
+          </div>
+        </div>
+        <div class="ex-glossary">
+          <strong>名詞小辭典：</strong>
+          <strong>「淨獲益」</strong>＝退休後領到的總金額 − 在職時從您薪水扣掉的自付保費（真正多賺到的退休保障）｜
+          <strong>「保費回本年齡」</strong>＝領到的退休金超過您自己繳過的保費總額的那一歲。
+        </div>`;
     }
 
     // Bind events & boot
